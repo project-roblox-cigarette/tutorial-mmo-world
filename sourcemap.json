@@ -239,6 +239,33 @@
               "name": "main",
               "className": "Script",
               "filePaths": ["out/server\\main.server.luau"]
+            },
+            {
+              "name": "Players",
+              "className": "Script",
+              "filePaths": ["out/server\\Players\\init.server.luau"],
+              "children": [
+                {
+                  "name": "handlers",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "onPlayerAdded",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "out/server\\Players\\handlers\\onPlayerAdded.luau"
+                      ]
+                    },
+                    {
+                      "name": "onPlayerRemoving",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "out/server\\Players\\handlers\\onPlayerRemoving.luau"
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
