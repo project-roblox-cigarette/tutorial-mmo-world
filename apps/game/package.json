@@ -1,0 +1,19 @@
+{
+  "name": "@game/main",
+  "private": true,
+  "scripts": {
+    "build": "rbxtsc",
+    "watch": "rbxtsc -w",
+    "lint": "selene src",
+    "format": "stylua src",
+    "test": "run-in-roblox"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.896",
+    "roblox-ts": "^3.0.0"
+  },
+  "dependencies": {
+    "@rbxts/services": "^1.6.0"
+  }
+}
