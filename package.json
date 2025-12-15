@@ -6,5 +6,9 @@
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "rojo": "1.0.3-rojo7.6.1"
   }
 }

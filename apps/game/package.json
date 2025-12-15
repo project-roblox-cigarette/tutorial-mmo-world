@@ -2,6 +2,7 @@
   "name": "@game/main",
   "private": true,
   "scripts": {
+    "dev": "concurrently \"pnpm build --watch\" \"pnpm rojo serve default.project.json\"",
     "build": "rbxtsc",
     "watch": "rbxtsc -w",
     "lint": "selene src",

@@ -1,0 +1,27 @@
+{
+    "name": "tutorial-mmo-world",
+    "tree": {
+      "$className": "DataModel",
+  
+      "ReplicatedStorage": {
+        "Shared": {
+          "$path": "out/shared"
+        }
+      },
+  
+      "ServerScriptService": {
+        "Server": {
+          "$path": "out/server"
+        }
+      },
+  
+      "StarterPlayer": {
+        "StarterPlayerScripts": {
+          "Client": {
+            "$path": "out/client"
+          }
+        }
+      }
+    }
+  }
+  
