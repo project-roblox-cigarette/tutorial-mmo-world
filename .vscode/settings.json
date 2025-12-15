@@ -1,3 +1,26 @@
 {
-    "luau-lsp.plugin.enabled": true
+  // 共通
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  // Lua
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+  // Luau
+  "[luau]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+
+  // TypeScript
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+
+  // Roblox LSP
+  "robloxLsp.diagnostics.globals": ["game", "workspace", "script"],
+
+  // 不要な自動整形を抑制
+  "lua.format.enable": false
 }
