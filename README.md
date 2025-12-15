@@ -23,7 +23,6 @@ Roblox Studio × TypeScript (roblox-ts) による MMO ゲーム開発プロジ�
 | [ESLint](https://eslint.org/)                         | TypeScript コード品質                 |
 | [Prettier](https://prettier.io/)                      | コードフォーマット                    |
 | [Stylua](https://github.com/JohnnyMorganz/StyLua)     | Luau フォーマット                     |
-| [Selene](https://github.com/Kampfkarren/selene)       | Luau 静的解析                         |
 | [TestEZ](https://github.com/Roblox/testez)            | Roblox テストフレームワーク           |
 | [Husky](https://typicode.github.io/husky/)            | Git フック                            |
 | [GitHub Actions](https://github.com/features/actions) | CI/CD                                 |
@@ -99,7 +98,6 @@ code --install-extension evaera.vscode-rojo
 code --install-extension fireboltofdeath.vscode-roblox-ts
 code --install-extension JohnnyMorganz.luau-lsp
 code --install-extension JohnnyMorganz.stylua
-code --install-extension Kampfkarren.selene-vscode
 code --install-extension dbaeumer.vscode-eslint
 code --install-extension esbenp.prettier-vscode
 code --install-extension eamodio.gitlens
@@ -150,7 +148,6 @@ tutorial-mmo-world/
 ├── package.json            # ルートパッケージ
 ├── pnpm-workspace.yaml     # pnpm ワークスペース定義
 ├── .prettierrc             # Prettier 設定
-├── selene.toml             # Selene 設定
 ├── stylua.toml             # Stylua 設定
 └── tsconfig.json           # 共通 TypeScript 設定
 ```
@@ -279,7 +276,6 @@ GitHub Actions で以下を自動実行:
 | ジョブ          | 内容                                |
 | --------------- | ----------------------------------- |
 | `build`         | TypeScript ビルド、ESLint、Prettier |
-| `lua-lint`      | Stylua、Selene                      |
 | `rojo-validate` | Rojo プロジェクト検証               |
 
 PR がすべてのチェックを通過しないとマージ不可。

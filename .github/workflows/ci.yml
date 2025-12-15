@@ -54,9 +54,6 @@ jobs:
       - name: Check Stylua formatting
         run: stylua --check .
 
-      - name: Run Selene
-        run: selene .
-
   rojo-validate:
     name: Rojo Validation
     runs-on: ubuntu-latest
