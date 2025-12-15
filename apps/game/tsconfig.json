@@ -1,13 +1,11 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-      "rootDir": "src",
-      "outDir": "out",
-      "typeRoots": [
-        "node_modules/@rbxts"
-      ],
-      "types": ["types", "compiler-types"]
-    },
-    "include": ["src"]
-  }
-  
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "out",
+
+    "typeRoots": ["node_modules/@rbxts"],
+    "types": ["types", "compiler-types", "testez"]
+  },
+  "include": ["src"]
+}

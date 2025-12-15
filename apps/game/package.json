@@ -4,11 +4,11 @@
   "scripts": {
     "dev": "concurrently \"pnpm build --watch\" \"pnpm exec rojo serve default.project.json\"",
     "build": "rbxtsc",
-    "watch": "rbxtsc -w",
-    "test": "run-in-roblox"
+    "watch": "rbxtsc -w"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/testez": "0.4.2-ts.0",
     "@rbxts/types": "^1.0.896",
     "roblox-ts": "^3.0.0"
   },

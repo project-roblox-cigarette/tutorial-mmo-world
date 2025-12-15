@@ -22,5 +22,6 @@
   "robloxLsp.diagnostics.globals": ["game", "workspace", "script"],
 
   // 不要な自動整形を抑制
-  "lua.format.enable": false
+  "lua.format.enable": false,
+  "luau-lsp.plugin.enabled": true
 }
