@@ -1,0 +1,190 @@
+# Roblox standard library for selene
+# This file defines Roblox-specific globals
+
+[selene]
+base = "lua51"
+name = "roblox"
+
+# Roblox Globals
+[game]
+any = true
+
+[workspace]
+any = true
+
+[script]
+any = true
+
+[plugin]
+any = true
+
+[task]
+any = true
+
+[task.spawn]
+args = [
+  { type = "function" },
+  { type = "..." },
+]
+
+[task.defer]
+args = [
+  { type = "function" },
+  { type = "..." },
+]
+
+[task.delay]
+args = [
+  { type = "number" },
+  { type = "function" },
+  { type = "..." },
+]
+
+[task.wait]
+args = [
+  { type = "number", required = false },
+]
+
+[task.cancel]
+args = [
+  { type = "thread" },
+]
+
+[warn]
+args = [
+  { type = "..." },
+]
+
+[bit32]
+any = true
+
+[bit32.arshift]
+args = [
+  { type = "number" },
+  { type = "number" },
+]
+
+[bit32.band]
+args = [
+  { type = "..." },
+]
+
+[bit32.bnot]
+args = [
+  { type = "number" },
+]
+
+[bit32.bor]
+args = [
+  { type = "..." },
+]
+
+[bit32.btest]
+args = [
+  { type = "..." },
+]
+
+[bit32.bxor]
+args = [
+  { type = "..." },
+]
+
+[bit32.extract]
+args = [
+  { type = "number" },
+  { type = "number" },
+  { type = "number", required = false },
+]
+
+[bit32.lrotate]
+args = [
+  { type = "number" },
+  { type = "number" },
+]
+
+[bit32.lshift]
+args = [
+  { type = "number" },
+  { type = "number" },
+]
+
+[bit32.replace]
+args = [
+  { type = "number" },
+  { type = "number" },
+  { type = "number" },
+  { type = "number", required = false },
+]
+
+[bit32.rrotate]
+args = [
+  { type = "number" },
+  { type = "number" },
+]
+
+[bit32.rshift]
+args = [
+  { type = "number" },
+  { type = "number" },
+]
+
+# Roblox extensions to standard library
+[table.find]
+args = [
+  { type = "table" },
+  { type = "any" },
+  { type = "number", required = false },
+]
+
+[table.clear]
+args = [
+  { type = "table" },
+]
+
+[table.create]
+args = [
+  { type = "number" },
+  { type = "any", required = false },
+]
+
+[table.move]
+args = [
+  { type = "table" },
+  { type = "number" },
+  { type = "number" },
+  { type = "number" },
+  { type = "table", required = false },
+]
+
+[table.pack]
+args = [
+  { type = "..." },
+]
+
+[table.unpack]
+args = [
+  { type = "table" },
+  { type = "number", required = false },
+  { type = "number", required = false },
+]
+
+[table.freeze]
+args = [
+  { type = "table" },
+]
+
+[table.isfrozen]
+args = [
+  { type = "table" },
+]
+
+[table.clone]
+args = [
+  { type = "table" },
+]
+
+# Coroutine extensions
+[coroutine.close]
+args = [
+  { type = "thread" },
+]

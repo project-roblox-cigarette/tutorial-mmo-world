@@ -1,0 +1,10 @@
+# Selene configuration for roblox-ts project
+# https://kampfkarren.github.io/selene/
+
+std = "roblox"
+
+[lints]
+# Allow _G usage for roblox-ts runtime
+global_usage = "allow"
+# Allow implicit returns (common in Lua)
+empty_if = "allow"

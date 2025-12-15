@@ -33,6 +33,10 @@
   "luau-lsp.plugin.enabled": true,
   "luau-lsp.sourcemap.enabled": true,
   "luau-lsp.sourcemap.rojoProjectFile": "apps/game/default.project.json",
+  "luau-lsp.ignoreGlobs": ["**/include/**", "**/node_modules/**"],
+
+  // Selene - include フォルダを除外
+  "selene.ignoreGlobs": ["**/include/**", "**/node_modules/**"],
 
   // ファイル関連付け
   "files.associations": {
@@ -44,5 +48,13 @@
 
   // ESLint
   "eslint.useFlatConfig": true,
-  "eslint.workingDirectories": [{ "mode": "auto" }]
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // include フォルダ内の Lua ファイルの診断を無効化
+  "files.exclude": {
+    "**/include/*.lua": false
+  },
+
+  // Selene を Lua ファイルで無効化（include フォルダは自動生成ファイル）
+  "selene.run": "onSave"
 }

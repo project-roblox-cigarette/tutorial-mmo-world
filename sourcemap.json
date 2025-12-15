@@ -17,6 +17,213 @@
               "filePaths": ["out/shared\\constants.luau"]
             }
           ]
+        },
+        {
+          "name": "rbxts_include",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "Promise",
+              "className": "ModuleScript",
+              "filePaths": ["include\\Promise.lua"]
+            },
+            {
+              "name": "RuntimeLib",
+              "className": "ModuleScript",
+              "filePaths": ["include\\RuntimeLib.lua"]
+            },
+            {
+              "name": "node_modules",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "@rbxts",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "compiler-types",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "node_modules/@rbxts\\compiler-types\\package.json"
+                          ]
+                        },
+                        { "name": "types", "className": "Folder" }
+                      ]
+                    },
+                    {
+                      "name": "services",
+                      "className": "ModuleScript",
+                      "filePaths": ["node_modules/@rbxts\\services\\init.lua"],
+                      "children": [
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "node_modules/@rbxts\\services\\package.json"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "testez",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "node_modules/@rbxts\\testez\\package.json"
+                          ]
+                        },
+                        {
+                          "name": "src",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "node_modules/@rbxts\\testez\\src\\init.lua"
+                          ],
+                          "children": [
+                            {
+                              "name": "Context",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\Context.lua"
+                              ]
+                            },
+                            {
+                              "name": "Expectation",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\Expectation.lua"
+                              ]
+                            },
+                            {
+                              "name": "ExpectationContext",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\ExpectationContext.lua"
+                              ]
+                            },
+                            {
+                              "name": "LifecycleHooks",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\LifecycleHooks.lua"
+                              ]
+                            },
+                            {
+                              "name": "Reporters",
+                              "className": "Folder",
+                              "children": [
+                                {
+                                  "name": "TeamCityReporter",
+                                  "className": "ModuleScript",
+                                  "filePaths": [
+                                    "node_modules/@rbxts\\testez\\src\\Reporters\\TeamCityReporter.lua"
+                                  ]
+                                },
+                                {
+                                  "name": "TextReporter",
+                                  "className": "ModuleScript",
+                                  "filePaths": [
+                                    "node_modules/@rbxts\\testez\\src\\Reporters\\TextReporter.lua"
+                                  ]
+                                },
+                                {
+                                  "name": "TextReporterQuiet",
+                                  "className": "ModuleScript",
+                                  "filePaths": [
+                                    "node_modules/@rbxts\\testez\\src\\Reporters\\TextReporterQuiet.lua"
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "name": "TestBootstrap",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestBootstrap.lua"
+                              ]
+                            },
+                            {
+                              "name": "TestEnum",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestEnum.lua"
+                              ]
+                            },
+                            {
+                              "name": "TestPlan",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestPlan.lua"
+                              ]
+                            },
+                            {
+                              "name": "TestPlanner",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestPlanner.lua"
+                              ]
+                            },
+                            {
+                              "name": "TestResults",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestResults.lua"
+                              ]
+                            },
+                            {
+                              "name": "TestRunner",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestRunner.lua"
+                              ]
+                            },
+                            {
+                              "name": "TestSession",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "node_modules/@rbxts\\testez\\src\\TestSession.lua"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "types",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "include",
+                          "className": "Folder",
+                          "children": [
+                            { "name": "generated", "className": "Folder" }
+                          ]
+                        },
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "node_modules/@rbxts\\types\\package.json"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "selene",
+              "className": "ModuleScript",
+              "filePaths": ["include\\selene.toml"]
+            }
+          ]
         }
       ]
     },

@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"pnpm build --watch\" \"pnpm exec rojo serve default.project.json\"",
-    "build": "rbxtsc",
-    "watch": "rbxtsc -w",
+    "build": "rbxtsc --type=game",
+    "watch": "rbxtsc -w --type=game",
     "test": "echo 'Tests run in Roblox Studio with TestEZ'"
   },
   "devDependencies": {

@@ -1,0 +1,18 @@
+{
+  "languageMode": "strict",
+  "lint": {
+    "*": true
+  },
+  "lintErrors": false,
+  "typeErrors": true,
+  "globals": [
+    "game",
+    "workspace",
+    "script",
+    "plugin",
+    "task",
+    "warn",
+    "bit32",
+    "_G"
+  ]
+}
