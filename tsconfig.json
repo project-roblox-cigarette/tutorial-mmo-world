@@ -1,15 +1,14 @@
 {
-    "compilerOptions": {
-      "target": "ESNext",
-      "module": "commonjs",
-      "moduleResolution": "Node",
-      "moduleDetection": "force",
-  
-      "noLib": true,
-      "strict": true,
-      "noEmitOnError": true,
-  
-      "allowSyntheticDefaultImports": true
-    }
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+
+    "noLib": true,
+    "strict": true,
+    "noEmitOnError": true,
+
+    "allowSyntheticDefaultImports": true
   }
-  
+}

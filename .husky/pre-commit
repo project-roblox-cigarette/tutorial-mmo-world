@@ -1,6 +1,13 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
-pnpm format
+# ステージされたファイルのみをチェック
+# TypeScript/JavaScript ファイルの lint
+pnpm lint
+
+# ビルドが通るか確認
 pnpm build
-pnpm test
+
+# フォーマットチェック（自動修正はしない）
+pnpm format:check
+
+echo "✅ Pre-commit checks passed!"

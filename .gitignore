@@ -1,10 +1,37 @@
+# Node.js
 node_modules
 
+# ビルド成果物
 dist
 out
 
+# Roblox ファイル
 *.rbxl
 *.rbxlx
+*.rbxm
+*.rbxmx
 
+# OS
 .DS_Store
+Thumbs.db
+
+# 環境変数
 .env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# ログ
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# キャッシュ
+.eslintcache
+.cache

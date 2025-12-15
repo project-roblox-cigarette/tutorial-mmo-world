@@ -1,0 +1,75 @@
+{
+  "name": "tutorial-mmo-world",
+  "className": "DataModel",
+  "filePaths": ["default.project.json"],
+  "children": [
+    {
+      "name": "ReplicatedStorage",
+      "className": "ReplicatedStorage",
+      "children": [
+        {
+          "name": "Shared",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "constants",
+              "className": "ModuleScript",
+              "filePaths": ["out/shared\\constants.luau"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ServerScriptService",
+      "className": "ServerScriptService",
+      "children": [
+        {
+          "name": "Server",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "main",
+              "className": "Script",
+              "filePaths": ["out/server\\main.server.luau"]
+            }
+          ]
+        },
+        {
+          "name": "Tests",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "sample.spec",
+              "className": "ModuleScript",
+              "filePaths": ["out/tests\\sample.spec.luau"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarterPlayer",
+      "className": "StarterPlayer",
+      "children": [
+        {
+          "name": "StarterPlayerScripts",
+          "className": "StarterPlayerScripts",
+          "children": [
+            {
+              "name": "Client",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "main",
+                  "className": "LocalScript",
+                  "filePaths": ["out/client\\main.client.luau"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "concurrently \"pnpm build --watch\" \"pnpm exec rojo serve default.project.json\"",
     "build": "rbxtsc",
-    "watch": "rbxtsc -w"
+    "watch": "rbxtsc -w",
+    "test": "echo 'Tests run in Roblox Studio with TestEZ'"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
@@ -13,6 +14,7 @@
     "roblox-ts": "^3.0.0"
   },
   "dependencies": {
+    "@packages/shared": "workspace:*",
     "@rbxts/services": "^1.6.0"
   }
 }

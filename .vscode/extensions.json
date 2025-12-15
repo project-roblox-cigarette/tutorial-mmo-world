@@ -1,11 +1,24 @@
 {
   "recommendations": [
-    "johnnymorganz.stylua",
-    "kevingamer3d2.selene-vscode",
+    // Roblox開発必須
     "evaera.vscode-rojo",
     "fireboltofdeath.vscode-roblox-ts",
-    "ms-ceintl.vscode-language-pack-ja",
+    "JohnnyMorganz.luau-lsp",
+    "JohnnyMorganz.stylua",
+    "Kampfkarren.selene-vscode",
+
+    // TypeScript/JavaScript
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+
+    // Git
+    "eamodio.gitlens",
+
+    // 日本語
+    "ms-ceintl.vscode-language-pack-ja"
+  ],
+  "unwantedRecommendations": [
+    // Luau LSP使用時に競合するプラグイン
+    "sumneko.lua"
   ]
 }

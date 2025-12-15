@@ -1,27 +1,48 @@
 {
-  // 共通
+  // エディタ共通設定
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-
-  // Lua
-  "[lua]": {
-    "editor.defaultFormatter": "JohnnyMorganz.stylua"
-  },
-  // Luau
-  "[luau]": {
-    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
   },
 
   // TypeScript
   "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
-  // Roblox LSP
+  // Luau
+  "[luau]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+
+  // roblox-ts
   "robloxLsp.diagnostics.globals": ["game", "workspace", "script"],
 
-  // 不要な自動整形を抑制
-  "lua.format.enable": false,
-  "luau-lsp.plugin.enabled": true
+  // Luau LSP
+  "luau-lsp.plugin.enabled": true,
+  "luau-lsp.sourcemap.enabled": true,
+  "luau-lsp.sourcemap.rojoProjectFile": "apps/game/default.project.json",
+
+  // ファイル関連付け
+  "files.associations": {
+    "*.luau": "luau"
+  },
+
+  // 自動インポート
+  "typescript.preferences.importModuleSpecifier": "relative",
+
+  // ESLint
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }]
 }
