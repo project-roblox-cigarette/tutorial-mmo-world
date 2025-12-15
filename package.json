@@ -4,9 +4,9 @@
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "build": "pnpm -r build",
-    "lint": "pnpm -r lint",
     "test": "pnpm -r test",
-    "format": "stylua ."
+    "format": "pnpm exec stylua .",
+    "dev:game": "pnpm --filter @game/main dev"
   },
   "devDependencies": {
     "@johnnymorganz/stylua-bin": "^2.3.1",
