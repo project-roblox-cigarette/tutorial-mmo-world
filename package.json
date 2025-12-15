@@ -5,9 +5,11 @@
   "scripts": {
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "format": "stylua ."
   },
   "devDependencies": {
+    "@johnnymorganz/stylua-bin": "^2.3.1",
     "concurrently": "^9.2.1",
     "rojo": "1.0.3-rojo7.6.1"
   }
