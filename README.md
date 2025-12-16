@@ -31,7 +31,63 @@ Roblox Studio × TypeScript (roblox-ts) による MMO ゲーム開発プロジ�
 
 ## 🚀 環境セットアップ
 
-### 1. 必須ソフトウェアのインストール
+### 推奨: Dev Container を使用する方法 (最も簡単)
+
+**Dev Container** を使用すると、全員が同じ開発環境で作業できます。
+Docker と VS Code があれば、面倒な環境構築は不要です。
+
+#### 前提条件
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) がインストールされていること
+- [VS Code](https://code.visualstudio.com/) がインストールされていること
+- VS Code 拡張機能 [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) がインストールされていること
+
+#### セットアップ手順
+
+1. **リポジトリをクローン**
+
+   ```bash
+   git clone https://github.com/your-org/tutorial-mmo-world.git
+   cd tutorial-mmo-world
+   ```
+
+2. **VS Code でプロジェクトを開く**
+
+   ```bash
+   code .
+   ```
+
+3. **Dev Container で開く**
+
+   VS Code が `.devcontainer` フォルダを検出し、「Reopen in Container」の通知が表示されます。
+   クリックするか、コマンドパレット（`F1`）で `Dev Containers: Reopen in Container` を実行します。
+
+4. **自動セットアップを待つ**
+
+   初回起動時に以下が自動的に実行されます:
+   - pnpm 依存関係のインストール
+   - Aftman ツール（Rojo, StyLua, Selene）のインストール
+   - TypeScript ビルド
+
+5. **Roblox Studio で接続**
+
+   ```bash
+   # Dev Container 内で
+   pnpm dev:game
+   ```
+
+   ホストマシンの Roblox Studio で Rojo プラグインを使用し、**ポート 34872** に接続します。
+
+> 💡 **注意**: Roblox Studio はホストマシン（Windows/macOS）で実行します。
+> Dev Container 内の Rojo サーバーとポートフォワーディング経由で接続します。
+
+---
+
+### 手動セットアップ (従来の方法)
+
+Dev Container を使用しない場合は、以下の手順で手動セットアップしてください。
+
+#### 1. 必須ソフトウェアのインストール
 
 #### Windows
 

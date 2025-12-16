@@ -1,0 +1,108 @@
+{
+  "name": "Tutorial MMO World - Roblox Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "remoteUser": "node",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "forwardPorts": [34872],
+  "portsAttributes": {
+    "34872": {
+      "label": "Rojo Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "postStartCommand": "/usr/local/bin/init.sh",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "evaera.vscode-rojo",
+        "fireboltofdeath.vscode-roblox-ts",
+        "JohnnyMorganz.luau-lsp",
+        "JohnnyMorganz.stylua",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "ms-ceintl.vscode-language-pack-ja",
+        "mhutchie.git-graph",
+        "pkief.material-icon-theme"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[markdown]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "files.trimTrailingWhitespace": false
+        },
+        "[luau]": {
+          "editor.defaultFormatter": "JohnnyMorganz.stylua"
+        },
+        "[lua]": {
+          "editor.defaultFormatter": "JohnnyMorganz.stylua"
+        },
+        "robloxLsp.diagnostics.globals": ["game", "workspace", "script"],
+        "luau-lsp.plugin.enabled": true,
+        "luau-lsp.sourcemap.enabled": true,
+        "luau-lsp.sourcemap.rojoProjectFile": "apps/game/default.project.json",
+        "luau-lsp.ignoreGlobs": ["**/include/**", "**/node_modules/**"],
+        "selene.ignoreGlobs": ["**/include/**", "**/node_modules/**"],
+        "files.associations": {
+          "*.luau": "luau"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "eslint.useFlatConfig": true,
+        "eslint.workingDirectories": [{ "mode": "auto" }],
+        "files.eol": "\n",
+        "files.insertFinalNewline": true,
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "workbench.iconTheme": "material-icon-theme",
+        "search.exclude": {
+          "node_modules": true,
+          "pnpm-lock.yaml": true,
+          "**/out/**": true
+        },
+        "files.exclude": {
+          "**/node_modules": true,
+          "**/out": true,
+          "**/include": true,
+          "pnpm-lock.yaml": true,
+          ".editorconfig": true,
+          ".prettierrc": true,
+          ".prettierignore": true,
+          ".luaurc": true,
+          ".husky": true,
+          "selene.toml": true,
+          "stylua.toml": true,
+          "roblox.toml": true,
+          "aftman.toml": true
+        },
+        "selene.run": "onSave"
+      }
+    }
+  }
+}
