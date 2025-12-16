@@ -89,8 +89,8 @@ function TS.import(context, module, ...)
 		if _G[module] then
 			error(
 				OUTPUT_PREFIX
-				.. "Invalid module access! Do you have multiple TS runtimes trying to import this? "
-				.. module:GetFullName(),
+					.. "Invalid module access! Do you have multiple TS runtimes trying to import this? "
+					.. module:GetFullName(),
 				2
 			)
 		end
@@ -138,14 +138,12 @@ function TS.async(callback)
 		local n = select("#", ...)
 		local args = { ... }
 		return Promise.new(function(resolve, reject)
-			coroutine.wrap(function()
-				local ok, result = pcall(callback, unpack(args, 1, n))
-				if ok then
-					resolve(result)
-				else
-					reject(result)
-				end
-			end)()
+			local ok, result = pcall(callback, unpack(args, 1, n))
+			if ok then
+				resolve(result)
+			else
+				reject(result)
+			end
 		end)
 	end
 end
