@@ -47,7 +47,6 @@ async function initialize(): Promise<void> {
 
   state.isReady = true;
   print('[Client] クライアント初期化完了');
-  print('[Client] クライアント初期化完了');
 }
 
 initialize();
