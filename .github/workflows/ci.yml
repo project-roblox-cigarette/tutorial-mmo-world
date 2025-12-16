@@ -6,9 +6,13 @@ on:
   pull_request:
     branches: [main, develop]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    name: Build & Test
+    name: Build & Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +43,7 @@ jobs:
         run: pnpm format:check
 
   lua-lint:
-    name: Lua Lint
+    name: Luau Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -49,14 +53,18 @@ jobs:
       - name: Install Aftman
         uses: ok-nick/setup-aftman@v0.4.2
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check Stylua formatting
+      - name: Check StyLua formatting
         run: stylua --check .
 
-  rojo-validate:
-    name: Rojo Validation
+      - name: Run Selene
+        run: selene apps/game/include
+
+  rojo-build:
+    name: Rojo Build
     runs-on: ubuntu-latest
+    needs: [build]
 
     steps:
       - name: Checkout repository
@@ -82,7 +90,14 @@ jobs:
       - name: Install Aftman tools
         uses: ok-nick/setup-aftman@v0.4.2
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Validate Rojo project
+      - name: Build Rojo project
         run: rojo build apps/game/default.project.json --output game.rbxl
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-build
+          path: game.rbxl
+          retention-days: 7

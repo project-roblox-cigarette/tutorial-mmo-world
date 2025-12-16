@@ -99,7 +99,8 @@
           "selene.toml": true,
           "stylua.toml": true,
           "roblox.toml": true,
-          "aftman.toml": true
+          "aftman.toml": true,
+          "sourcemap.json": true
         },
         "selene.run": "onSave"
       }
