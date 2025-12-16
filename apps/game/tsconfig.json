@@ -5,7 +5,12 @@
     "outDir": "out",
 
     "typeRoots": ["node_modules/@rbxts"],
-    "types": ["types", "compiler-types", "testez"]
+    "types": ["types", "compiler-types", "testez"],
+
+    "baseUrl": ".",
+    "paths": {
+      "shared/*": ["src/shared/*"]
+    }
   },
   "include": ["src"]
 }

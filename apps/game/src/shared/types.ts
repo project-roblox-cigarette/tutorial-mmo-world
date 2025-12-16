@@ -1,4 +1,4 @@
-// 共通型定義
+// ゲーム内共通型定義
 
 /**
  * ゲーム内プレイヤーデータ
@@ -10,14 +10,6 @@ export interface PlayerData {
   score: number;
   level: number;
 }
-
-/**
- * RemoteEvent用ペイロード型
- */
-export type RemotePayload<T extends string, D = unknown> = {
-  type: T;
-  data: D;
-};
 
 /**
  * スコア更新の種類
