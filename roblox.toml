@@ -47,7 +47,7 @@ args = [
 
 [task.cancel]
 args = [
-  { type = "thread" },
+  { type = "any" },
 ]
 
 [warn]
@@ -186,8 +186,5 @@ args = [
 # Coroutine extensions
 [coroutine.close]
 args = [
-  { type = "thread" },
+  { type = "any" },
 ]
-
-
-
