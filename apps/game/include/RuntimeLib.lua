@@ -89,8 +89,8 @@ function TS.import(context, module, ...)
 		if _G[module] then
 			error(
 				OUTPUT_PREFIX
-				.. "Invalid module access! Do you have multiple TS runtimes trying to import this? "
-				.. module:GetFullName(),
+					.. "Invalid module access! Do you have multiple TS runtimes trying to import this? "
+					.. module:GetFullName(),
 				2
 			)
 		end
