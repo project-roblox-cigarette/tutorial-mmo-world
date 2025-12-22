@@ -44,7 +44,7 @@ function warpWithinPlace(
   }
 
   // 少し上に置いて埋まりを軽減（必要なら調整）
-  const cf = new CFrame(pos.add(new Vector3(0, 3, 0)));
+  const cf = new CFrame(pos.add(new Vector3(0, 5, 0)));
   character.PivotTo(cf);
 
   // 任意：移動直後の滑りを抑える
