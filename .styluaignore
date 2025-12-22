@@ -1,0 +1,8 @@
+# roblox-ts ランタイムライブラリ（外部提供のため除外）
+apps/game/include/
+
+# ビルド出力
+apps/game/out/
+
+# 依存関係
+node_modules/
