@@ -21,7 +21,7 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
     const raw = prompt.GetAttribute(ATTR_DESTINATION);
     if (!isPlaceKey(raw)) {
       warn(
-        `[Teleport] invalid Destination attribute. prompt=${prompt.GetFullName()} raw=${tostring(
+        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} raw=${tostring(
           raw,
         )}`,
       );
@@ -46,17 +46,17 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
  */
 export function initTeleportHandler() {
   const tagged = CollectionService.GetTagged(TELEPORT_PROMPT_TAG);
-  print(`[Teleport] initializing teleport prompts. found=${tagged.size()}`);
+  print(`[Teleport] Teleportタグを ${tagged.size()} 件検出`);
 
   for (const inst of tagged) {
     print(
-      `[Teleport] tagged inst: class=${inst.ClassName} name=${inst.GetFullName()}`,
+      `[Teleport] Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
     );
     if (inst.IsA('ProximityPrompt')) {
       bindTeleportPrompt(inst);
     } else {
       warn(
-        `[Teleport] tagged instance is not ProximityPrompt: ${inst.GetFullName()}`,
+        `[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`,
       );
     }
   }
