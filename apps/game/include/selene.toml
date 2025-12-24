@@ -1,0 +1,14 @@
+# roblox-ts auto-generated runtime files
+# Disable all lints for this folder
+
+std = "roblox"
+
+[lints]
+# Disable all lints
+global_usage = "allow"
+undefined_variable = "allow"
+incorrect_standard_library_use = "allow"
+unused_variable = "allow"
+shadowing = "allow"
+empty_if = "allow"
+parenthese_conditions = "allow"
