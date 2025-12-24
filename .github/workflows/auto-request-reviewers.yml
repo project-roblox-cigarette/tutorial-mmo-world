@@ -1,0 +1,42 @@
+name: Auto Request Reviewers
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  request-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const author = context.payload.pull_request.user.login;
+
+            // 👇 レビュー対象メンバーはここだけ管理
+            const reviewMembers = [
+              "AnijaaaPan",
+              "VIVY246"
+            ];
+
+            // PR作成者を除外
+            const reviewers = reviewMembers.filter(
+              (member) => member !== author
+            );
+
+            if (reviewers.length === 0) {
+              console.log("No reviewers to request");
+              return;
+            }
+
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              reviewers
+            });
+
+            console.log(
+              `Requested reviewers: ${reviewers.join(", ")} (author: ${author})`
+            );
