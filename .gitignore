@@ -10,6 +10,8 @@ out
 *.rbxlx
 *.rbxm
 *.rbxmx
+*.lua
+*.luau
 
 # OS
 .DS_Store
