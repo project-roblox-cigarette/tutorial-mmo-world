@@ -3,9 +3,9 @@
 
 import { CollectionService } from '@rbxts/services';
 import {
-  TELEPORT_PROMPT_TAG,
   ATTR_DESTINATION,
   isPlaceKey,
+  TELEPORT_PROMPT_TAG,
 } from '../../../shared/Places';
 import { requestTeleport } from '../../services/TeleportService';
 
