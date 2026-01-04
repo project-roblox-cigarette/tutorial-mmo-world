@@ -1,5 +1,6 @@
 // プレイヤー退出時の処理
 
+import { enemySpawnService } from '../../services/EnemySpawnService';
 import {
   getPlayerData,
   removePlayerData,
@@ -7,6 +8,10 @@ import {
 
 export function onPlayerRemoving(player: Player): void {
   const data = getPlayerData(player.UserId);
+
+  // 敵スポーンサービスに通知
+  enemySpawnService.onPlayerRemoving(player);
+
   if (data) {
     print(
       `[Server] ${player.Name} が退出しました (最終スコア: ${data.score}, Level: ${data.level})`,

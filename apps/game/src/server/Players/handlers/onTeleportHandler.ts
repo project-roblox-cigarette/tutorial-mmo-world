@@ -7,6 +7,7 @@ import {
   isPlaceKey,
   TELEPORT_PROMPT_TAG,
 } from '../../../shared/Places';
+import { enemySpawnService } from '../../services/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 
 // すでにバインドされたProximityPromptを記録、2重処理を避ける。
@@ -33,6 +34,12 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
       destination: raw,
     });
     if (!result.ok) return;
+
+    // テレポート成功後、敵が生成されるべきか確認する
+    task.defer(() => {
+      // テレポート後の処理: 敵スポーンの更新
+      enemySpawnService.updateSpawnState(Player);
+    });
   });
 
   prompt.Destroying.Connect(() => {

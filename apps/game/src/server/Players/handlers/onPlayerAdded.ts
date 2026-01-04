@@ -1,5 +1,6 @@
 // プレイヤー参加時の処理
 
+import { enemySpawnService } from '../../services/EnemySpawnService';
 import { initializePlayerData } from '../../services/PlayerDataService';
 
 export function onPlayerAdded(player: Player): void {
@@ -7,6 +8,10 @@ export function onPlayerAdded(player: Player): void {
 
   // プレイヤーデータを初期化
   const data = initializePlayerData(player);
+
+  // 敵スポーンサービスに通知
+  enemySpawnService.onPlayerAdded(player);
+
   print(
     `[Server] プレイヤーデータを初期化: ${data.displayName} (Level: ${data.level})`,
   );
