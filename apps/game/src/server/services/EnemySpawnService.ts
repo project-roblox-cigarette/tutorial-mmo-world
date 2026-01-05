@@ -1,6 +1,6 @@
 import { ServerStorage, Workspace } from '@rbxts/services';
 import { getAreaSpawnConfig } from '../../shared/EnemySpawnConfig';
-import { resolveEnemyAreaForPlayer } from './spawn/AreaResolver';
+import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
 
 function getOrCreateFolder(parent: Instance, name: string): Folder {
@@ -162,14 +162,14 @@ export class EnemySpawnService {
   private readonly enemiesFolder = getOrCreateFolder(Workspace, 'Enemies');
   private readonly spawners = new Map<number, PlayerSpawner>(); // userId -> spawner
 
-  public updateSpawnState(player: Player): void {
+  public updateSpawnStateByPlayer(player: Player, placeKey: string): void {
     const spawner = this.spawners.get(player.UserId);
     if (!spawner) {
       warn(`[EnemySpawnService] spawner missing for ${player.Name}`);
       return;
     }
 
-    const area = resolveEnemyAreaForPlayer(player);
+    const area = resolveEnemyAreaByPlaceKey(placeKey);
     print(
       `[EnemySpawnService] updateSpawnState player=${player.Name} area=${area ? area.GetFullName() : 'none'}`,
     );

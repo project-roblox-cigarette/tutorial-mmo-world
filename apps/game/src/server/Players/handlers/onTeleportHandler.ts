@@ -36,9 +36,9 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
     if (!result.ok) return;
 
     // テレポート成功後、敵が生成されるべきか確認する
-    task.defer(() => {
+    task.delay(0.2, () => {
       // テレポート後の処理: 敵スポーンの更新
-      enemySpawnService.updateSpawnState(Player);
+      enemySpawnService.updateSpawnStateByPlayer(Player, raw);
     });
   });
 
