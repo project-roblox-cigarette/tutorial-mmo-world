@@ -1,6 +1,6 @@
 // プレイヤー退出時の処理
 
-import { enemySpawnService } from '../../services/EnemySpawnService';
+import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import {
   getPlayerData,
   removePlayerData,

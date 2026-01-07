@@ -1,6 +1,6 @@
 // プレイヤー参加時の処理
 
-import { enemySpawnService } from '../../services/EnemySpawnService';
+import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { initializePlayerData } from '../../services/PlayerDataService';
 
 export function onPlayerAdded(player: Player): void {

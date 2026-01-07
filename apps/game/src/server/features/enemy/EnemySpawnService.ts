@@ -1,5 +1,11 @@
 import { ServerStorage, Workspace } from '@rbxts/services';
-import { getAreaSpawnConfig } from '../../shared/EnemySpawnConfig';
+import {
+  getAreaSpawnConfig,
+  toAreaLevel,
+  type AreaSpawnConfig,
+  type AreaLevel,
+} from '../../../shared/config/EnemySpawnConfig';
+
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
 
@@ -10,6 +16,28 @@ function getOrCreateFolder(parent: Instance, name: string): Folder {
   f.Name = name;
   f.Parent = parent;
   return f;
+}
+
+function resolveSpawnConfigFromArea(area: BasePart):
+  | {
+      areaId: string;
+      level: AreaLevel;
+      config: AreaSpawnConfig;
+    }
+  | undefined {
+  const areaIdAttr = area.GetAttribute('AreaId');
+  const levelAttr = area.GetAttribute('Level');
+
+  if (!typeIs(areaIdAttr, 'string')) return undefined;
+  if (!typeIs(levelAttr, 'number')) return undefined;
+
+  const lv = toAreaLevel(levelAttr);
+  if (!lv) return undefined;
+
+  const cfg = getAreaSpawnConfig(areaIdAttr, lv);
+  if (!cfg) return undefined;
+
+  return { areaId: areaIdAttr, level: lv, config: cfg };
 }
 
 class PlayerSpawner {
@@ -55,18 +83,12 @@ class PlayerSpawner {
         continue;
       }
 
-      const areaId = area.GetAttribute('AreaId');
-      const level = area.GetAttribute('Level');
-      if (typeOf(areaId) !== 'string' || typeOf(level) !== 'number') {
+      const resolved = resolveSpawnConfigFromArea(area);
+      if (!resolved) {
         await task.wait(1);
         continue;
       }
-
-      const cfg = getAreaSpawnConfig(areaId as string, level as number);
-      if (!cfg) {
-        await task.wait(1);
-        continue;
-      }
+      const { config: cfg } = resolved;
 
       while (this.running && this.alive.size() < cfg.maxAlivePerPlayer) {
         const ok = this.spawnOne(cfg.templateName, area);
@@ -144,14 +166,12 @@ class PlayerSpawner {
       if (parent) return;
       this.alive.delete(model);
 
-      const areaId = area.GetAttribute('AreaId');
-      const level = area.GetAttribute('Level');
-      if (typeOf(areaId) !== 'string' || typeOf(level) !== 'number') return;
+      // ★変更：同じ解決ロジックを再利用
+      const resolved = resolveSpawnConfigFromArea(area);
+      if (!resolved) return;
+      const { config: cfg } = resolved;
 
-      const cfg = getAreaSpawnConfig(areaId as string, level as number);
-      if (!cfg) return;
-
-      // 倒されたら次を生成
+      // 倒されたら次を生成（※現状は待つだけ。生成は maintain ループ側が担当）
       await task.wait(cfg.spawnIntervalSec);
     });
     return true;
@@ -188,11 +208,18 @@ export class EnemySpawnService {
     spawner.setArea(area);
     spawner.start();
 
-    const areaId = area.GetAttribute('AreaId');
-    const level = area.GetAttribute('Level');
-    print(
-      `[EnemySpawnService] Start spawning for Player ${player.Name} in Area ${areaId} Level ${level}`,
-    );
+    const resolved = resolveSpawnConfigFromArea(area);
+    if (resolved) {
+      print(
+        `[EnemySpawnService] Start spawning player=${player.Name} areaId=${resolved.areaId} level=${resolved.level} template=${resolved.config.templateName}`,
+      );
+    } else {
+      const areaId = area.GetAttribute('AreaId');
+      const level = area.GetAttribute('Level');
+      print(
+        `[EnemySpawnService] Start spawning player=${player.Name} area=${areaId} level=${level} (config unresolved)`,
+      );
+    }
   }
 
   public onPlayerAdded(player: Player): void {

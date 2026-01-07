@@ -7,7 +7,7 @@ import {
   isPlaceKey,
   TELEPORT_PROMPT_TAG,
 } from '../../../shared/Places';
-import { enemySpawnService } from '../../services/EnemySpawnService';
+import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 
 // すでにバインドされたProximityPromptを記録、2重処理を避ける。

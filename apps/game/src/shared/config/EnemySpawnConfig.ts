@@ -7,22 +7,26 @@ export interface AreaSpawnConfig {
   templateName: string; //
 }
 
+export function toAreaLevel(level: number): AreaLevel | undefined {
+  return level === 1 || level === 2 || level === 3 ? level : undefined;
+}
+
 const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
   TestArea: {
     1: {
       spawnIntervalSec: 3.0,
       maxAlivePerPlayer: 2,
-      templateName: 'EnemyObject',
+      templateName: 'EnemyObject_Lv1',
     },
     2: {
       spawnIntervalSec: 2.0,
       maxAlivePerPlayer: 2,
-      templateName: 'EnemyObject',
+      templateName: 'EnemyObject_Lv2',
     },
     3: {
       spawnIntervalSec: 1.0,
       maxAlivePerPlayer: 2,
-      templateName: 'EnemyObject',
+      templateName: 'EnemyObject_Lv3',
     },
   },
 };
@@ -31,6 +35,7 @@ export function getAreaSpawnConfig(
   areaId: AreaId,
   level: number,
 ): AreaSpawnConfig | undefined {
-  if (level !== 1 && level !== 2 && level !== 3) return undefined;
-  return CONFIG[areaId]?.[level];
+  const lv = toAreaLevel(level);
+  if (!lv) return undefined;
+  return CONFIG[areaId]?.[lv];
 }
