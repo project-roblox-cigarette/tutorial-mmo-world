@@ -18,3 +18,10 @@ export const REMOTE_EVENTS = {
   PLAYER_ACTION: 'PlayerAction',
   SYNC_STATE: 'SyncState',
 } as const;
+
+export const TAG_ENEMY = 'Enemy' as const;
+
+export const ATTR_AGGRO_RANGE = 'AggroRange' as const;
+export const ATTR_STOP_RANGE = 'StopDistance' as const;
+export const ATTR_CHASE_SPEED = 'ChaseSpeed' as const;
+export const ATTR_WALK_TICK = 'ChaseTick' as const;
