@@ -1,16 +1,19 @@
 export type AreaLevel = 1 | 2 | 3;
 export type AreaId = string;
 
+// エリアごとのスポーン設定
 export interface AreaSpawnConfig {
   spawnIntervalSec: number; // リスポーンの間隔
   maxAlivePerPlayer: number; // プレイヤー1人当たりの最大敵出現数
   templateName: string; //
 }
 
+// レベルをAreaLevel型に変換する
 export function toAreaLevel(level: number): AreaLevel | undefined {
   return level === 1 || level === 2 || level === 3 ? level : undefined;
 }
 
+// エリアごとのスポーン設定
 const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
   TestArea: {
     1: {

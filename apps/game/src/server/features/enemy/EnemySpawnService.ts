@@ -9,6 +9,7 @@ import {
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
 
+// 指定した名前のFolderをparent内に取得、なければ作成して返す
 function getOrCreateFolder(parent: Instance, name: string): Folder {
   const found = parent.FindFirstChild(name);
   if (found?.IsA('Folder')) return found;
@@ -18,6 +19,7 @@ function getOrCreateFolder(parent: Instance, name: string): Folder {
   return f;
 }
 
+// エリア情報からスポーン設定を解決する
 function resolveSpawnConfigFromArea(area: BasePart):
   | {
       areaId: string;
@@ -40,6 +42,7 @@ function resolveSpawnConfigFromArea(area: BasePart):
   return { areaId: areaIdAttr, level: lv, config: cfg };
 }
 
+// プレイヤーごとのスポーン管理クラス
 class PlayerSpawner {
   private readonly rng = new Random();
   private readonly alive = new Set<Model>();
@@ -51,30 +54,36 @@ class PlayerSpawner {
     private currentArea?: BasePart,
   ) {}
 
+  // スポーン開始
   public start(): void {
     if (this.running) return;
     this.running = true;
     this.maintain();
   }
 
+  // スポーン停止
   public stop(): void {
     this.running = false;
     for (const m of this.alive) m.Destroy();
     this.alive.clear();
   }
 
+  // スポーンエリアを設定
   public setArea(area: BasePart) {
     this.currentArea = area;
   }
 
+  // 現在のスポーンエリアを取得
   public getArea(): BasePart | undefined {
     return this.currentArea;
   }
 
+  // 指定エリアでスポーン中か
   public isRunningIn(area: BasePart): boolean {
     return this.running && this.currentArea === area;
   }
 
+  // 倒されたら次をスポーンさせる維持処理
   private async maintain(): Promise<void> {
     while (this.running) {
       const area = this.currentArea;
@@ -100,6 +109,7 @@ class PlayerSpawner {
     }
   }
 
+  // 敵を1体スポーンさせる
   private spawnOne(templateName: string, area: BasePart): boolean {
     const spawnable = ServerStorage.FindFirstChild('Spawnables');
 
@@ -166,22 +176,23 @@ class PlayerSpawner {
       if (parent) return;
       this.alive.delete(model);
 
-      // ★変更：同じ解決ロジックを再利用
       const resolved = resolveSpawnConfigFromArea(area);
       if (!resolved) return;
       const { config: cfg } = resolved;
 
-      // 倒されたら次を生成（※現状は待つだけ。生成は maintain ループ側が担当）
+      // 倒されたら次を生成
       await task.wait(cfg.spawnIntervalSec);
     });
     return true;
   }
 }
 
+// 敵スポーン管理サービス
 export class EnemySpawnService {
   private readonly enemiesFolder = getOrCreateFolder(Workspace, 'Enemies');
   private readonly spawners = new Map<number, PlayerSpawner>(); // userId -> spawner
 
+  // プレイヤーのスポーン状態を更新
   public updateSpawnStateByPlayer(player: Player, placeKey: string): void {
     const spawner = this.spawners.get(player.UserId);
     if (!spawner) {
@@ -222,11 +233,13 @@ export class EnemySpawnService {
     }
   }
 
+  // プレイヤーが参加したときの処理
   public onPlayerAdded(player: Player): void {
     const spawner = new PlayerSpawner(player, this.enemiesFolder);
     this.spawners.set(player.UserId, spawner);
   }
 
+  // プレイヤーが離脱したときの処理
   public onPlayerRemoving(player: Player): void {
     const spawner = this.spawners.get(player.UserId);
     if (!spawner) return;
