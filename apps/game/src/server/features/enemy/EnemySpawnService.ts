@@ -115,6 +115,17 @@ class PlayerSpawner {
     }
   }
 
+  // スポーンエリアを解除
+  public clearArea() {
+    this.currentArea = undefined;
+  }
+
+  // 敵を全部削除、スポーン停止
+  public reset(): void {
+    this.stop();
+    this.clearArea();
+  }
+
   // 敵を1体スポーンさせる
   private spawnOne(cfg: AreaSpawnConfig, area: BasePart): boolean {
     const model = createEnemyFromTemplateName(cfg.templateName);
@@ -241,9 +252,25 @@ export class EnemySpawnService {
   // プレイヤーが離脱したときの処理
   public onPlayerRemoving(player: Player): void {
     const spawner = this.spawners.get(player.UserId);
-    if (!spawner) return;
-    spawner.stop();
+    if (spawner) spawner.stop();
+
+    // 本番環境用の敵削除処理
+    for (const child of this.enemiesFolder.GetChildren()) {
+      if (!child.IsA('Model')) continue;
+      const owner = child.GetAttribute('OwnerUserId');
+      if (typeIs(owner, 'number') && owner === player.UserId) {
+        child.Destroy();
+      }
+    }
+
+    // spawnerを削除
     this.spawners.delete(player.UserId);
+  }
+
+  // プレイヤーの敵を全部削除、スポーン停止
+  public despawnAllForPlayer(player: Player): void {
+    const spawner = this.spawners.get(player.UserId);
+    if (spawner) spawner.reset();
   }
 }
 
