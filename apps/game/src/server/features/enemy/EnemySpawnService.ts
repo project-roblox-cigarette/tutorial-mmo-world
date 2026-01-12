@@ -1,13 +1,19 @@
-import { ServerStorage, Workspace } from '@rbxts/services';
+import { Workspace } from '@rbxts/services';
 import {
   getAreaSpawnConfig,
   toAreaLevel,
   type AreaSpawnConfig,
   type AreaLevel,
 } from '../../../shared/config/EnemySpawnConfig';
-
+import { createEnemyFromTemplateName } from './spawn/EnemyFactory';
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
+import {
+  ATTR_CHASE_SPEED,
+  ATTR_AGGRO_RANGE,
+  ATTR_STOP_DISTANCE,
+  ATTR_CHASE_TICK,
+} from '../../../shared/constants';
 
 // 指定した名前のFolderをparent内に取得、なければ作成して返す
 function getOrCreateFolder(parent: Instance, name: string): Folder {
@@ -100,7 +106,7 @@ class PlayerSpawner {
       const { config: cfg } = resolved;
 
       while (this.running && this.alive.size() < cfg.maxAlivePerPlayer) {
-        const ok = this.spawnOne(cfg.templateName, area);
+        const ok = this.spawnOne(cfg, area);
         if (!ok) break;
         await task.wait(0.05);
       }
@@ -110,34 +116,25 @@ class PlayerSpawner {
   }
 
   // 敵を1体スポーンさせる
-  private spawnOne(templateName: string, area: BasePart): boolean {
-    const spawnable = ServerStorage.FindFirstChild('Spawnables');
-
-    if (!spawnable || !spawnable.IsA('Folder')) {
-      // フォルダがない時
-      warn(`[EnemySpawn] ServerStorage/Spawnables folder is missing`);
-      return false;
-    }
-
-    const template = spawnable.FindFirstChild(templateName);
-
-    if (!template || !template.IsA('Model')) {
-      // テンプレートがない時
-      const available = spawnable
-        .GetChildren()
-        .map((c) => c.Name)
-        .join(', ');
-      warn(
-        `[EnemySpawn] Spawn template not found or not Model: ` +
-          `requested="${templateName}" actual="${template ? template.ClassName : 'nil'}" ` +
-          `available=[${available}]`,
-      );
-      return false;
-    }
-
-    const model = template.Clone();
-    model.Name = `${template.Name}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
+  private spawnOne(cfg: AreaSpawnConfig, area: BasePart): boolean {
+    const model = createEnemyFromTemplateName(cfg.templateName);
+    model.Name = `${cfg.templateName}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
     model.SetAttribute('OwnerUserId', this.player.UserId);
+
+    // ✅ 先にWorkspace配下へ（Humanoid稼働・後続のGetFullName等が安定）
+    model.Parent = this.enemiesFolder;
+
+    print(
+      `[EnemySpawnService][DBG] spawned: model=${model.GetFullName()} parent=${model.Parent ? model.Parent.GetFullName() : 'nil'}`,
+    );
+
+    const chase = cfg.chase;
+    if (chase) {
+      model.SetAttribute(ATTR_CHASE_SPEED, chase.speed);
+      model.SetAttribute(ATTR_AGGRO_RANGE, chase.aggroRange);
+      model.SetAttribute(ATTR_STOP_DISTANCE, chase.stopDistance);
+      model.SetAttribute(ATTR_CHASE_TICK, chase.chaseTickSec);
+    }
 
     // 倒す用の ProximityPrompt （なければつける）
     let prompt = model.FindFirstChildOfClass('ProximityPrompt');
@@ -151,8 +148,10 @@ class PlayerSpawner {
       const primary =
         model.PrimaryPart ?? model.FindFirstChildWhichIsA('BasePart', true);
       if (!primary) {
+        model.Destroy(); // ✅ 追加：失敗したら片付ける
         return false;
       }
+
       pp.Parent = primary;
       prompt = pp;
     }
