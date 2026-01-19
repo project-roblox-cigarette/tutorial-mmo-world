@@ -37,7 +37,7 @@ const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
         stopDistance: 4,
         chaseTickSec: 0.2,
         followLagSec: 0, // 後で使う
-        stopDurationSec: 0, // 後で使う
+        stopDurationSec: 3, // 後で使う
       },
     },
     2: {
@@ -50,7 +50,7 @@ const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
         stopDistance: 4,
         chaseTickSec: 0.2,
         followLagSec: 0,
-        stopDurationSec: 0,
+        stopDurationSec: 3,
       },
     },
     3: {
@@ -63,7 +63,7 @@ const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
         stopDistance: 4,
         chaseTickSec: 0.15,
         followLagSec: 0,
-        stopDurationSec: 0,
+        stopDurationSec: 3,
       },
     },
   },
