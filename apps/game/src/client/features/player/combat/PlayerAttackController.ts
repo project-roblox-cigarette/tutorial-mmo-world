@@ -1,14 +1,5 @@
-import {
-  ContextActionService,
-  Players,
-  ReplicatedStorage,
-} from '@rbxts/services';
+import { ContextActionService, Players } from '@rbxts/services';
 import { PLAYER_ANIMS } from '../../../../shared/config/PlayerAnimations';
-import {
-  REMOTES_FOLDER_NAME,
-  REMOTE_MELEE_ATTACK,
-  type MeleeAttackRequest,
-} from '../../../../shared/net/Remotes';
 
 const ATTACK_ACTION = 'Attack'; // ContextActionServiceでのアクション名
 const SWING_COOLDOWN_SEC = 0.5; // 攻撃のクールダウン時間
@@ -48,23 +39,12 @@ function loadSwingTrack(animator: Animator): AnimationTrack {
 }
 
 /**
- * ReplicatedStorageからRemoteEventを取得する
- * サーバー側で作成される前提なのでWaitForChildを使って確実に待つ。
- */
-function getMeleeAttackRemote(): RemoteEvent {
-  const folder = ReplicatedStorage.WaitForChild(REMOTES_FOLDER_NAME) as Folder;
-  const re = folder.WaitForChild(REMOTE_MELEE_ATTACK) as RemoteEvent;
-  return re;
-}
-
-/**
  * Playerの攻撃入力（Fキー/クリック）を受けて攻撃モーションを再生するコントローラを開始する。
  * - クライアントで動かしてサーバーへ通知する想定。
  * - 将来ここからサーバへ「攻撃開始/当たりタイミング」を通知するよう拡張していく。
  */
 export function startPlayerAttackController() {
   const player = Players.LocalPlayer;
-  const meleeRemote = getMeleeAttackRemote();
 
   /**
    * キャラクターに対してAnimator/AnimationTrack の準備
@@ -80,31 +60,6 @@ export function startPlayerAttackController() {
     const swingTrack = loadSwingTrack(animator); // 攻撃アニメのTrackを取得
 
     let lastSwing = 0; // 最後に攻撃した時間（クールダウン管理用）
-
-    /**
-     * 1回のスイングに対してRemoteを二重送信しないためのシーケンス。
-     * - Hitマーカーがある場合：マーカー到達で送信
-     * - マーカーがない場合：言って位置円で送信
-     */
-    let swingSeq = 0;
-    let sentSeq = -1;
-
-    /**
-     * サーバへ攻撃判定してほしい通知を送る。
-     */
-    const fireAttackRemoteOnce = (seq: number) => {
-      // 既にこのスイングで送っているなら何もしない
-      if (sentSeq === seq) return;
-      sentSeq = seq;
-
-      const tool = getEquippedSword();
-      const req: MeleeAttackRequest = {
-        debugWeaponName: tool?.Name,
-      };
-
-      print('[Attack] FireServer MeleeAttack');
-      meleeRemote.FireServer(req);
-    };
 
     /**
      * 装備中の剣を取得する
@@ -131,10 +86,6 @@ export function startPlayerAttackController() {
       if (now - lastSwing < SWING_COOLDOWN_SEC) return; // クールダウン中は無視
       lastSwing = now; // 攻撃時間を更新
 
-      // 新しいスイングとしてシーケンスを進める
-      swingSeq += 1;
-      const seq = swingSeq;
-
       if (swingTrack.IsPlaying) swingTrack.Stop(0.05); // 再生中なら軽くStop
 
       /**
@@ -144,19 +95,6 @@ export function startPlayerAttackController() {
        * - 第3引数: speed（再生速度）
        */
       swingTrack.Play(0.05, 1, 1);
-
-      // アニメに "Hit" マーカーがあるなら、到達時に送信
-      //   - マーカーが無い場合、このイベントは発火しない
-      const hitConn = swingTrack.GetMarkerReachedSignal('Hit').Connect(() => {
-        fireAttackRemoteOnce(seq);
-      });
-
-      task.delay(0.12, () => {
-        fireAttackRemoteOnce(seq);
-
-        // このスイングのHitConnは不要になるので切断
-        hitConn.Disconnect();
-      });
     };
 
     /**
