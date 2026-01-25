@@ -59,7 +59,7 @@ class PlayerSpawner {
   public start(): void {
     if (this._running) return;
     this._running = true;
-    this.maintain();
+    this._maintain();
   }
 
   // スポーン停止
@@ -85,7 +85,7 @@ class PlayerSpawner {
   }
 
   // 倒されたら次をスポーンさせる維持処理
-  private async maintain(): Promise<void> {
+  private async _maintain(): Promise<void> {
     while (this._running) {
       const area = this._currentArea;
       if (!area) {
