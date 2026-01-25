@@ -14,22 +14,27 @@ export interface TeleportRequest {
 
 /**
  * 呼び出し元（Handler）が分岐できるように、処理結果を型で表現する。
- * - ok: true  → TeleportAsync 呼び出し成功
- * - ok: false → pcallの実行エラー
+ * - status: true  → TeleportAsync 呼び出し成功
+ * - status: false → pcallの実行エラー
  */
-export type TeleportResult =
-  | { ok: true }
-  | { ok: false; reason: 'TELEPORT_ERROR'; detail?: string };
+
+const successRes = { status: true as const };
+const failureRes = {
+  status: false as const,
+  reason: 'TELEPORT_ERROR' as const,
+  detail: '',
+};
+
+export type TeleportResponce = typeof successRes | typeof failureRes;
 
 function warpWithinPlace(
   player: Player,
   destination: PlaceKey,
-): TeleportResult {
+): TeleportResponce {
   const pos = DEBUG_WARP_POS[destination];
   if (!pos) {
     return {
-      ok: false,
-      reason: 'TELEPORT_ERROR',
+      ...failureRes,
       detail: 'No debug position defined',
     };
   }
@@ -37,8 +42,7 @@ function warpWithinPlace(
   const character = player.Character;
   if (!character) {
     return {
-      ok: false,
-      reason: 'TELEPORT_ERROR',
+      ...failureRes,
       detail: 'Character not found',
     };
   }
@@ -54,7 +58,7 @@ function warpWithinPlace(
     hrp.AssemblyAngularVelocity = new Vector3(0, 0, 0);
   }
 
-  return { ok: true };
+  return successRes;
 }
 
 /**
@@ -62,7 +66,7 @@ function warpWithinPlace(
  * @param req プレイヤーと目的地
  * @returns Teleport の実行成否（成功 or エラー理由 + detail）
  */
-export function requestTeleport(req: TeleportRequest): TeleportResult {
+export function requestTeleport(req: TeleportRequest): TeleportResponce {
   // Studioで確認するときは座標ワープ。
   if (RunService.IsStudio()) {
     return warpWithinPlace(req.player, req.destination);
@@ -82,9 +86,9 @@ export function requestTeleport(req: TeleportRequest): TeleportResult {
     warn(
       `[Teleport] failed userId=${req.player.UserId} dest=${req.destination} placeId=${placeId} err=${detail}`,
     );
-    return { ok: false, reason: 'TELEPORT_ERROR', detail };
+    return { ...failureRes, detail };
   }
 
   // 呼び出し元に成功を通知。
-  return { ok: true };
+  return successRes;
 }

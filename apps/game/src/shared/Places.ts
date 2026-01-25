@@ -35,7 +35,7 @@ export type PlaceKey = keyof typeof PLACES;
  * @param value Studioから取得した文字列
  * @returns trueでPlaceKeyとして使用可能。型安全を担保する。
  */
-export function isPlaceKey(value: unknown): value is PlaceKey {
+export function assertIsPlaceKey(value: unknown): value is PlaceKey {
   if (!typeIs(value, 'string')) return false;
   return (PLACES as Record<string, unknown>)[value] !== undefined;
 }
