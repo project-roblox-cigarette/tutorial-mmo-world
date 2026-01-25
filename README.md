@@ -1,6 +1,5 @@
 # Tutorial MMO World
 
-
 [![CI](https://github.com/your-org/tutorial-mmo-world/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/tutorial-mmo-world/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-9-orange.svg)](https://pnpm.io/)
@@ -294,4 +293,4 @@ pnpm prepare
 
 ## 📝 ライセンス
 
-Private - All Rights Reserved
+Private - All Rights Reserved aaa
