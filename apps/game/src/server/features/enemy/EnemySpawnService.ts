@@ -5,9 +5,15 @@ import {
   type AreaSpawnConfig,
   type AreaLevel,
 } from '../../../shared/config/EnemySpawnConfig';
-
+import { createEnemyFromTemplateName } from './spawn/EnemyFactory';
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
+import {
+  ATTR_CHASE_SPEED,
+  ATTR_AGGRO_RANGE,
+  ATTR_STOP_DISTANCE,
+  ATTR_CHASE_TICK,
+} from '../../../shared/constants';
 
 // 指定した名前のFolderをparent内に取得、なければ作成して返す
 function getOrCreateFolder(parent: Instance, name: string): Folder {
@@ -157,6 +163,7 @@ class PlayerSpawner {
         enemyModel.PrimaryPart ??
         enemyModel.FindFirstChildWhichIsA('BasePart', true);
       if (!primary) {
+        enemyModel.Destroy();
         return false;
       }
       pp.Parent = primary;
