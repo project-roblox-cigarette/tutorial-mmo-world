@@ -104,8 +104,8 @@ class PlayerSpawner {
         this._running &&
         this._aliveEnemies.size() < spawnConfig.maxAlivePerPlayer
       ) {
-        const ok = this.spawnOne(spawnConfig.templateName, area);
-        if (!ok) break;
+        const isSuccessSpawn = this.spawnOne(spawnConfig.templateName, area);
+        if (!isSuccessSpawn) break;
         await task.wait(0.05);
       }
 
