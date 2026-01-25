@@ -3,6 +3,7 @@
 
 import { Players, UserInputService } from '@rbxts/services';
 import { waitSeconds } from 'shared/utils';
+import { startPlayerAttackController } from './features/player/combat/PlayerAttackController';
 
 const player = Players.LocalPlayer;
 
@@ -41,6 +42,8 @@ async function initialize(): Promise<void> {
   // 入力ハンドラ設定
   setupInputHandlers();
   print('[Client] 入力ハンドラを設定しました');
+
+  startPlayerAttackController();
 
   // 少し待機（UIのロードなどをシミュレート）
   await waitSeconds(0.5);

@@ -19,7 +19,7 @@ export function createEnemyFromTemplateName(templateName: string): Model {
   print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
 
   const instanceEnemyModel = inst.Clone();
-  model.SetAttribute('TemplateName', templateName);
+  instanceEnemyModel.SetAttribute('TemplateName', templateName);
 
   print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
 
