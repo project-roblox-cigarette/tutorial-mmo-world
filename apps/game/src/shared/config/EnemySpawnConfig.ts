@@ -15,7 +15,7 @@ export function toAreaLevel(level: number): AreaLevel | undefined {
 
 // エリアごとのスポーン設定
 const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
-  TestArea: {
+  EnemySpawnArea: {
     1: {
       spawnIntervalSec: 3.0,
       maxAlivePerPlayer: 2,

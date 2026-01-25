@@ -28,15 +28,15 @@ const AREA_ID_ATTR = 'AreaId';
 const AREA_LEVEL_ATTR = 'Level';
 
 function resolveAreaId(area: Instance): AreaId {
-  const v = area.GetAttribute(AREA_ID_ATTR); // AttributeValue | undefined
-  if (typeIs(v, 'string') && v !== '') return v;
+  const attribute = area.GetAttribute(AREA_ID_ATTR); // AttributeValue | undefined
+  if (typeIs(attribute, 'string') && attribute !== '') return attribute;
   return area.Name;
 }
 
 function resolveAreaLevel(area: Instance): AreaLevel {
-  const v = area.GetAttribute(AREA_LEVEL_ATTR); // AttributeValue | undefined
-  if (typeIs(v, 'number')) {
-    const lv = toAreaLevel(v);
+  const attribute = area.GetAttribute(AREA_LEVEL_ATTR); // AttributeValue | undefined
+  if (typeIs(attribute, 'number')) {
+    const lv = toAreaLevel(attribute);
     if (lv !== undefined) return lv;
   }
   return 1;
@@ -44,9 +44,9 @@ function resolveAreaLevel(area: Instance): AreaLevel {
 
 export function resolveAreas(): AreaContext[] {
   const areas = CollectionService.GetTagged('EnemyArea');
-  return areas.map((a) => ({
-    area: a,
-    areaId: resolveAreaId(a),
-    level: resolveAreaLevel(a),
+  return areas.map((area) => ({
+    area: area,
+    areaId: resolveAreaId(area),
+    level: resolveAreaLevel(area),
   }));
 }
