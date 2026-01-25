@@ -5,15 +5,8 @@ import {
   type AreaSpawnConfig,
   type AreaLevel,
 } from '../../../shared/config/EnemySpawnConfig';
-import { createEnemyFromTemplateName } from './spawn/EnemyFactory';
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
-import {
-  ATTR_CHASE_SPEED,
-  ATTR_AGGRO_RANGE,
-  ATTR_STOP_DISTANCE,
-  ATTR_CHASE_TICK,
-} from '../../../shared/constants';
 
 // 指定した名前のFolderをparent内に取得、なければ作成して返す
 function getOrCreateFolder(parent: Instance, name: string): Folder {
@@ -121,7 +114,7 @@ class PlayerSpawner {
 
   // スポーンエリアを解除
   public clearArea() {
-    this.currentArea = undefined;
+    this._currentArea = undefined;
   }
 
   // 敵を全部削除、スポーン停止
@@ -269,7 +262,7 @@ export class EnemySpawnService {
     if (spawner) spawner.stop();
 
     // 本番環境用の敵削除処理
-    for (const child of this.enemiesFolder.GetChildren()) {
+    for (const child of this._enemiesFolder.GetChildren()) {
       if (!child.IsA('Model')) continue;
       const owner = child.GetAttribute('OwnerUserId');
       if (typeIs(owner, 'number') && owner === player.UserId) {
@@ -283,7 +276,7 @@ export class EnemySpawnService {
 
   // プレイヤーの敵を全部削除、スポーン停止
   public despawnAllForPlayer(player: Player): void {
-    const spawner = this.spawners.get(player.UserId);
+    const spawner = this._spawners.get(player.UserId);
     if (spawner) spawner.reset();
   }
 }
