@@ -44,7 +44,7 @@ function resolveSpawnConfigFromArea(area: BasePart):
 
 // プレイヤーごとのスポーン管理クラス
 class PlayerSpawner {
-  private readonly rng = new Random();
+  private readonly range = new Random();
   private readonly alive = new Set<Model>();
   private running = false;
 
@@ -135,21 +135,22 @@ class PlayerSpawner {
       return false;
     }
 
-    const model = template.Clone();
-    model.Name = `${template.Name}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
-    model.SetAttribute('OwnerUserId', this.player.UserId);
+    const enemySpawnAreaModel = template.Clone();
+    enemySpawnAreaModel.Name = `${template.Name}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
+    enemySpawnAreaModel.SetAttribute('OwnerUserId', this.player.UserId);
 
     // 倒す用の ProximityPrompt （なければつける）
-    let prompt = model.FindFirstChildOfClass('ProximityPrompt');
+    let prompt = enemySpawnAreaModel.FindFirstChildOfClass('ProximityPrompt');
     if (!prompt) {
       const pp = new Instance('ProximityPrompt');
       pp.ActionText = '攻撃する';
-      pp.ObjectText = model.Name;
+      pp.ObjectText = enemySpawnAreaModel.Name;
       pp.MaxActivationDistance = 10;
 
       // どのPartにつけるか、PrimaryPartを優先。
       const primary =
-        model.PrimaryPart ?? model.FindFirstChildWhichIsA('BasePart', true);
+        enemySpawnAreaModel.PrimaryPart ??
+        enemySpawnAreaModel.FindFirstChildWhichIsA('BasePart', true);
       if (!primary) {
         return false;
       }
@@ -158,23 +159,23 @@ class PlayerSpawner {
     }
     prompt.Triggered.Connect((p) => {
       if (p !== this.player) return;
-      model.Destroy();
+      enemySpawnAreaModel.Destroy();
     });
 
     // 配置
-    model.Parent = this.enemiesFolder;
-    const cf = getSpawnCFrameInArea(area, this.rng, {
+    enemySpawnAreaModel.Parent = this.enemiesFolder;
+    const cf = getSpawnCFrameInArea(area, this.range, {
       paddingStuds: 2,
       yOffsetStuds: 5,
     });
-    model.PivotTo(cf);
+    enemySpawnAreaModel.PivotTo(cf);
 
-    this.alive.add(model);
+    this.alive.add(enemySpawnAreaModel);
 
     // 倒されたらaliveから削除
-    model.AncestryChanged.Connect(async (_, parent) => {
+    enemySpawnAreaModel.AncestryChanged.Connect(async (_, parent) => {
       if (parent) return;
-      this.alive.delete(model);
+      this.alive.delete(enemySpawnAreaModel);
 
       const resolved = resolveSpawnConfigFromArea(area);
       if (!resolved) return;
