@@ -7,6 +7,7 @@ import {
   assertIsPlaceKey,
   TELEPORT_PROMPT_TAG,
 } from '../../../shared/Places';
+import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 
 // すでにバインドされたProximityPromptを記録、2重処理を避ける。
@@ -29,9 +30,16 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
     }
 
     print(`[Server] ${Player.Name} が ${placeName} にテレポートしました`);
-    requestTeleport({
+    const result = requestTeleport({
       player: Player,
       destination: placeName,
+    });
+    if (!result.status) return;
+
+    // テレポート成功後、敵が生成されるべきか確認する
+    task.delay(0.2, () => {
+      // テレポート後の処理: 敵スポーンの更新
+      enemySpawnService.updateSpawnStateByPlayer(Player, placeName);
     });
   });
 
