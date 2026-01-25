@@ -42,6 +42,17 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
 }
 
 /**
+ * ProximityPromptがあるときbindTeleportPromtを呼び出す
+ */
+function applyBindTeleportPrompt(inst: Instance) {
+  if (inst.IsA('ProximityPrompt')) {
+    bindTeleportPrompt(inst);
+  } else {
+    warn(`[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`);
+  }
+}
+
+/**
  * 起動時に既存のタグインスタンスをバインドする
  */
 export function initTeleportHandler() {
@@ -52,25 +63,13 @@ export function initTeleportHandler() {
     print(
       `[Teleport] Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
     );
-    if (inst.IsA('ProximityPrompt')) {
-      bindTeleportPrompt(inst);
-    } else {
-      warn(
-        `[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`,
-      );
-    }
+    applyBindTeleportPrompt(inst);
   }
 }
 
 // タグ付与イベントの監視を開始
 CollectionService.GetInstanceAddedSignal(TELEPORT_PROMPT_TAG).Connect(
   (inst) => {
-    if (inst.IsA('ProximityPrompt')) {
-      bindTeleportPrompt(inst);
-    } else {
-      warn(
-        `[Teleport] tagged instance is not ProximityPrompt: ${inst.GetFullName()}`,
-      );
-    }
+    applyBindTeleportPrompt(inst);
   },
 );
