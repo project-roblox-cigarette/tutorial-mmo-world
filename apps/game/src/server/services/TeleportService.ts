@@ -14,12 +14,18 @@ export interface TeleportRequest {
 
 /**
  * 呼び出し元（Handler）が分岐できるように、処理結果を型で表現する。
- * - ok: true  → TeleportAsync 呼び出し成功
- * - ok: false → pcallの実行エラー
+ * - status: true  → TeleportAsync 呼び出し成功
+ * - status: false → pcallの実行エラー
  */
-export type TeleportResponce =
-  | { status: true }
-  | { status: false; reason: 'TELEPORT_ERROR'; detail?: string };
+
+const successRes = { status: true as const };
+const failureRes = {
+  status: false as const,
+  reason: 'TELEPORT_ERROR' as const,
+  detail: '',
+};
+
+export type TeleportResponce = typeof successRes | typeof failureRes;
 
 function warpWithinPlace(
   player: Player,
@@ -28,8 +34,7 @@ function warpWithinPlace(
   const pos = DEBUG_WARP_POS[destination];
   if (!pos) {
     return {
-      status: false,
-      reason: 'TELEPORT_ERROR',
+      ...failureRes,
       detail: 'No debug position defined',
     };
   }
@@ -37,8 +42,7 @@ function warpWithinPlace(
   const character = player.Character;
   if (!character) {
     return {
-      status: false,
-      reason: 'TELEPORT_ERROR',
+      ...failureRes,
       detail: 'Character not found',
     };
   }
@@ -54,7 +58,7 @@ function warpWithinPlace(
     hrp.AssemblyAngularVelocity = new Vector3(0, 0, 0);
   }
 
-  return { status: true };
+  return successRes;
 }
 
 /**
@@ -82,9 +86,9 @@ export function requestTeleport(req: TeleportRequest): TeleportResponce {
     warn(
       `[Teleport] failed userId=${req.player.UserId} dest=${req.destination} placeId=${placeId} err=${detail}`,
     );
-    return { status: false, reason: 'TELEPORT_ERROR', detail };
+    return { ...failureRes, detail };
   }
 
   // 呼び出し元に成功を通知。
-  return { status: true };
+  return successRes;
 }
