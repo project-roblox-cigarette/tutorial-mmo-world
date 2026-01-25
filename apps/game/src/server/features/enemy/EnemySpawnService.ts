@@ -46,6 +46,7 @@ function resolveSpawnConfigFromArea(area: BasePart):
 class PlayerSpawner {
   private readonly _randomizer = new Random();
   private readonly _aliveEnemies = new Set<Model>();
+  private readonly _MILLISECONDS_PER_SECOND = 1000;
   private _running = false;
 
   constructor(
@@ -118,7 +119,7 @@ class PlayerSpawner {
 
     if (!spawnable || !spawnable.IsA('Folder')) {
       // フォルダがない時
-      warn(`[EnemySpawn] ServerStorage/Spawnables folder is missing`);
+      warn(`[EnemySpawn] ServerStorage/Spawnables フォルダーがありません`);
       return false;
     }
 
@@ -139,7 +140,8 @@ class PlayerSpawner {
     }
 
     const enemyModel = template.Clone();
-    enemyModel.Name = `${template.Name}_${this._player.UserId}_${math.floor(os.clock() * 1000)}`;
+    const uptimeMs = math.floor(os.clock() * this._MILLISECONDS_PER_SECOND);
+    enemyModel.Name = `${template.Name}_${this._player.UserId}_${uptimeMs}`;
     enemyModel.SetAttribute('OwnerUserId', this._player.UserId);
 
     // 倒す用の ProximityPrompt （なければつける）
@@ -180,12 +182,12 @@ class PlayerSpawner {
       if (parent) return;
       this._aliveEnemies.delete(enemyModel);
 
-      const resolved = resolveSpawnConfigFromArea(area);
-      if (!resolved) return;
-      const { spawnConfig } = resolved;
+      // const resolved = resolveSpawnConfigFromArea(area);
+      // if (!resolved) return;
+      // const { spawnConfig } = resolved;
 
-      // 倒されたら次を生成
-      await task.wait(spawnConfig.spawnIntervalSec);
+      // // 倒されたら次を生成
+      // await task.wait(spawnConfig.spawnIntervalSec);
     });
     return true;
   }
