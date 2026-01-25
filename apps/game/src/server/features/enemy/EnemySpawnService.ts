@@ -23,29 +23,29 @@ function getOrCreateFolder(parent: Instance, name: string): Folder {
 function resolveSpawnConfigFromArea(area: BasePart):
   | {
       areaId: string;
-      level: AreaLevel;
-      config: AreaSpawnConfig;
+      areaLevel: AreaLevel;
+      spawnConfig: AreaSpawnConfig;
     }
   | undefined {
   const areaIdAttr = area.GetAttribute('AreaId');
-  const levelAttr = area.GetAttribute('Level');
+  const areaLevelAttr = area.GetAttribute('Level');
 
   if (!typeIs(areaIdAttr, 'string')) return undefined;
-  if (!typeIs(levelAttr, 'number')) return undefined;
+  if (!typeIs(areaLevelAttr, 'number')) return undefined;
 
-  const lv = toAreaLevel(levelAttr);
-  if (!lv) return undefined;
+  const areaLevel = toAreaLevel(areaLevelAttr);
+  if (!areaLevel) return undefined;
 
-  const cfg = getAreaSpawnConfig(areaIdAttr, lv);
-  if (!cfg) return undefined;
+  const spawnConfig = getAreaSpawnConfig(areaIdAttr, areaLevel);
+  if (!spawnConfig) return undefined;
 
-  return { areaId: areaIdAttr, level: lv, config: cfg };
+  return { areaId: areaIdAttr, areaLevel, spawnConfig };
 }
 
 // プレイヤーごとのスポーン管理クラス
 class PlayerSpawner {
-  private readonly range = new Random();
-  private readonly alive = new Set<Model>();
+  private readonly randomizer = new Random();
+  private readonly aliveEnemies = new Set<Model>();
   private running = false;
 
   constructor(
@@ -64,8 +64,8 @@ class PlayerSpawner {
   // スポーン停止
   public stop(): void {
     this.running = false;
-    for (const m of this.alive) m.Destroy();
-    this.alive.clear();
+    for (const m of this.aliveEnemies) m.Destroy();
+    this.aliveEnemies.clear();
   }
 
   // スポーンエリアを設定
@@ -97,15 +97,18 @@ class PlayerSpawner {
         await task.wait(1);
         continue;
       }
-      const { config: cfg } = resolved;
+      const { spawnConfig } = resolved;
 
-      while (this.running && this.alive.size() < cfg.maxAlivePerPlayer) {
-        const ok = this.spawnOne(cfg.templateName, area);
+      while (
+        this.running &&
+        this.aliveEnemies.size() < spawnConfig.maxAlivePerPlayer
+      ) {
+        const ok = this.spawnOne(spawnConfig.templateName, area);
         if (!ok) break;
         await task.wait(0.05);
       }
 
-      await task.wait(cfg.spawnIntervalSec);
+      await task.wait(spawnConfig.spawnIntervalSec);
     }
   }
 
@@ -135,22 +138,22 @@ class PlayerSpawner {
       return false;
     }
 
-    const enemySpawnAreaModel = template.Clone();
-    enemySpawnAreaModel.Name = `${template.Name}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
-    enemySpawnAreaModel.SetAttribute('OwnerUserId', this.player.UserId);
+    const enemyModel = template.Clone();
+    enemyModel.Name = `${template.Name}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
+    enemyModel.SetAttribute('OwnerUserId', this.player.UserId);
 
     // 倒す用の ProximityPrompt （なければつける）
-    let prompt = enemySpawnAreaModel.FindFirstChildOfClass('ProximityPrompt');
+    let prompt = enemyModel.FindFirstChildOfClass('ProximityPrompt');
     if (!prompt) {
       const pp = new Instance('ProximityPrompt');
       pp.ActionText = '攻撃する';
-      pp.ObjectText = enemySpawnAreaModel.Name;
+      pp.ObjectText = enemyModel.Name;
       pp.MaxActivationDistance = 10;
 
       // どのPartにつけるか、PrimaryPartを優先。
       const primary =
-        enemySpawnAreaModel.PrimaryPart ??
-        enemySpawnAreaModel.FindFirstChildWhichIsA('BasePart', true);
+        enemyModel.PrimaryPart ??
+        enemyModel.FindFirstChildWhichIsA('BasePart', true);
       if (!primary) {
         return false;
       }
@@ -159,30 +162,30 @@ class PlayerSpawner {
     }
     prompt.Triggered.Connect((p) => {
       if (p !== this.player) return;
-      enemySpawnAreaModel.Destroy();
+      enemyModel.Destroy();
     });
 
     // 配置
-    enemySpawnAreaModel.Parent = this.enemiesFolder;
-    const cf = getSpawnCFrameInArea(area, this.range, {
+    enemyModel.Parent = this.enemiesFolder;
+    const cf = getSpawnCFrameInArea(area, this.randomizer, {
       paddingStuds: 2,
       yOffsetStuds: 5,
     });
-    enemySpawnAreaModel.PivotTo(cf);
+    enemyModel.PivotTo(cf);
 
-    this.alive.add(enemySpawnAreaModel);
+    this.aliveEnemies.add(enemyModel);
 
     // 倒されたらaliveから削除
-    enemySpawnAreaModel.AncestryChanged.Connect(async (_, parent) => {
+    enemyModel.AncestryChanged.Connect(async (_, parent) => {
       if (parent) return;
-      this.alive.delete(enemySpawnAreaModel);
+      this.aliveEnemies.delete(enemyModel);
 
       const resolved = resolveSpawnConfigFromArea(area);
       if (!resolved) return;
-      const { config } = resolved;
+      const { spawnConfig } = resolved;
 
       // 倒されたら次を生成
-      await task.wait(config.spawnIntervalSec);
+      await task.wait(spawnConfig.spawnIntervalSec);
     });
     return true;
   }
@@ -223,7 +226,7 @@ export class EnemySpawnService {
     const resolved = resolveSpawnConfigFromArea(area);
     if (resolved) {
       print(
-        `[EnemySpawnService] Start spawning player=${player.Name} areaId=${resolved.areaId} level=${resolved.level} template=${resolved.config.templateName}`,
+        `[EnemySpawnService] Start spawning player=${player.Name} areaId=${resolved.areaId} areaLevel=${resolved.areaLevel} template=${resolved.spawnConfig.templateName}`,
       );
     } else {
       const areaId = area.GetAttribute('AreaId');
