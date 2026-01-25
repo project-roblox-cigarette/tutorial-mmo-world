@@ -18,20 +18,20 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
 
   // プレイヤーがProximityPromptをトリガーしたときの処理
   const conn = prompt.Triggered.Connect((Player) => {
-    const raw = prompt.GetAttribute(ATTR_DESTINATION);
-    if (!isPlaceKey(raw)) {
+    const placeName = prompt.GetAttribute(ATTR_DESTINATION);
+    if (!isPlaceKey(placeName)) {
       warn(
-        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} raw=${tostring(
-          raw,
+        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} placeName=${tostring(
+          placeName,
         )}`,
       );
       return;
     }
 
-    print(`[Server] ${Player.Name} が ${raw} にテレポートしました`);
+    print(`[Server] ${Player.Name} が ${placeName} にテレポートしました`);
     requestTeleport({
       player: Player,
-      destination: raw,
+      destination: placeName,
     });
   });
 
