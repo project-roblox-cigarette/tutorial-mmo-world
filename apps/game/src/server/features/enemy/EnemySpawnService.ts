@@ -123,9 +123,9 @@ class PlayerSpawner {
       return false;
     }
 
-    const template = spawnable.FindFirstChild(templateName);
+    const enemyTemplateModel = spawnable.FindFirstChild(templateName);
 
-    if (!template || !template.IsA('Model')) {
+    if (!enemyTemplateModel || !enemyTemplateModel.IsA('Model')) {
       // テンプレートがない時
       const available = spawnable
         .GetChildren()
@@ -133,15 +133,15 @@ class PlayerSpawner {
         .join(', ');
       warn(
         `[EnemySpawn] Spawn template not found or not Model: ` +
-          `requested="${templateName}" actual="${template ? template.ClassName : 'nil'}" ` +
+          `requested="${templateName}" actual="${enemyTemplateModel ? enemyTemplateModel.ClassName : 'nil'}" ` +
           `available=[${available}]`,
       );
       return false;
     }
 
-    const enemyModel = template.Clone();
+    const enemyModel = enemyTemplateModel.Clone();
     const uptimeMs = math.floor(os.clock() * this._MILLISECONDS_PER_SECOND);
-    enemyModel.Name = `${template.Name}_${this._player.UserId}_${uptimeMs}`;
+    enemyModel.Name = `${enemyTemplateModel.Name}_${this._player.UserId}_${uptimeMs}`;
     enemyModel.SetAttribute('OwnerUserId', this._player.UserId);
 
     // 倒す用の ProximityPrompt （なければつける）
