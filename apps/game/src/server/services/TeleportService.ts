@@ -17,18 +17,18 @@ export interface TeleportRequest {
  * - ok: true  → TeleportAsync 呼び出し成功
  * - ok: false → pcallの実行エラー
  */
-export type TeleportResult =
-  | { ok: true }
-  | { ok: false; reason: 'TELEPORT_ERROR'; detail?: string };
+export type TeleportResponce =
+  | { status: true }
+  | { status: false; reason: 'TELEPORT_ERROR'; detail?: string };
 
 function warpWithinPlace(
   player: Player,
   destination: PlaceKey,
-): TeleportResult {
+): TeleportResponce {
   const pos = DEBUG_WARP_POS[destination];
   if (!pos) {
     return {
-      ok: false,
+      status: false,
       reason: 'TELEPORT_ERROR',
       detail: 'No debug position defined',
     };
@@ -37,7 +37,7 @@ function warpWithinPlace(
   const character = player.Character;
   if (!character) {
     return {
-      ok: false,
+      status: false,
       reason: 'TELEPORT_ERROR',
       detail: 'Character not found',
     };
@@ -54,7 +54,7 @@ function warpWithinPlace(
     hrp.AssemblyAngularVelocity = new Vector3(0, 0, 0);
   }
 
-  return { ok: true };
+  return { status: true };
 }
 
 /**
@@ -62,7 +62,7 @@ function warpWithinPlace(
  * @param req プレイヤーと目的地
  * @returns Teleport の実行成否（成功 or エラー理由 + detail）
  */
-export function requestTeleport(req: TeleportRequest): TeleportResult {
+export function requestTeleport(req: TeleportRequest): TeleportResponce {
   // Studioで確認するときは座標ワープ。
   if (RunService.IsStudio()) {
     return warpWithinPlace(req.player, req.destination);
@@ -82,9 +82,9 @@ export function requestTeleport(req: TeleportRequest): TeleportResult {
     warn(
       `[Teleport] failed userId=${req.player.UserId} dest=${req.destination} placeId=${placeId} err=${detail}`,
     );
-    return { ok: false, reason: 'TELEPORT_ERROR', detail };
+    return { status: false, reason: 'TELEPORT_ERROR', detail };
   }
 
   // 呼び出し元に成功を通知。
-  return { ok: true };
+  return { status: true };
 }
