@@ -27,12 +27,12 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
       );
       return;
     }
+
     print(`[Server] ${Player.Name} が ${raw} にテレポートしました`);
-    const result = requestTeleport({
+    requestTeleport({
       player: Player,
       destination: raw,
     });
-    if (!result.ok) return;
   });
 
   prompt.Destroying.Connect(() => {
