@@ -293,4 +293,4 @@ pnpm prepare
 
 ## 📝 ライセンス
 
-Private - All Rights Reserved
+Private - All Rights Reserved aaa
