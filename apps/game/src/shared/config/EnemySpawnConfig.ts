@@ -15,7 +15,6 @@ export interface AreaSpawnConfig {
   spawnIntervalSec: number; // リスポーンの間隔
   maxAlivePerPlayer: number; // プレイヤー1人当たりの最大敵出現数
   templateName: string; //
-
   chase: EnemyChaseConfig; // 追尾設定
 }
 
@@ -26,7 +25,7 @@ export function toAreaLevel(level: number): AreaLevel | undefined {
 
 // エリアごとのスポーン設定
 const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {
-  TestArea: {
+  EnemySpawnArea: {
     1: {
       spawnIntervalSec: 3.0,
       maxAlivePerPlayer: 2,

@@ -9,7 +9,7 @@ export interface SpawnPositionOptions {
 
 export function getSpawnCFrameInArea(
   areaPart: BasePart,
-  rng: Random,
+  range: Random,
   options: SpawnPositionOptions = {},
 ): CFrame {
   const padding = options.paddingStuds ?? 0;
@@ -20,8 +20,8 @@ export function getSpawnCFrameInArea(
   const maxX = math.max(0, half.X - padding);
   const maxZ = math.max(0, half.Z - padding);
 
-  const localX = rng.NextNumber(-maxX, maxX);
-  const localZ = rng.NextNumber(-maxZ, maxZ);
+  const localX = range.NextNumber(-maxX, maxX);
+  const localZ = range.NextNumber(-maxZ, maxZ);
 
   // ワールド座標に変換
   const worldPos = areaPart.CFrame.PointToWorldSpace(

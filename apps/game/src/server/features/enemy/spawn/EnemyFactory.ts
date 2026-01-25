@@ -18,7 +18,7 @@ export function createEnemyFromTemplateName(templateName: string): Model {
 
   print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
 
-  const model = inst.Clone();
+  const instanceEnemyModel = inst.Clone();
   model.SetAttribute('TemplateName', templateName);
 
   print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
@@ -34,28 +34,28 @@ export function createEnemyFromTemplateName(templateName: string): Model {
   });
 
   // Tag付与
-  CollectionService.AddTag(model, TAG_ENEMY);
+  CollectionService.AddTag(instanceEnemyModel, TAG_ENEMY);
 
   // デフォルト値（未設定なら付与）
-  if (model.GetAttribute(ATTR_AGGRO_RANGE) === undefined)
-    model.SetAttribute(ATTR_AGGRO_RANGE, 60);
-  if (model.GetAttribute(ATTR_STOP_DISTANCE) === undefined)
-    model.SetAttribute(ATTR_STOP_DISTANCE, 4);
-  if (model.GetAttribute(ATTR_CHASE_SPEED) === undefined)
-    model.SetAttribute(ATTR_CHASE_SPEED, 14);
-  if (model.GetAttribute(ATTR_CHASE_TICK) === undefined)
-    model.SetAttribute(ATTR_CHASE_TICK, 0.2);
+  if (instanceEnemyModel.GetAttribute(ATTR_AGGRO_RANGE) === undefined)
+    instanceEnemyModel.SetAttribute(ATTR_AGGRO_RANGE, 60);
+  if (instanceEnemyModel.GetAttribute(ATTR_STOP_DISTANCE) === undefined)
+    instanceEnemyModel.SetAttribute(ATTR_STOP_DISTANCE, 4);
+  if (instanceEnemyModel.GetAttribute(ATTR_CHASE_SPEED) === undefined)
+    instanceEnemyModel.SetAttribute(ATTR_CHASE_SPEED, 14);
+  if (instanceEnemyModel.GetAttribute(ATTR_CHASE_TICK) === undefined)
+    instanceEnemyModel.SetAttribute(ATTR_CHASE_TICK, 0.2);
 
   // PrimaryPart を HumanoidRootPart に寄せる（無い場合もあるのでガード）
-  const hrp = model.FindFirstChild('HumanoidRootPart');
-  if (!model.PrimaryPart && hrp?.IsA('BasePart')) {
-    model.PrimaryPart = hrp;
+  const hrp = instanceEnemyModel.FindFirstChild('HumanoidRootPart');
+  if (!instanceEnemyModel.PrimaryPart && hrp?.IsA('BasePart')) {
+    instanceEnemyModel.PrimaryPart = hrp;
   }
 
   // 追尾が動かない典型原因：テンプレが Anchored のまま
-  for (const d of model.GetDescendants()) {
+  for (const d of instanceEnemyModel.GetDescendants()) {
     if (d.IsA('BasePart')) d.Anchored = false;
   }
 
-  return model;
+  return instanceEnemyModel;
 }
