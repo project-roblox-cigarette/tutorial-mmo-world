@@ -4,7 +4,7 @@
 import { CollectionService } from '@rbxts/services';
 import {
   ATTR_DESTINATION,
-  isPlaceKey,
+  assertIsPlaceKey,
   TELEPORT_PROMPT_TAG,
 } from '../../../shared/Places';
 import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
@@ -19,26 +19,27 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
 
   // プレイヤーがProximityPromptをトリガーしたときの処理
   const conn = prompt.Triggered.Connect((Player) => {
-    const raw = prompt.GetAttribute(ATTR_DESTINATION);
-    if (!isPlaceKey(raw)) {
+    const placeName = prompt.GetAttribute(ATTR_DESTINATION);
+    if (!assertIsPlaceKey(placeName)) {
       warn(
-        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} raw=${tostring(
-          raw,
+        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} placeName=${tostring(
+          placeName,
         )}`,
       );
       return;
     }
-    print(`[Server] ${Player.Name} が ${raw} にテレポートしました`);
+
+    print(`[Server] ${Player.Name} が ${placeName} にテレポートしました`);
     const result = requestTeleport({
       player: Player,
-      destination: raw,
+      destination: placeName,
     });
-    if (!result.ok) return;
+    if (!result.status) return;
 
     // テレポート成功後、敵が生成されるべきか確認する
     task.delay(0.2, () => {
       // テレポート後の処理: 敵スポーンの更新
-      enemySpawnService.updateSpawnStateByPlayer(Player, raw);
+      enemySpawnService.updateSpawnStateByPlayer(Player, placeName);
     });
   });
 
@@ -46,6 +47,17 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
     conn.Disconnect();
     boundPrompts.delete(prompt);
   });
+}
+
+/**
+ * ProximityPromptがあるときbindTeleportPromtを呼び出す
+ */
+function applyBindTeleportPrompt(inst: Instance) {
+  if (inst.IsA('ProximityPrompt')) {
+    bindTeleportPrompt(inst);
+  } else {
+    warn(`[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`);
+  }
 }
 
 /**
@@ -59,25 +71,13 @@ export function initTeleportHandler() {
     print(
       `[Teleport] Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
     );
-    if (inst.IsA('ProximityPrompt')) {
-      bindTeleportPrompt(inst);
-    } else {
-      warn(
-        `[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`,
-      );
-    }
+    applyBindTeleportPrompt(inst);
   }
 }
 
 // タグ付与イベントの監視を開始
 CollectionService.GetInstanceAddedSignal(TELEPORT_PROMPT_TAG).Connect(
   (inst) => {
-    if (inst.IsA('ProximityPrompt')) {
-      bindTeleportPrompt(inst);
-    } else {
-      warn(
-        `[Teleport] tagged instance is not ProximityPrompt: ${inst.GetFullName()}`,
-      );
-    }
+    applyBindTeleportPrompt(inst);
   },
 );
