@@ -44,49 +44,49 @@ function resolveSpawnConfigFromArea(area: BasePart):
 
 // プレイヤーごとのスポーン管理クラス
 class PlayerSpawner {
-  private readonly randomizer = new Random();
-  private readonly aliveEnemies = new Set<Model>();
-  private running = false;
+  private readonly _randomizer = new Random();
+  private readonly _aliveEnemies = new Set<Model>();
+  private _running = false;
 
   constructor(
-    private readonly player: Player,
-    private readonly enemiesFolder: Folder,
-    private currentArea?: BasePart,
+    private readonly _player: Player,
+    private readonly _enemiesFolder: Folder,
+    private _currentArea?: BasePart,
   ) {}
 
   // スポーン開始
   public start(): void {
-    if (this.running) return;
-    this.running = true;
+    if (this._running) return;
+    this._running = true;
     this.maintain();
   }
 
   // スポーン停止
   public stop(): void {
-    this.running = false;
-    for (const m of this.aliveEnemies) m.Destroy();
-    this.aliveEnemies.clear();
+    this._running = false;
+    for (const m of this._aliveEnemies) m.Destroy();
+    this._aliveEnemies.clear();
   }
 
   // スポーンエリアを設定
   public setArea(area: BasePart) {
-    this.currentArea = area;
+    this._currentArea = area;
   }
 
   // 現在のスポーンエリアを取得
   public getArea(): BasePart | undefined {
-    return this.currentArea;
+    return this._currentArea;
   }
 
   // 指定エリアでスポーン中か
   public isRunningIn(area: BasePart): boolean {
-    return this.running && this.currentArea === area;
+    return this._running && this._currentArea === area;
   }
 
   // 倒されたら次をスポーンさせる維持処理
   private async maintain(): Promise<void> {
-    while (this.running) {
-      const area = this.currentArea;
+    while (this._running) {
+      const area = this._currentArea;
       if (!area) {
         await task.wait(0.3);
         continue;
@@ -100,8 +100,8 @@ class PlayerSpawner {
       const { spawnConfig } = resolved;
 
       while (
-        this.running &&
-        this.aliveEnemies.size() < spawnConfig.maxAlivePerPlayer
+        this._running &&
+        this._aliveEnemies.size() < spawnConfig.maxAlivePerPlayer
       ) {
         const ok = this.spawnOne(spawnConfig.templateName, area);
         if (!ok) break;
@@ -139,8 +139,8 @@ class PlayerSpawner {
     }
 
     const enemyModel = template.Clone();
-    enemyModel.Name = `${template.Name}_${this.player.UserId}_${math.floor(os.clock() * 1000)}`;
-    enemyModel.SetAttribute('OwnerUserId', this.player.UserId);
+    enemyModel.Name = `${template.Name}_${this._player.UserId}_${math.floor(os.clock() * 1000)}`;
+    enemyModel.SetAttribute('OwnerUserId', this._player.UserId);
 
     // 倒す用の ProximityPrompt （なければつける）
     let prompt = enemyModel.FindFirstChildOfClass('ProximityPrompt');
@@ -161,24 +161,24 @@ class PlayerSpawner {
       prompt = pp;
     }
     prompt.Triggered.Connect((p) => {
-      if (p !== this.player) return;
+      if (p !== this._player) return;
       enemyModel.Destroy();
     });
 
     // 配置
-    enemyModel.Parent = this.enemiesFolder;
-    const cf = getSpawnCFrameInArea(area, this.randomizer, {
+    enemyModel.Parent = this._enemiesFolder;
+    const cf = getSpawnCFrameInArea(area, this._randomizer, {
       paddingStuds: 2,
       yOffsetStuds: 5,
     });
     enemyModel.PivotTo(cf);
 
-    this.aliveEnemies.add(enemyModel);
+    this._aliveEnemies.add(enemyModel);
 
     // 倒されたらaliveから削除
     enemyModel.AncestryChanged.Connect(async (_, parent) => {
       if (parent) return;
-      this.aliveEnemies.delete(enemyModel);
+      this._aliveEnemies.delete(enemyModel);
 
       const resolved = resolveSpawnConfigFromArea(area);
       if (!resolved) return;
@@ -193,12 +193,12 @@ class PlayerSpawner {
 
 // 敵スポーン管理サービス
 export class EnemySpawnService {
-  private readonly enemiesFolder = getOrCreateFolder(Workspace, 'Enemies');
-  private readonly spawners = new Map<number, PlayerSpawner>(); // userId -> spawner
+  private readonly _enemiesFolder = getOrCreateFolder(Workspace, 'Enemies');
+  private readonly _spawners = new Map<number, PlayerSpawner>(); // userId -> spawner
 
   // プレイヤーのスポーン状態を更新
   public updateSpawnStateByPlayer(player: Player, placeKey: string): void {
-    const spawner = this.spawners.get(player.UserId);
+    const spawner = this._spawners.get(player.UserId);
     if (!spawner) {
       warn(`[EnemySpawnService] spawner missing for ${player.Name}`);
       return;
@@ -239,16 +239,16 @@ export class EnemySpawnService {
 
   // プレイヤーが参加したときの処理
   public onPlayerAdded(player: Player): void {
-    const spawner = new PlayerSpawner(player, this.enemiesFolder);
-    this.spawners.set(player.UserId, spawner);
+    const spawner = new PlayerSpawner(player, this._enemiesFolder);
+    this._spawners.set(player.UserId, spawner);
   }
 
   // プレイヤーが離脱したときの処理
   public onPlayerRemoving(player: Player): void {
-    const spawner = this.spawners.get(player.UserId);
+    const spawner = this._spawners.get(player.UserId);
     if (!spawner) return;
     spawner.stop();
-    this.spawners.delete(player.UserId);
+    this._spawners.delete(player.UserId);
   }
 }
 
