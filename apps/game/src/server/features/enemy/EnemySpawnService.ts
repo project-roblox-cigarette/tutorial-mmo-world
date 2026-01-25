@@ -178,10 +178,10 @@ class PlayerSpawner {
 
       const resolved = resolveSpawnConfigFromArea(area);
       if (!resolved) return;
-      const { config: cfg } = resolved;
+      const { config } = resolved;
 
       // 倒されたら次を生成
-      await task.wait(cfg.spawnIntervalSec);
+      await task.wait(config.spawnIntervalSec);
     });
     return true;
   }
