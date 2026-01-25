@@ -4,7 +4,7 @@
 import { CollectionService } from '@rbxts/services';
 import {
   ATTR_DESTINATION,
-  isPlaceKey,
+  assertIsPlaceKey,
   TELEPORT_PROMPT_TAG,
 } from '../../../shared/Places';
 import { requestTeleport } from '../../services/TeleportService';
@@ -19,7 +19,7 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
   // プレイヤーがProximityPromptをトリガーしたときの処理
   const conn = prompt.Triggered.Connect((Player) => {
     const placeName = prompt.GetAttribute(ATTR_DESTINATION);
-    if (!isPlaceKey(placeName)) {
+    if (!assertIsPlaceKey(placeName)) {
       warn(
         `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} placeName=${tostring(
           placeName,
