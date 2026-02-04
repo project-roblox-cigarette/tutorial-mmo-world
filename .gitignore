@@ -37,6 +37,7 @@ pnpm-debug.log*
 # キャッシュ
 .eslintcache
 .cache
+.tsbuildinfo
 
 # sourcemap
 sourcemap.json
