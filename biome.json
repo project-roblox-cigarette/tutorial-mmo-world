@@ -37,7 +37,8 @@
       "!**/dist",
       "!**/*.luau",
       "!**/*.lua",
-      "!**/pnpm-lock.yaml"
+      "!**/pnpm-lock.yaml",
+      "!**/sourcemap.json"
     ]
   }
 }
