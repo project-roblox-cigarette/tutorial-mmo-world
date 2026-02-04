@@ -3,9 +3,13 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "out",
-    "declaration": true,
+    "declaration": false,
     "typeRoots": ["node_modules/@rbxts"],
-    "types": ["types", "compiler-types"]
+    "types": ["types", "compiler-types"],
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "removeComments": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["out", "node_modules"]
 }

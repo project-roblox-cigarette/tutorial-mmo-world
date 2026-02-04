@@ -9,6 +9,8 @@
     "strict": true,
     "noEmitOnError": true,
 
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   }
 }

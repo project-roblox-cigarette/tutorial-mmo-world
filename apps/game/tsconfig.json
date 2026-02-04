@@ -10,7 +10,20 @@
     "baseUrl": ".",
     "paths": {
       "shared/*": ["src/shared/*"]
-    }
+    },
+
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "declaration": false,
+    "removeComments": true,
+    "assumeChangesOnlyAffectDirectDependencies": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["out", "node_modules", "**/*.spec.ts", "**/*.test.ts"],
+  "watchOptions": {
+    "watchFile": "dynamicPriorityPolling",
+    "watchDirectory": "dynamicPriorityPolling",
+    "fallbackPolling": "dynamicPriority",
+    "synchronousWatchDirectory": true
+  }
 }
