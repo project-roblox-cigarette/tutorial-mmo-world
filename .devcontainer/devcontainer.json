@@ -27,8 +27,7 @@
         "fireboltofdeath.vscode-roblox-ts",
         "JohnnyMorganz.luau-lsp",
         "JohnnyMorganz.stylua",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
+        "biomejs.biome",
         "eamodio.gitlens",
         "ms-ceintl.vscode-language-pack-ja",
         "mhutchie.git-graph",
@@ -39,22 +38,23 @@
         "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": "explicit"
+          "source.organizeImports.biome": "explicit",
+          "quickfix.biome": "explicit"
         },
         "[typescript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[typescriptreact]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[json]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[jsonc]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[markdown]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.defaultFormatter": "biomejs.biome",
           "files.trimTrailingWhitespace": false
         },
         "[luau]": {
@@ -73,35 +73,12 @@
           "*.luau": "luau"
         },
         "typescript.preferences.importModuleSpecifier": "relative",
-        "eslint.useFlatConfig": true,
-        "eslint.workingDirectories": [{ "mode": "auto" }],
         "files.eol": "\n",
         "files.insertFinalNewline": true,
         "files.trimFinalNewlines": true,
         "files.trimTrailingWhitespace": true,
         "terminal.integrated.defaultProfile.linux": "bash",
         "workbench.iconTheme": "material-icon-theme",
-        "search.exclude": {
-          "node_modules": true,
-          "pnpm-lock.yaml": true,
-          "**/out/**": true
-        },
-        "files.exclude": {
-          "**/node_modules": true,
-          "**/out": true,
-          "**/include": true,
-          "pnpm-lock.yaml": true,
-          ".editorconfig": true,
-          ".prettierrc": true,
-          ".prettierignore": true,
-          ".luaurc": true,
-          ".husky": true,
-          "selene.toml": true,
-          "stylua.toml": true,
-          "roblox.toml": true,
-          "aftman.toml": true,
-          "sourcemap.json": true
-        },
         "selene.run": "onSave"
       }
     }

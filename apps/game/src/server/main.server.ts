@@ -1,6 +1,6 @@
-import { EnemyChaseSystem } from './features/enemy/ai/EnemyChaseSystem';
 import { CollectionService } from '@rbxts/services';
 import { TAG_ENEMY } from 'shared/constants';
+import { EnemyChaseSystem } from './features/enemy/ai/EnemyChaseSystem';
 import { EnemyContactAttackService } from './features/enemy/combat/EnemyContactAttackService';
 import { playerMeleeAttackService } from './features/player/combat/PlayerMeleeAttackService';
 

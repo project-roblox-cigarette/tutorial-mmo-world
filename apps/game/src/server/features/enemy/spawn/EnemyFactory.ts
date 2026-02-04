@@ -1,11 +1,11 @@
 // server/features/enemy/spawn/EnemyFactory.ts
 import { CollectionService, ServerStorage } from '@rbxts/services';
 import {
-  TAG_ENEMY,
   ATTR_AGGRO_RANGE,
-  ATTR_STOP_DISTANCE,
   ATTR_CHASE_SPEED,
   ATTR_CHASE_TICK,
+  ATTR_STOP_DISTANCE,
+  TAG_ENEMY,
 } from 'shared/constants';
 
 const templatesFolder = ServerStorage.WaitForChild('EnemyTemplates') as Folder;

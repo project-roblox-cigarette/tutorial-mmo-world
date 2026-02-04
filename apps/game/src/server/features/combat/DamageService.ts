@@ -32,7 +32,7 @@ export function applyDamageToEnemy(
 
   // Humanoid方式
   const humanoid = enemy.FindFirstChildWhichIsA('Humanoid', true);
-  if (humanoid && humanoid.IsA('Humanoid')) {
+  if (humanoid?.IsA('Humanoid')) {
     humanoid.TakeDamage(amount);
 
     if (humanoid.Health <= 0) {

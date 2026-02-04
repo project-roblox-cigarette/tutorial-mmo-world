@@ -1,9 +1,9 @@
 import { ServerStorage, Workspace } from '@rbxts/services';
 import {
+  type AreaLevel,
+  type AreaSpawnConfig,
   getAreaSpawnConfig,
   toAreaLevel,
-  type AreaSpawnConfig,
-  type AreaLevel,
 } from '../../../shared/config/EnemySpawnConfig';
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';

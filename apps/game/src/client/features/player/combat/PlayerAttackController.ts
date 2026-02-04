@@ -5,9 +5,9 @@ import {
 } from '@rbxts/services';
 import { PLAYER_ANIMS } from '../../../../shared/config/PlayerAnimations';
 import {
-  REMOTES_FOLDER_NAME,
-  REMOTE_MELEE_ATTACK,
   type MeleeAttackRequest,
+  REMOTE_MELEE_ATTACK,
+  REMOTES_FOLDER_NAME,
 } from '../../../../shared/net/Remotes';
 
 const ATTACK_ACTION = 'Attack'; // ContextActionServiceでのアクション名
@@ -180,7 +180,7 @@ export function startPlayerAttackController() {
      * - bindCharacter() が呼ばれた時点で Tool が Character に居る場合に備える。
      */
     const existing = character.FindFirstChildOfClass('Tool');
-    if (existing && existing.IsA('Tool')) bindToolActivated(existing);
+    if (existing?.IsA('Tool')) bindToolActivated(existing);
 
     /**
      * Fキー（攻撃ボタン想定）で振る。

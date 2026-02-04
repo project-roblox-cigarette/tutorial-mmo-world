@@ -1,8 +1,8 @@
 import {
   CollectionService,
   Players,
-  TeleportService,
   RunService,
+  TeleportService,
 } from '@rbxts/services';
 import { TAG_ENEMY } from '../../../../shared/constants';
 import { getPlaceId, type PlaceKey } from '../../../../shared/Places';

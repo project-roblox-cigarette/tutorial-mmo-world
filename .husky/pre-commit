@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# ステージされたファイルのみをチェック
 # フォーマットチェック（自動修正はしない）
 pnpm format:check
 
-echo "✅ Pre-commit checks passed!"
+echo "Pre-commit checks passed!"

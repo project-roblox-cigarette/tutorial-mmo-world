@@ -1,7 +1,0 @@
-node_modules
-out
-dist
-*.luau
-*.lua
-pnpm-lock.yaml
-

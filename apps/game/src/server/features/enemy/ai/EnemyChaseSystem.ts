@@ -1,9 +1,9 @@
-import { Players, RunService, CollectionService } from '@rbxts/services';
+import { CollectionService, Players, RunService } from '@rbxts/services';
 import {
-  TAG_ENEMY,
   ATTR_AGGRO_RANGE,
-  ATTR_STOP_DISTANCE,
   ATTR_CHASE_SPEED,
+  ATTR_STOP_DISTANCE,
+  TAG_ENEMY,
 } from 'shared/constants';
 
 type EnemyModel = Model;
