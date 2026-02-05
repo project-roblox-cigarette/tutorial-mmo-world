@@ -29,7 +29,6 @@ Roblox Studio × TypeScript (roblox-ts) による MMO ゲーム開発プロジ�
 | [Prettier](https://prettier.io/)                      | コードフォーマット                    |
 | [StyLua](https://github.com/JohnnyMorganz/StyLua)     | Luau フォーマット                     |
 | [Selene](https://kampfkarren.github.io/selene/)       | Luau 静的解析                         |
-| [TestEZ](https://github.com/Roblox/testez)            | Roblox テストフレームワーク           |
 | [Husky](https://typicode.github.io/husky/)            | Git フック                            |
 | [GitHub Actions](https://github.com/features/actions) | CI/CD                                 |
 
@@ -131,7 +130,6 @@ tutorial-mmo-world/
 │       │   ├── client/          # クライアントスクリプト
 │       │   ├── server/          # サーバースクリプト
 │       │   ├── shared/          # 共有コード
-│       │   └── tests/           # テストコード
 │       ├── include/             # Luau ランタイム
 │       └── default.project.json # Rojo 設定
 ├── packages/
@@ -205,23 +203,6 @@ docs: README を更新
 
 👉 [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
 
----
-
-## 🧪 テスト
-
-```typescript
-// src/tests/sample.spec.ts
-/// <reference types="@rbxts/testez/globals" />
-
-export = () => {
-  describe('Sample', () => {
-    it('adds numbers', () => {
-      expect(1 + 1).to.equal(2);
-    });
-  });
-};
-```
-
 Roblox Studio でゲームを再生するとテストが実行されます。
 
 ---
@@ -287,7 +268,6 @@ pnpm prepare
 - [roblox-ts ドキュメント](https://roblox-ts.com/docs/)
 - [Rojo ドキュメント](https://rojo.space/docs/)
 - [Roblox Luau スタイルガイド](https://roblox.github.io/lua-style-guide/)
-- [TestEZ ドキュメント](https://github.com/Roblox/testez)
 
 ---
 

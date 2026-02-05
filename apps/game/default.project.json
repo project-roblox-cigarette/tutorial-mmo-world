@@ -21,9 +21,6 @@
     "ServerScriptService": {
       "Server": {
         "$path": "out/server"
-      },
-      "Tests": {
-        "$path": "out/tests"
       }
     },
 
