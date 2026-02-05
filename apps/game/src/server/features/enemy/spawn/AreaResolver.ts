@@ -1,7 +1,7 @@
 import { CollectionService } from '@rbxts/services';
 import {
-  AreaId,
-  AreaLevel,
+  type AreaId,
+  type AreaLevel,
   toAreaLevel,
 } from '../../../../shared/config/EnemySpawnConfig';
 

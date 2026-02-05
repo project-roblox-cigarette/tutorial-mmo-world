@@ -1,8 +1,8 @@
 // テレポート処理
 // Handlerから呼び出してテレポートを実行する。
 
-import { TeleportService, RunService } from '@rbxts/services';
-import { getPlaceId, PlaceKey, DEBUG_WARP_POS } from '../../shared/Places';
+import { RunService, TeleportService } from '@rbxts/services';
+import { DEBUG_WARP_POS, getPlaceId, type PlaceKey } from '../../shared/Places';
 
 /**
  * Handlerから渡される情報
@@ -53,7 +53,7 @@ function warpWithinPlace(
 
   // 任意：移動直後の滑りを抑える
   const hrp = character.FindFirstChild('HumanoidRootPart');
-  if (hrp && hrp.IsA('BasePart')) {
+  if (hrp?.IsA('BasePart')) {
     hrp.AssemblyLinearVelocity = new Vector3(0, 0, 0);
     hrp.AssemblyAngularVelocity = new Vector3(0, 0, 0);
   }

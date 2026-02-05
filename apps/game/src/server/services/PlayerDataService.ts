@@ -59,7 +59,9 @@ export function removePlayerData(userId: number): boolean {
  */
 export function getAllPlayerData(): PlayerData[] {
   const result: PlayerData[] = [];
-  playerDataCache.forEach((data) => result.push(data));
+  playerDataCache.forEach((data) => {
+    result.push(data);
+  });
   return result;
 }
 
