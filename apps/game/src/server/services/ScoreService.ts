@@ -1,6 +1,6 @@
 // スコア管理サービス
 
-import type { LeaderboardEntry, ScoreUpdateType } from 'shared/types';
+import type { LeaderboardEntry, ScoreUpdateType } from 'shared/types/player';
 import { clamp } from 'shared/utils';
 import {
   getAllPlayerData,

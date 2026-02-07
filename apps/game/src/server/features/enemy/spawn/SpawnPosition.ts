@@ -1,11 +1,6 @@
 // EnemyAreaの範囲内からランダム座標を作る
 
-export interface SpawnPositionOptions {
-  // エリアの端から内側に寄せる距離
-  paddingStuds?: number;
-  // スポーン一の高さ補正
-  yOffsetStuds?: number;
-}
+import type { SpawnPositionOptions } from 'shared/types/enemy';
 
 export function getSpawnCFrameInArea(
   areaPart: BasePart,

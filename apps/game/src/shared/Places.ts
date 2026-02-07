@@ -1,5 +1,7 @@
 // ワープ先地点の定義ファイル
 
+import type { PlaceKey } from './types/teleport';
+
 // タグを統一
 export const TELEPORT_PROMPT_TAG = 'TeleportPrompt' as const;
 
@@ -9,6 +11,9 @@ export const ATTR_DESTINATION = 'Destination' as const;
 /**
  * ワープ先一覧
  * - Studio側の属性、Destinationにキーを設定する。
+ *
+ * 注意: PlaceKey 型（types/teleport.ts）と同期する必要があります。
+ * 新しい場所を追加する際は、両方を更新してください。
  */
 export const PLACES = {
   Lobby: { placeId: 106990103180926, displayName: 'Lobby' },
@@ -26,9 +31,6 @@ export const DEBUG_WARP_POS: Partial<Record<PlaceKey, Vector3>> = {
   EnemyArea_Lv2: new Vector3(50, 0.5, -250),
   EnemyArea_Lv3: new Vector3(200, 0.5, -250),
 };
-
-// Destinationとして使用できる型をPLACESのキーのみにする
-export type PlaceKey = keyof typeof PLACES;
 
 /**
  * Studioから取得した文字列がPLACESに含まれているキーかを判定する。

@@ -1,6 +1,6 @@
 // プレイヤーデータ管理サービス
 
-import type { PlayerData } from 'shared/types';
+import type { PlayerData } from 'shared/types/player';
 import { getCurrentTimestamp } from 'shared/utils';
 
 // プレイヤーデータのメモリキャッシュ

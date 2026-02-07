@@ -6,7 +6,7 @@ import {
   ATTR_DESTINATION,
   assertIsPlaceKey,
   TELEPORT_PROMPT_TAG,
-} from '../../../shared/Places';
+} from 'shared/Places';
 import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 

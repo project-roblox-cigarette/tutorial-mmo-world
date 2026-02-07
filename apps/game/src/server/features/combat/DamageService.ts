@@ -1,19 +1,6 @@
 import { CollectionService } from '@rbxts/services';
-import { TAG_ENEMY } from '../../../shared/constants';
-
-/**
- * ダメージ適用結果
- */
-export type DamageApplyResult =
-  | { ok: true; killed: boolean }
-  | {
-      ok: false;
-      reason:
-        | 'NOT_ENEMY'
-        | 'NO_TARGET'
-        | 'ALREADY_DEAD'
-        | 'NO_HEALTH_COMPONENT';
-    };
+import { TAG_ENEMY } from 'shared/constants';
+import type { DamageApplyResult } from 'shared/types/combat';
 
 export function applyDamageToEnemy(
   enemy: Model,

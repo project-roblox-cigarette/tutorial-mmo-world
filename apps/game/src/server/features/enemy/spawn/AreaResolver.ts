@@ -1,9 +1,6 @@
 import { CollectionService } from '@rbxts/services';
-import {
-  type AreaId,
-  type AreaLevel,
-  toAreaLevel,
-} from '../../../../shared/config/EnemySpawnConfig';
+import type { AreaContext, AreaId, AreaLevel } from 'shared/types/enemy';
+import { toAreaLevel } from 'shared/utils';
 
 const ENEMY_AREA_TAG = 'EnemyArea';
 
@@ -16,12 +13,6 @@ export function resolveEnemyAreaByPlaceKey(
     if (typeOf(key) === 'string' && key === placeKey) return inst;
   }
   return undefined;
-}
-
-export interface AreaContext {
-  area: Instance;
-  areaId: AreaId;
-  level: AreaLevel;
 }
 
 const AREA_ID_ATTR = 'AreaId';

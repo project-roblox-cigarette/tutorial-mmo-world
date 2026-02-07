@@ -2,16 +2,13 @@
 // プレイヤーのデバイスで実行される初期化処理
 
 import { Players, UserInputService } from '@rbxts/services';
+import type { ClientState } from 'shared/types/client';
 import { waitSeconds } from 'shared/utils';
 import { startPlayerAttackController } from './features/player/combat/PlayerAttackController';
 
 const player = Players.LocalPlayer;
 
 // ゲームの状態
-interface ClientState {
-  isReady: boolean;
-  lastInputTime: number;
-}
 
 const state: ClientState = {
   isReady: false,

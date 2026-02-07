@@ -1,27 +1,5 @@
-export type AreaLevel = 1 | 2 | 3;
-export type AreaId = string;
-
-export interface EnemyChaseConfig {
-  speed: number; // 追尾速度
-  aggroRange: number; // 追尾開始距離
-  stopDistance: number; // 停止距離
-  chaseTickSec: number; // 追尾更新間隔
-  followLagSec: number; // 過去位置追尾の遅延時間
-  stopDurationSec: number; // 近づいたら一時停止する時間
-}
-
-// エリアごとのスポーン設定
-export interface AreaSpawnConfig {
-  spawnIntervalSec: number; // リスポーンの間隔
-  maxAlivePerPlayer: number; // プレイヤー1人当たりの最大敵出現数
-  templateName: string; //
-  chase: EnemyChaseConfig; // 追尾設定
-}
-
-// レベルをAreaLevel型に変換する
-export function toAreaLevel(level: number): AreaLevel | undefined {
-  return level === 1 || level === 2 || level === 3 ? level : undefined;
-}
+import type { AreaId, AreaLevel, AreaSpawnConfig } from '../types/enemy';
+import { toAreaLevel } from '../utils';
 
 // エリアごとのスポーン設定
 const CONFIG: Record<AreaId, Record<AreaLevel, AreaSpawnConfig>> = {

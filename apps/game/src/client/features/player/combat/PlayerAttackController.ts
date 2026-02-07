@@ -3,12 +3,9 @@ import {
   Players,
   ReplicatedStorage,
 } from '@rbxts/services';
-import { PLAYER_ANIMS } from '../../../../shared/config/PlayerAnimations';
-import {
-  type MeleeAttackRequest,
-  REMOTE_MELEE_ATTACK,
-  REMOTES_FOLDER_NAME,
-} from '../../../../shared/net/Remotes';
+import { PLAYER_ANIMS } from 'shared/config/PlayerAnimations';
+import { REMOTE_MELEE_ATTACK, REMOTES_FOLDER_NAME } from 'shared/net/Remotes';
+import type { MeleeAttackRequest } from 'shared/types/combat';
 
 const ATTACK_ACTION = 'Attack'; // ContextActionServiceでのアクション名
 const SWING_COOLDOWN_SEC = 0.5; // 攻撃のクールダウン時間

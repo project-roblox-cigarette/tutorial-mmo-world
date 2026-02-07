@@ -1,12 +1,6 @@
 import { CollectionService, Workspace } from '@rbxts/services';
-import { TAG_ENEMY } from '../../../shared/constants';
-
-/**
- * ヒットした敵モデル
- */
-export type HitDetectionResult = {
-  enemies: Model[];
-};
+import { TAG_ENEMY } from 'shared/constants';
+import type { HitDetectionResult } from 'shared/types/combat';
 
 /**
  * 判定ボックスのデバッグ表示

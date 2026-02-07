@@ -1,15 +1,4 @@
-export type WeaponId = 'Sword_Lv0' | 'Sword_Lv1' | 'Sword_Lv2' | 'Sword_Lv3';
-
-export type WeaponConfig = {
-  id: WeaponId;
-  damage: number; // 攻撃力
-  hitboxThickness: number; // 当たり判定の太さ
-  maxHitsPerSwing: number; // 1回の攻撃でヒット可能な最大数
-  cooldownSec: number; // 攻撃のクールダウン時間（秒）
-  hitStartSec: number; // 攻撃発生時間
-  hitEndSec: number; // 攻撃終了時間
-  hitSampleIntervalSec: number; // サンプリング間隔
-};
+import type { WeaponConfig, WeaponId } from '../types/weapon';
 
 /**
  * 武器の設定値

@@ -6,8 +6,6 @@ import {
   TAG_ENEMY,
 } from 'shared/constants';
 
-type EnemyModel = Model;
-
 function getHumanoid(model: Model): Humanoid | undefined {
   return model.FindFirstChildOfClass('Humanoid');
 }
@@ -82,7 +80,7 @@ export class EnemyChaseSystem {
     return () => conn.Disconnect();
   }
 
-  private updateEnemy(enemy: EnemyModel) {
+  private updateEnemy(enemy: Model) {
     const hum = getHumanoid(enemy);
     const root = getRoot(enemy);
     if (!hum || !root) return;

@@ -2,12 +2,9 @@ import { ReplicatedStorage } from '@rbxts/services';
 import {
   tryGetWeaponIdFromTool,
   WEAPON_CATALOG,
-  type WeaponConfig,
-} from '../../../../shared/config/WeaponCatalog';
-import {
-  REMOTE_MELEE_ATTACK,
-  REMOTES_FOLDER_NAME,
-} from '../../../../shared/net/Remotes';
+} from 'shared/config/WeaponCatalog';
+import { REMOTE_MELEE_ATTACK, REMOTES_FOLDER_NAME } from 'shared/net/Remotes';
+import type { WeaponConfig } from 'shared/types/weapon';
 import {
   applyDamageToEnemy,
   finalizeEnemyDeath,

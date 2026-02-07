@@ -2,15 +2,12 @@
 // Handlerから呼び出してテレポートを実行する。
 
 import { RunService, TeleportService } from '@rbxts/services';
-import { DEBUG_WARP_POS, getPlaceId, type PlaceKey } from '../../shared/Places';
-
-/**
- * Handlerから渡される情報
- */
-export interface TeleportRequest {
-  player: Player;
-  destination: PlaceKey;
-}
+import { DEBUG_WARP_POS, getPlaceId } from 'shared/Places';
+import type {
+  PlaceKey,
+  TeleportRequest,
+  TeleportResponse,
+} from 'shared/types/teleport';
 
 /**
  * 呼び出し元（Handler）が分岐できるように、処理結果を型で表現する。
@@ -25,12 +22,10 @@ const failureRes = {
   detail: '',
 };
 
-export type TeleportResponce = typeof successRes | typeof failureRes;
-
 function warpWithinPlace(
   player: Player,
   destination: PlaceKey,
-): TeleportResponce {
+): TeleportResponse {
   const pos = DEBUG_WARP_POS[destination];
   if (!pos) {
     return {
@@ -66,7 +61,7 @@ function warpWithinPlace(
  * @param req プレイヤーと目的地
  * @returns Teleport の実行成否（成功 or エラー理由 + detail）
  */
-export function requestTeleport(req: TeleportRequest): TeleportResponce {
+export function requestTeleport(req: TeleportRequest): TeleportResponse {
   // Studioで確認するときは座標ワープ。
   if (RunService.IsStudio()) {
     return warpWithinPlace(req.player, req.destination);
