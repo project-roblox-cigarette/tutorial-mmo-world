@@ -2,18 +2,12 @@
 
 import type { LeaderboardEntry, ScoreUpdateType } from 'shared/types/player';
 import { clamp } from 'shared/utils';
+import { LEVEL_THRESHOLDS, SCORES } from '../../shared/constants/scores';
 import {
   getAllPlayerData,
   getPlayerData,
   updatePlayerData,
 } from './PlayerDataService';
-
-// スコアの制限値
-const MIN_SCORE = 0;
-const MAX_SCORE = 999999;
-
-// レベルアップに必要なスコア
-const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500];
 
 /**
  * スコアからレベルを計算
@@ -62,7 +56,7 @@ export function updateScore(
       break;
   }
 
-  newScore = clamp(newScore, MIN_SCORE, MAX_SCORE);
+  newScore = clamp(newScore, SCORES.MIN, SCORES.MAX);
   const newLevel = calculateLevel(newScore);
 
   const previousLevel = playerData.level;

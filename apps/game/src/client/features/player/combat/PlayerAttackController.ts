@@ -3,12 +3,13 @@ import {
   Players,
   ReplicatedStorage,
 } from '@rbxts/services';
-import { PLAYER_ANIMS } from 'shared/config/PlayerAnimations';
-import { REMOTE_MELEE_ATTACK, REMOTES_FOLDER_NAME } from 'shared/net/Remotes';
+import {
+  ACTIONS,
+  COMBAT_CONFIG,
+  PLAYER_ANIMS,
+  REMOTES,
+} from 'shared/constants';
 import type { MeleeAttackRequest } from 'shared/types/combat';
-
-const ATTACK_ACTION = 'Attack'; // ContextActionServiceでのアクション名
-const SWING_COOLDOWN_SEC = 0.5; // 攻撃のクールダウン時間
 
 /**
  * Toolが剣かどうかを判定する。
@@ -49,8 +50,8 @@ function loadSwingTrack(animator: Animator): AnimationTrack {
  * サーバー側で作成される前提なのでWaitForChildを使って確実に待つ。
  */
 function getMeleeAttackRemote(): RemoteEvent {
-  const folder = ReplicatedStorage.WaitForChild(REMOTES_FOLDER_NAME) as Folder;
-  const re = folder.WaitForChild(REMOTE_MELEE_ATTACK) as RemoteEvent;
+  const folder = ReplicatedStorage.WaitForChild(REMOTES.FOLDER_NAME) as Folder;
+  const re = folder.WaitForChild(REMOTES.MELEE_ATTACK) as RemoteEvent;
   return re;
 }
 
@@ -125,7 +126,7 @@ export function startPlayerAttackController() {
       if (!tool) return;
 
       const now = os.clock(); // 現在時間取得
-      if (now - lastSwing < SWING_COOLDOWN_SEC) return; // クールダウン中は無視
+      if (now - lastSwing < COMBAT_CONFIG.SWING_COOLDOWN_SEC) return; // クールダウン中は無視
       lastSwing = now; // 攻撃時間を更新
 
       // 新しいスイングとしてシーケンスを進める
@@ -186,11 +187,11 @@ export function startPlayerAttackController() {
      * - UIボタン追加時もこのアクションを呼ぶ設計にしやすい
      */
 
-    ContextActionService.UnbindAction(ATTACK_ACTION); // 念のため同名アクションを解除（リスポーン等で二重登録を防ぐ）
+    ContextActionService.UnbindAction(ACTIONS.ATTACK); // 念のため同名アクションを解除（リスポーン等で二重登録を防ぐ）
 
     // AttackアクションをFキーに紐付ける
     ContextActionService.BindAction(
-      ATTACK_ACTION,
+      ACTIONS.ATTACK,
       (_actionName, inputState) => {
         // キー押下開始（Begin）の瞬間だけ攻撃を実行
         if (inputState === Enum.UserInputState.Begin) {
@@ -208,7 +209,7 @@ export function startPlayerAttackController() {
    * - 二重登録や不要な入力受付を避ける。
    */
   const unbind = () => {
-    ContextActionService.UnbindAction(ATTACK_ACTION);
+    ContextActionService.UnbindAction(ACTIONS.ATTACK);
   };
 
   /**

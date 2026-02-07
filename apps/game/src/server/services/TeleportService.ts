@@ -2,7 +2,8 @@
 // Handlerから呼び出してテレポートを実行する。
 
 import { RunService, TeleportService } from '@rbxts/services';
-import { DEBUG_WARP_POS, getPlaceId } from 'shared/Places';
+import { DEBUG_WARP_POS } from 'shared/constants';
+import { getPlaceId } from 'shared/Places';
 import type {
   PlaceKey,
   TeleportRequest,

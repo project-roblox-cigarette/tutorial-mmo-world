@@ -4,7 +4,7 @@ import {
   RunService,
   TeleportService,
 } from '@rbxts/services';
-import { TAG_ENEMY } from 'shared/constants';
+import { TAGS } from 'shared/constants';
 import { getPlaceId } from 'shared/Places';
 import type { PlaceKey } from 'shared/types/teleport';
 import { enemySpawnService } from '../EnemySpawnService';
@@ -25,17 +25,17 @@ export class EnemyContactAttackService {
 
   public start(): void {
     // 既存のEnemyにもバインド
-    for (const inst of CollectionService.GetTagged(TAG_ENEMY)) {
+    for (const inst of CollectionService.GetTagged(TAGS.ENEMY)) {
       if (inst.IsA('Model')) this.bind(inst);
     }
 
     // 追加されたEnemyにバインド
-    CollectionService.GetInstanceAddedSignal(TAG_ENEMY).Connect((inst) => {
+    CollectionService.GetInstanceAddedSignal(TAGS.ENEMY).Connect((inst) => {
       if (inst.IsA('Model')) this.bind(inst);
     });
 
     // 削除されたEnemyのバインド解除
-    CollectionService.GetInstanceRemovedSignal(TAG_ENEMY).Connect((inst) => {
+    CollectionService.GetInstanceRemovedSignal(TAGS.ENEMY).Connect((inst) => {
       if (inst.IsA('Model')) this.unbind(inst);
     });
   }

@@ -1,5 +1,5 @@
 import { CollectionService, Workspace } from '@rbxts/services';
-import { TAG_ENEMY } from 'shared/constants';
+import { TAGS } from 'shared/constants';
 import type { HitDetectionResult } from 'shared/types/combat';
 
 /**
@@ -70,7 +70,7 @@ export function detectSwordEnemiesByBox(
     const model = part.FindFirstAncestorOfClass('Model');
     if (!model) continue;
 
-    if (!CollectionService.HasTag(model, TAG_ENEMY)) continue; //Enemyタグのモデルのみ対象
+    if (!CollectionService.HasTag(model, TAGS.ENEMY)) continue; //Enemyタグのモデルのみ対象
 
     if (!model.Parent) continue;
 

@@ -1,5 +1,6 @@
 import { ServerStorage, Workspace } from '@rbxts/services';
 import { getAreaSpawnConfig } from 'shared/config/EnemySpawnConfig';
+import { ATTRS } from 'shared/constants';
 import type { AreaLevel, AreaSpawnConfig } from 'shared/types/enemy';
 import { toAreaLevel } from 'shared/utils';
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
@@ -23,8 +24,8 @@ function resolveSpawnConfigFromArea(area: BasePart):
       spawnConfig: AreaSpawnConfig;
     }
   | undefined {
-  const areaIdAttr = area.GetAttribute('AreaId');
-  const areaLevelAttr = area.GetAttribute('Level');
+  const areaIdAttr = area.GetAttribute(ATTRS.AREA_ID);
+  const areaLevelAttr = area.GetAttribute(ATTRS.AREA_LEVEL);
 
   if (!typeIs(areaIdAttr, 'string')) return undefined;
   if (!typeIs(areaLevelAttr, 'number')) return undefined;
@@ -239,8 +240,8 @@ export class EnemySpawnService {
         `[EnemySpawnService] Start spawning player=${player.Name} areaId=${resolved.areaId} areaLevel=${resolved.areaLevel} template=${resolved.spawnConfig.templateName}`,
       );
     } else {
-      const areaId = area.GetAttribute('AreaId');
-      const level = area.GetAttribute('Level');
+      const areaId = area.GetAttribute(ATTRS.AREA_ID);
+      const level = area.GetAttribute(ATTRS.AREA_LEVEL);
       print(
         `[EnemySpawnService] Start spawning player=${player.Name} area=${areaId} level=${level} (config unresolved)`,
       );
@@ -261,7 +262,7 @@ export class EnemySpawnService {
     // 本番環境用の敵削除処理
     for (const child of this._enemiesFolder.GetChildren()) {
       if (!child.IsA('Model')) continue;
-      const owner = child.GetAttribute('OwnerUserId');
+      const owner = child.GetAttribute(ATTRS.OWNER_USER_ID);
       if (typeIs(owner, 'number') && owner === player.UserId) {
         child.Destroy();
       }

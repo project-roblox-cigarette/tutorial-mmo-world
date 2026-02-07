@@ -1,5 +1,5 @@
 import { CollectionService } from '@rbxts/services';
-import { TAG_ENEMY } from 'shared/constants';
+import { ATTRS, TAGS } from 'shared/constants';
 import type { DamageApplyResult } from 'shared/types/combat';
 
 export function applyDamageToEnemy(
@@ -10,11 +10,11 @@ export function applyDamageToEnemy(
   if (!enemy || !enemy.Parent) return { ok: false, reason: 'NO_TARGET' };
 
   // Enemyタグがついているか確認。
-  if (!CollectionService.HasTag(enemy, TAG_ENEMY))
+  if (!CollectionService.HasTag(enemy, TAGS.ENEMY))
     return { ok: false, reason: 'NOT_ENEMY' };
 
   // 二重処理防止
-  if (enemy.GetAttribute('Dead') === true)
+  if (enemy.GetAttribute(ATTRS.DEAD) === true)
     return { ok: false, reason: 'ALREADY_DEAD' };
 
   // Humanoid方式
@@ -23,20 +23,20 @@ export function applyDamageToEnemy(
     humanoid.TakeDamage(amount);
 
     if (humanoid.Health <= 0) {
-      enemy.SetAttribute('Dead', true);
+      enemy.SetAttribute(ATTRS.DEAD, true);
       return { ok: true, killed: true };
     }
     return { ok: true, killed: false };
   }
 
   // Attrubute方式
-  const hp = enemy.GetAttribute('HP');
+  const hp = enemy.GetAttribute(ATTRS.HP);
   if (typeIs(hp, 'number')) {
     const newHP = math.max(0, hp - amount);
-    enemy.SetAttribute('HP', newHP);
+    enemy.SetAttribute(ATTRS.HP, newHP);
 
     if (newHP <= 0) {
-      enemy.SetAttribute('Dead', true);
+      enemy.SetAttribute(ATTRS.DEAD, true);
       return { ok: true, killed: true };
     }
     return { ok: true, killed: false };
@@ -51,8 +51,8 @@ export function applyDamageToEnemy(
 export function finalizeEnemyDeath(enemy: Model): void {
   if (!enemy || !enemy.Parent) return;
 
-  if (CollectionService.HasTag(enemy, TAG_ENEMY)) {
-    CollectionService.RemoveTag(enemy, TAG_ENEMY);
+  if (CollectionService.HasTag(enemy, TAGS.ENEMY)) {
+    CollectionService.RemoveTag(enemy, TAGS.ENEMY);
   }
 
   enemy.Destroy();

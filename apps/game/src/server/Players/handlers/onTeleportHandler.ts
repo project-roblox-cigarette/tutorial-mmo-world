@@ -2,11 +2,8 @@
 // ROBLOX Studio依存の処理はすべてここで行う。
 
 import { CollectionService } from '@rbxts/services';
-import {
-  ATTR_DESTINATION,
-  assertIsPlaceKey,
-  TELEPORT_PROMPT_TAG,
-} from 'shared/Places';
+import { ATTRS, TAGS } from 'shared/constants';
+import { assertIsPlaceKey } from 'shared/Places';
 import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 
@@ -19,7 +16,7 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
 
   // プレイヤーがProximityPromptをトリガーしたときの処理
   const conn = prompt.Triggered.Connect((Player) => {
-    const placeName = prompt.GetAttribute(ATTR_DESTINATION);
+    const placeName = prompt.GetAttribute(ATTRS.DESTINATION);
     if (!assertIsPlaceKey(placeName)) {
       warn(
         `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} placeName=${tostring(
@@ -64,7 +61,7 @@ function applyBindTeleportPrompt(inst: Instance) {
  * 起動時に既存のタグインスタンスをバインドする
  */
 export function initTeleportHandler() {
-  const tagged = CollectionService.GetTagged(TELEPORT_PROMPT_TAG);
+  const tagged = CollectionService.GetTagged(TAGS.TELEPORT_PROMPT);
   print(`[Teleport] Teleportタグを ${tagged.size()} 件検出`);
 
   for (const inst of tagged) {
@@ -76,7 +73,7 @@ export function initTeleportHandler() {
 }
 
 // タグ付与イベントの監視を開始
-CollectionService.GetInstanceAddedSignal(TELEPORT_PROMPT_TAG).Connect(
+CollectionService.GetInstanceAddedSignal(TAGS.TELEPORT_PROMPT).Connect(
   (inst) => {
     applyBindTeleportPrompt(inst);
   },

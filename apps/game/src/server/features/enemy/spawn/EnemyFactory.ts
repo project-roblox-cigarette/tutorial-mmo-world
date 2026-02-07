@@ -1,12 +1,6 @@
 // server/features/enemy/spawn/EnemyFactory.ts
 import { CollectionService, ServerStorage } from '@rbxts/services';
-import {
-  ATTR_AGGRO_RANGE,
-  ATTR_CHASE_SPEED,
-  ATTR_CHASE_TICK,
-  ATTR_STOP_DISTANCE,
-  TAG_ENEMY,
-} from 'shared/constants';
+import { ATTRS, TAGS } from 'shared/constants';
 
 const templatesFolder = ServerStorage.WaitForChild('EnemyTemplates') as Folder;
 
@@ -23,28 +17,28 @@ export function createEnemyFromTemplateName(templateName: string): Model {
 
   print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
 
-  CollectionService.GetInstanceAddedSignal(TAG_ENEMY).Connect((inst) => {
+  CollectionService.GetInstanceAddedSignal(TAGS.ENEMY).Connect((inst) => {
     print(
       `[EnemyTag][DBG] added: class=${inst.ClassName} name=${inst.GetFullName()} parent=${inst.Parent ? inst.Parent.GetFullName() : 'nil'}`,
     );
   });
 
-  CollectionService.GetInstanceRemovedSignal(TAG_ENEMY).Connect((inst) => {
+  CollectionService.GetInstanceRemovedSignal(TAGS.ENEMY).Connect((inst) => {
     print(`[EnemyTag][DBG] removed: name=${inst.GetFullName()}`);
   });
 
   // Tag付与
-  CollectionService.AddTag(instanceEnemyModel, TAG_ENEMY);
+  CollectionService.AddTag(instanceEnemyModel, TAGS.ENEMY);
 
   // デフォルト値（未設定なら付与）
-  if (instanceEnemyModel.GetAttribute(ATTR_AGGRO_RANGE) === undefined)
-    instanceEnemyModel.SetAttribute(ATTR_AGGRO_RANGE, 60);
-  if (instanceEnemyModel.GetAttribute(ATTR_STOP_DISTANCE) === undefined)
-    instanceEnemyModel.SetAttribute(ATTR_STOP_DISTANCE, 4);
-  if (instanceEnemyModel.GetAttribute(ATTR_CHASE_SPEED) === undefined)
-    instanceEnemyModel.SetAttribute(ATTR_CHASE_SPEED, 14);
-  if (instanceEnemyModel.GetAttribute(ATTR_CHASE_TICK) === undefined)
-    instanceEnemyModel.SetAttribute(ATTR_CHASE_TICK, 0.2);
+  if (instanceEnemyModel.GetAttribute(ATTRS.AGGRO_RANGE) === undefined)
+    instanceEnemyModel.SetAttribute(ATTRS.AGGRO_RANGE, 60);
+  if (instanceEnemyModel.GetAttribute(ATTRS.STOP_DISTANCE) === undefined)
+    instanceEnemyModel.SetAttribute(ATTRS.STOP_DISTANCE, 4);
+  if (instanceEnemyModel.GetAttribute(ATTRS.CHASE_SPEED) === undefined)
+    instanceEnemyModel.SetAttribute(ATTRS.CHASE_SPEED, 14);
+  if (instanceEnemyModel.GetAttribute(ATTRS.CHASE_TICK) === undefined)
+    instanceEnemyModel.SetAttribute(ATTRS.CHASE_TICK, 0.2);
 
   // PrimaryPart を HumanoidRootPart に寄せる（無い場合もあるのでガード）
   const hrp = instanceEnemyModel.FindFirstChild('HumanoidRootPart');

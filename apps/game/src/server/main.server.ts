@@ -1,5 +1,5 @@
 import { CollectionService } from '@rbxts/services';
-import { TAG_ENEMY } from 'shared/constants';
+import { TAGS } from 'shared/constants';
 import { EnemyChaseSystem } from './features/enemy/ai/EnemyChaseSystem';
 import { EnemyContactAttackService } from './features/enemy/combat/EnemyContactAttackService';
 import { playerMeleeAttackService } from './features/player/combat/PlayerMeleeAttackService';
@@ -13,7 +13,7 @@ enemyContactAttackService.start();
 playerMeleeAttackService.start();
 
 task.delay(2, () => {
-  const tagged = CollectionService.GetTagged(TAG_ENEMY);
+  const tagged = CollectionService.GetTagged(TAGS.ENEMY);
 
   const n = tagged.size();
   print(`[DBG] tagged enemies = ${n}`);

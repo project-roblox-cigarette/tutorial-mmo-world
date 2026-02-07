@@ -1,10 +1,5 @@
 import { CollectionService, Players, RunService } from '@rbxts/services';
-import {
-  ATTR_AGGRO_RANGE,
-  ATTR_CHASE_SPEED,
-  ATTR_STOP_DISTANCE,
-  TAG_ENEMY,
-} from 'shared/constants';
+import { ATTRS, TAGS } from 'shared/constants';
 
 function getHumanoid(model: Model): Humanoid | undefined {
   return model.FindFirstChildOfClass('Humanoid');
@@ -54,14 +49,14 @@ export class EnemyChaseSystem {
 
   start() {
     // 追加観測：タグ付与された瞬間
-    CollectionService.GetInstanceAddedSignal(TAG_ENEMY).Connect((inst) => {
+    CollectionService.GetInstanceAddedSignal(TAGS.ENEMY).Connect((inst) => {
       print(
         `[Chase][DBG] Enemy tagged: class=${inst.ClassName} name=${inst.GetFullName()}`,
       );
     });
 
     // （任意）外れた瞬間も
-    CollectionService.GetInstanceRemovedSignal(TAG_ENEMY).Connect((inst) => {
+    CollectionService.GetInstanceRemovedSignal(TAGS.ENEMY).Connect((inst) => {
       print(`[Chase][DBG] Enemy untagged: ${inst.GetFullName()}`);
     });
 
@@ -71,7 +66,7 @@ export class EnemyChaseSystem {
       if (this.acc < 0.1) return;
       this.acc = 0;
 
-      const tagged = CollectionService.GetTagged(TAG_ENEMY);
+      const tagged = CollectionService.GetTagged(TAGS.ENEMY);
       for (const inst of tagged) {
         if (!inst.IsA('Model')) continue;
         this.updateEnemy(inst);
@@ -85,9 +80,9 @@ export class EnemyChaseSystem {
     const root = getRoot(enemy);
     if (!hum || !root) return;
 
-    const aggroRange = (enemy.GetAttribute(ATTR_AGGRO_RANGE) as number) ?? 60;
-    const stopDist = (enemy.GetAttribute(ATTR_STOP_DISTANCE) as number) ?? 4;
-    const speed = (enemy.GetAttribute(ATTR_CHASE_SPEED) as number) ?? 14;
+    const aggroRange = (enemy.GetAttribute(ATTRS.AGGRO_RANGE) as number) ?? 60;
+    const stopDist = (enemy.GetAttribute(ATTRS.STOP_DISTANCE) as number) ?? 4;
+    const speed = (enemy.GetAttribute(ATTRS.CHASE_SPEED) as number) ?? 14;
 
     const targetChar = pickNearestPlayer(root.Position, aggroRange);
     if (!targetChar) return;

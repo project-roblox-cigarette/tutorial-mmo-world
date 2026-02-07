@@ -1,10 +1,7 @@
 import { ReplicatedStorage } from '@rbxts/services';
-import {
-  tryGetWeaponIdFromTool,
-  WEAPON_CATALOG,
-} from 'shared/config/WeaponCatalog';
-import { REMOTE_MELEE_ATTACK, REMOTES_FOLDER_NAME } from 'shared/net/Remotes';
+import { tryGetWeaponIdFromTool } from 'shared/config/WeaponCatalog';
 import type { WeaponConfig } from 'shared/types/weapon';
+import { REMOTES, WEAPON_CATALOG } from '../../../../shared/constants';
 import {
   applyDamageToEnemy,
   finalizeEnemyDeath,
@@ -45,18 +42,18 @@ export class PlayerMeleeAttackService {
    * - フォルダが無ければ作成
    */
   private getOrCreateMeleeAttackRemote(): RemoteEvent {
-    let folder = ReplicatedStorage.FindFirstChild(REMOTES_FOLDER_NAME);
+    let folder = ReplicatedStorage.FindFirstChild(REMOTES.FOLDER_NAME);
     if (!folder) {
       folder = new Instance('Folder');
-      folder.Name = REMOTES_FOLDER_NAME;
+      folder.Name = REMOTES.FOLDER_NAME;
       folder.Parent = ReplicatedStorage;
     }
 
-    const existing = folder.FindFirstChild(REMOTE_MELEE_ATTACK);
+    const existing = folder.FindFirstChild(REMOTES.MELEE_ATTACK);
     if (existing?.IsA('RemoteEvent')) return existing;
 
     const re = new Instance('RemoteEvent');
-    re.Name = REMOTE_MELEE_ATTACK;
+    re.Name = REMOTES.MELEE_ATTACK;
     re.Parent = folder;
     return re;
   }

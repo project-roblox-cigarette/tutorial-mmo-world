@@ -1,31 +1,27 @@
 import { CollectionService } from '@rbxts/services';
+import { ATTRS, TAGS } from 'shared/constants';
 import type { AreaContext, AreaId, AreaLevel } from 'shared/types/enemy';
 import { toAreaLevel } from 'shared/utils';
-
-const ENEMY_AREA_TAG = 'EnemyArea';
 
 export function resolveEnemyAreaByPlaceKey(
   placeKey: string,
 ): BasePart | undefined {
-  for (const inst of CollectionService.GetTagged(ENEMY_AREA_TAG)) {
+  for (const inst of CollectionService.GetTagged(TAGS.ENEMY_AREA)) {
     if (!inst.IsA('BasePart')) continue;
-    const key = inst.GetAttribute('PlaceKey');
+    const key = inst.GetAttribute(ATTRS.PLACE_KEY);
     if (typeOf(key) === 'string' && key === placeKey) return inst;
   }
   return undefined;
 }
 
-const AREA_ID_ATTR = 'AreaId';
-const AREA_LEVEL_ATTR = 'Level';
-
 function resolveAreaId(area: Instance): AreaId {
-  const attribute = area.GetAttribute(AREA_ID_ATTR); // AttributeValue | undefined
+  const attribute = area.GetAttribute(ATTRS.AREA_ID); // AttributeValue | undefined
   if (typeIs(attribute, 'string') && attribute !== '') return attribute;
   return area.Name;
 }
 
 function resolveAreaLevel(area: Instance): AreaLevel {
-  const attribute = area.GetAttribute(AREA_LEVEL_ATTR); // AttributeValue | undefined
+  const attribute = area.GetAttribute(ATTRS.AREA_LEVEL); // AttributeValue | undefined
   if (typeIs(attribute, 'number')) {
     const lv = toAreaLevel(attribute);
     if (lv !== undefined) return lv;
@@ -34,7 +30,7 @@ function resolveAreaLevel(area: Instance): AreaLevel {
 }
 
 export function resolveAreas(): AreaContext[] {
-  const areas = CollectionService.GetTagged('EnemyArea');
+  const areas = CollectionService.GetTagged(TAGS.ENEMY_AREA);
   return areas.map((area) => ({
     area: area,
     areaId: resolveAreaId(area),
