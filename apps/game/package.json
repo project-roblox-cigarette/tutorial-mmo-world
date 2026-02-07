@@ -2,15 +2,18 @@
   "name": "@game/main",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"pnpm build --watch\" \"pnpm exec rojo serve default.project.json\"",
-    "build": "rbxtsc --type=game",
-    "watch": "rbxtsc -w --type=game",
+    "dev": "concurrently \"pnpm watch\" \"pnpm watch:rojo\"",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' rbxtsc --type=game",
+    "watch": "NODE_OPTIONS='--max-old-space-size=4096' nodemon",
+    "watch:rojo": "nodemon --config nodemon-rojo.json",
     "test": "echo 'Tests run in Roblox Studio with TestEZ'"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/testez": "0.4.2-ts.0",
     "@rbxts/types": "^1.0.896",
+    "chokidar-cli": "^3.0.0",
+    "nodemon": "^3.1.11",
     "roblox-ts": "^3.0.0"
   },
   "dependencies": {

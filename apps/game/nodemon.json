@@ -1,0 +1,8 @@
+{
+  "watch": ["src"],
+  "ext": "ts,tsx",
+  "ignore": ["out/**", "node_modules/**"],
+  "exec": "rbxtsc --type=game",
+  "legacyWatch": true,
+  "delay": 500
+}
