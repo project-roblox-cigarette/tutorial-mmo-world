@@ -5,7 +5,7 @@
     "outDir": "out",
 
     "typeRoots": ["node_modules/@rbxts"],
-    "types": ["types", "compiler-types", "testez"],
+    "types": ["types", "compiler-types"],
 
     "baseUrl": ".",
     "paths": {
@@ -19,7 +19,7 @@
     "assumeChangesOnlyAffectDirectDependencies": true
   },
   "include": ["src"],
-  "exclude": ["out", "node_modules", "**/*.spec.ts", "**/*.test.ts"],
+  "exclude": ["out", "node_modules"],
   "watchOptions": {
     "watchFile": "dynamicPriorityPolling",
     "watchDirectory": "dynamicPriorityPolling",
