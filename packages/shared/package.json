@@ -5,7 +5,7 @@
   "description": "チーム共有ユーティリティ・型定義",
   "main": "src/index.ts",
   "scripts": {
-    "build": "rbxtsc"
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' rbxtsc"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
