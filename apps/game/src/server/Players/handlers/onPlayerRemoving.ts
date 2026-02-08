@@ -1,6 +1,7 @@
 // プレイヤー退出時の処理
 
-import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
+import { logger } from 'shared/utils/logger';
+import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
 import {
   getPlayerData,
   removePlayerData,
@@ -13,13 +14,14 @@ export function onPlayerRemoving(player: Player): void {
   enemySpawnService.onPlayerRemoving(player);
 
   if (data) {
-    print(
-      `[Server] ${player.Name} が退出しました (最終スコア: ${data.score}, Level: ${data.level})`,
+    logger.info(
+      'PlayerLeave',
+      `${player.Name} が退出しました (最終スコア: ${data.Score}, レベル: ${data.Level})`,
     );
     // TODO: ここでデータを保存（DataStoreへ）
 
     removePlayerData(player.UserId);
   } else {
-    print(`[Server] ${player.Name} が退出しました`);
+    logger.info('PlayerLeave', `${player.Name} が退出しました`);
   }
 }

@@ -3,15 +3,9 @@ import {
   Players,
   ReplicatedStorage,
 } from '@rbxts/services';
-import { PLAYER_ANIMS } from '../../../../shared/config/PlayerAnimations';
-import {
-  type MeleeAttackRequest,
-  REMOTE_MELEE_ATTACK,
-  REMOTES_FOLDER_NAME,
-} from '../../../../shared/net/Remotes';
-
-const ATTACK_ACTION = 'Attack'; // ContextActionServiceでのアクション名
-const SWING_COOLDOWN_SEC = 0.5; // 攻撃のクールダウン時間
+import { ACTIONS, CONFIGS, PLAYER_ANIMS, REMOTES } from 'shared/constants';
+import type { MeleeAttackRequest } from 'shared/types/combat';
+import { logger } from 'shared/utils/logger';
 
 /**
  * Toolが剣かどうかを判定する。
@@ -25,12 +19,12 @@ function isSwordTool(tool: Tool) {
  * HumanoidからAnimatorを取得する。なければ新規作成して返す。
  */
 function getAnimator(humanoid: Humanoid): Animator {
-  const found = humanoid.FindFirstChildOfClass('Animator');
-  if (found) return found;
+  const getAnimator = humanoid.FindFirstChildOfClass('Animator');
+  if (getAnimator) return getAnimator;
 
-  const animator = new Instance('Animator');
-  animator.Parent = humanoid;
-  return animator;
+  const newAnimator = new Instance('Animator');
+  newAnimator.Parent = humanoid;
+  return newAnimator;
 }
 
 /**
@@ -39,12 +33,12 @@ function getAnimator(humanoid: Humanoid): Animator {
  * - Animator.LoadAnimation() で Track を取得する。
  */
 function loadSwingTrack(animator: Animator): AnimationTrack {
-  const anim = new Instance('Animation');
-  anim.AnimationId = PLAYER_ANIMS.swordSwing;
+  const newAnimation = new Instance('Animation');
+  newAnimation.AnimationId = PLAYER_ANIMS.SwordSwing;
 
-  const track = animator.LoadAnimation(anim);
-  track.Priority = Enum.AnimationPriority.Action;
-  return track;
+  const animationTrack = animator.LoadAnimation(newAnimation);
+  animationTrack.Priority = Enum.AnimationPriority.Action;
+  return animationTrack;
 }
 
 /**
@@ -52,9 +46,9 @@ function loadSwingTrack(animator: Animator): AnimationTrack {
  * サーバー側で作成される前提なのでWaitForChildを使って確実に待つ。
  */
 function getMeleeAttackRemote(): RemoteEvent {
-  const folder = ReplicatedStorage.WaitForChild(REMOTES_FOLDER_NAME) as Folder;
-  const re = folder.WaitForChild(REMOTE_MELEE_ATTACK) as RemoteEvent;
-  return re;
+  const getFolder = ReplicatedStorage.WaitForChild(REMOTES.FolderName);
+  const getRemoteEvent = getFolder.WaitForChild(REMOTES.MeleeAttack);
+  return getRemoteEvent as RemoteEvent;
 }
 
 /**
@@ -73,36 +67,36 @@ export function startPlayerAttackController() {
    */
   const bindCharacter = (character: Model) => {
     // キャラクターからHumanoidを取得
-    const humanoid = character.FindFirstChildOfClass('Humanoid');
-    if (!humanoid) return;
+    const getHumanoid = character.FindFirstChildOfClass('Humanoid');
+    if (!getHumanoid) return;
 
-    const animator = getAnimator(humanoid); // Animator取得
+    const animator = getAnimator(getHumanoid); // Animator取得
     const swingTrack = loadSwingTrack(animator); // 攻撃アニメのTrackを取得
 
-    let lastSwing = 0; // 最後に攻撃した時間（クールダウン管理用）
+    let lastSwingAt = 0; // 最後に攻撃した時間（クールダウン管理用）
 
     /**
      * 1回のスイングに対してRemoteを二重送信しないためのシーケンス。
      * - Hitマーカーがある場合：マーカー到達で送信
      * - マーカーがない場合：言って位置円で送信
      */
-    let swingSeq = 0;
-    let sentSeq = -1;
+    let swingSequence = 0;
+    let sentSequence = -1;
 
     /**
      * サーバへ攻撃判定してほしい通知を送る。
      */
-    const fireAttackRemoteOnce = (seq: number) => {
+    const fireAttackRemoteOnce = (sequence: number) => {
       // 既にこのスイングで送っているなら何もしない
-      if (sentSeq === seq) return;
-      sentSeq = seq;
+      if (sentSequence === sequence) return;
+      sentSequence = sequence;
 
       const tool = getEquippedSword();
       const req: MeleeAttackRequest = {
-        debugWeaponName: tool?.Name,
+        DebugWeaponName: tool?.Name,
       };
 
-      print('[Attack] FireServer MeleeAttack');
+      logger.debug('PlayerAttack', 'サーバーに近接攻撃をリクエスト');
       meleeRemote.FireServer(req);
     };
 
@@ -112,8 +106,8 @@ export function startPlayerAttackController() {
      * ※別Toolがあると問題になるから
      */
     const getEquippedSword = (): Tool | undefined => {
-      const tool = character.FindFirstChildOfClass('Tool');
-      if (tool && isSwordTool(tool)) return tool;
+      const getTool = character.FindFirstChildOfClass('Tool');
+      if (getTool && isSwordTool(getTool)) return getTool;
       return undefined;
     };
 
@@ -128,12 +122,12 @@ export function startPlayerAttackController() {
       if (!tool) return;
 
       const now = os.clock(); // 現在時間取得
-      if (now - lastSwing < SWING_COOLDOWN_SEC) return; // クールダウン中は無視
-      lastSwing = now; // 攻撃時間を更新
+      if (now - lastSwingAt < CONFIGS.Combat.SwingCooldownSec) return; // クールダウン中は無視
+      lastSwingAt = now; // 攻撃時間を更新
 
       // 新しいスイングとしてシーケンスを進める
-      swingSeq += 1;
-      const seq = swingSeq;
+      swingSequence += 1;
+      const sequence = swingSequence; // 現在のシーケンス
 
       if (swingTrack.IsPlaying) swingTrack.Stop(0.05); // 再生中なら軽くStop
 
@@ -147,15 +141,17 @@ export function startPlayerAttackController() {
 
       // アニメに "Hit" マーカーがあるなら、到達時に送信
       //   - マーカーが無い場合、このイベントは発火しない
-      const hitConn = swingTrack.GetMarkerReachedSignal('Hit').Connect(() => {
-        fireAttackRemoteOnce(seq);
-      });
+      const hitConnection = swingTrack
+        .GetMarkerReachedSignal('Hit')
+        .Connect(() => {
+          fireAttackRemoteOnce(sequence);
+        });
 
       task.delay(0.12, () => {
-        fireAttackRemoteOnce(seq);
+        fireAttackRemoteOnce(sequence);
 
         // このスイングのHitConnは不要になるので切断
-        hitConn.Disconnect();
+        hitConnection.Disconnect();
       });
     };
 
@@ -179,8 +175,8 @@ export function startPlayerAttackController() {
      * すでに装備しているToolがあるケースにも対応。
      * - bindCharacter() が呼ばれた時点で Tool が Character に居る場合に備える。
      */
-    const existing = character.FindFirstChildOfClass('Tool');
-    if (existing?.IsA('Tool')) bindToolActivated(existing);
+    const getExistingTool = character.FindFirstChildOfClass('Tool');
+    if (getExistingTool?.IsA('Tool')) bindToolActivated(getExistingTool);
 
     /**
      * Fキー（攻撃ボタン想定）で振る。
@@ -189,11 +185,11 @@ export function startPlayerAttackController() {
      * - UIボタン追加時もこのアクションを呼ぶ設計にしやすい
      */
 
-    ContextActionService.UnbindAction(ATTACK_ACTION); // 念のため同名アクションを解除（リスポーン等で二重登録を防ぐ）
+    ContextActionService.UnbindAction(ACTIONS.Attack); // 念のため同名アクションを解除（リスポーン等で二重登録を防ぐ）
 
     // AttackアクションをFキーに紐付ける
     ContextActionService.BindAction(
-      ATTACK_ACTION,
+      ACTIONS.Attack,
       (_actionName, inputState) => {
         // キー押下開始（Begin）の瞬間だけ攻撃を実行
         if (inputState === Enum.UserInputState.Begin) {
@@ -211,7 +207,7 @@ export function startPlayerAttackController() {
    * - 二重登録や不要な入力受付を避ける。
    */
   const unbind = () => {
-    ContextActionService.UnbindAction(ATTACK_ACTION);
+    ContextActionService.UnbindAction(ACTIONS.Attack);
   };
 
   /**

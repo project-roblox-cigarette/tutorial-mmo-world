@@ -1,26 +1,38 @@
 import { CollectionService } from '@rbxts/services';
-import { TAG_ENEMY } from 'shared/constants';
-import { EnemyChaseSystem } from './features/enemy/ai/EnemyChaseSystem';
-import { EnemyContactAttackService } from './features/enemy/combat/EnemyContactAttackService';
-import { playerMeleeAttackService } from './features/player/combat/PlayerMeleeAttackService';
+import { TAGS } from 'shared/constants';
+import { logger } from 'shared/utils/logger';
+import { ServiceRegistry } from './core/ServiceRegistry';
+import {
+  EnemyChaseSystem,
+  EnemyContactAttackService,
+} from './features/enemy/services';
+import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
 
-print('[Server] サーバーが起動しました');
+logger.info('Server', 'サーバーを起動中...');
 
+// サービスを登録
 const enemyChaseSystem = new EnemyChaseSystem();
-enemyChaseSystem.start();
 const enemyContactAttackService = new EnemyContactAttackService();
-enemyContactAttackService.start();
-playerMeleeAttackService.start();
 
+ServiceRegistry.register('PlayerMeleeAttack', playerMeleeAttackService);
+ServiceRegistry.register('EnemyChase', enemyChaseSystem);
+ServiceRegistry.register('EnemyContactAttack', enemyContactAttackService);
+
+// 全サービスを起動
+ServiceRegistry.startAll();
+
+logger.info('Server', 'サーバーが起動しました');
+
+// デバッグ: 遅延後にタグ付き敵をチェック
 task.delay(2, () => {
-  const tagged = CollectionService.GetTagged(TAG_ENEMY);
+  const taggedEnemies = CollectionService.GetTagged(TAGS.ENEMY);
+  const enemyCount = taggedEnemies.size();
+  logger.debug('Server', `タグ付き敵の数: ${enemyCount}`);
 
-  const n = tagged.size();
-  print(`[DBG] tagged enemies = ${n}`);
-
-  for (const inst of tagged) {
-    print(
-      `[DBG] enemy: ${inst.GetFullName()} parent=${inst.Parent ? inst.Parent.GetFullName() : 'nil'}`,
+  for (const enemy of taggedEnemies) {
+    logger.debug(
+      'Server',
+      `敵: ${enemy.GetFullName()} parent=${enemy.Parent ? enemy.Parent.GetFullName() : 'nil'}`,
     );
   }
 });

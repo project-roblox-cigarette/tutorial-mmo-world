@@ -1,10 +1,11 @@
 // プレイヤー参加時の処理
 
-import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
+import { logger } from 'shared/utils/logger';
+import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
 import { initializePlayerData } from '../../services/PlayerDataService';
 
 export function onPlayerAdded(player: Player): void {
-  print(`[Server] ${player.Name} が参加しました`);
+  logger.info('PlayerJoin', `${player.Name} が参加しました`);
 
   // プレイヤーデータを初期化
   const data = initializePlayerData(player);
@@ -12,7 +13,8 @@ export function onPlayerAdded(player: Player): void {
   // 敵スポーンサービスに通知
   enemySpawnService.onPlayerAdded(player);
 
-  print(
-    `[Server] プレイヤーデータを初期化: ${data.displayName} (Level: ${data.level})`,
+  logger.info(
+    'PlayerJoin',
+    `プレイヤーデータを初期化: ${data.DisplayName} (レベル: ${data.Level})`,
   );
 }

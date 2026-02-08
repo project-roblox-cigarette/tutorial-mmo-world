@@ -2,12 +2,10 @@
 // ROBLOX Studio依存の処理はすべてここで行う。
 
 import { CollectionService } from '@rbxts/services';
-import {
-  ATTR_DESTINATION,
-  assertIsPlaceKey,
-  TELEPORT_PROMPT_TAG,
-} from '../../../shared/Places';
-import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
+import { ATTRIBUTES, TAGS } from 'shared/constants';
+import { logger } from 'shared/utils/logger';
+import { assertIsPlaceKey } from 'shared/utils/type-guards';
+import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 
 // すでにバインドされたProximityPromptを記録、2重処理を避ける。
@@ -18,33 +16,35 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
   boundPrompts.add(prompt);
 
   // プレイヤーがProximityPromptをトリガーしたときの処理
-  const conn = prompt.Triggered.Connect((Player) => {
-    const placeName = prompt.GetAttribute(ATTR_DESTINATION);
+  const connection = prompt.Triggered.Connect((player) => {
+    const placeName = prompt.GetAttribute(ATTRIBUTES.Destination);
     if (!assertIsPlaceKey(placeName)) {
-      warn(
-        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} placeName=${tostring(
-          placeName,
-        )}`,
+      logger.warn(
+        'Teleport',
+        `定義されていない目的地: prompt=${prompt.GetFullName()} placeName=${tostring(placeName)}`,
       );
       return;
     }
 
-    print(`[Server] ${Player.Name} が ${placeName} にテレポートしました`);
+    logger.info(
+      'Teleport',
+      `${player.Name} が ${placeName} にテレポートしました`,
+    );
     const result = requestTeleport({
-      player: Player,
-      destination: placeName,
+      Player: player,
+      Destination: placeName,
     });
-    if (!result.status) return;
+    if (!result.Status) return;
 
     // テレポート成功後、敵が生成されるべきか確認する
     task.delay(0.2, () => {
       // テレポート後の処理: 敵スポーンの更新
-      enemySpawnService.updateSpawnStateByPlayer(Player, placeName);
+      enemySpawnService.updateSpawnStateByPlayer(player, placeName);
     });
   });
 
   prompt.Destroying.Connect(() => {
-    conn.Disconnect();
+    connection.Disconnect();
     boundPrompts.delete(prompt);
   });
 }
@@ -56,7 +56,10 @@ function applyBindTeleportPrompt(inst: Instance) {
   if (inst.IsA('ProximityPrompt')) {
     bindTeleportPrompt(inst);
   } else {
-    warn(`[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`);
+    logger.warn(
+      'Teleport',
+      `ProximityPromptタグがありません: ${inst.GetFullName()}`,
+    );
   }
 }
 
@@ -64,20 +67,21 @@ function applyBindTeleportPrompt(inst: Instance) {
  * 起動時に既存のタグインスタンスをバインドする
  */
 export function initTeleportHandler() {
-  const tagged = CollectionService.GetTagged(TELEPORT_PROMPT_TAG);
-  print(`[Teleport] Teleportタグを ${tagged.size()} 件検出`);
+  const taggedPrompts = CollectionService.GetTagged(TAGS.TELEPORT_PROMPT);
+  logger.info('Teleport', `Teleportタグを ${taggedPrompts.size()} 件検出`);
 
-  for (const inst of tagged) {
-    print(
-      `[Teleport] Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
+  for (const prompt of taggedPrompts) {
+    logger.debug(
+      'Teleport',
+      `Teleportタグ: class=${prompt.ClassName} name=${prompt.GetFullName()}`,
     );
-    applyBindTeleportPrompt(inst);
+    applyBindTeleportPrompt(prompt);
   }
 }
 
 // タグ付与イベントの監視を開始
-CollectionService.GetInstanceAddedSignal(TELEPORT_PROMPT_TAG).Connect(
-  (inst) => {
-    applyBindTeleportPrompt(inst);
+CollectionService.GetInstanceAddedSignal(TAGS.TELEPORT_PROMPT).Connect(
+  (prompt) => {
+    applyBindTeleportPrompt(prompt);
   },
 );
