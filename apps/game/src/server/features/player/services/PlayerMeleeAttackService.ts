@@ -8,8 +8,8 @@ import { BaseService } from '../../../core/Service';
 import {
   applyDamageToEnemy,
   finalizeEnemyDeath,
-} from '../../combat/DamageUtils';
-import { detectSwordEnemiesByBox } from '../../combat/MeleeHitDetectionUtils';
+} from '../../combat/utils/damage';
+import { detectSwordEnemiesByBox } from '../../combat/utils/melee-hit-detection';
 
 export class PlayerMeleeAttackService extends BaseService {
   // サーバ側クールダウン管理

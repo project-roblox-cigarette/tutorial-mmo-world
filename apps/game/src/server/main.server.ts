@@ -2,9 +2,9 @@ import { CollectionService } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { ServiceRegistry } from './core/ServiceRegistry';
-import { EnemyChaseSystem } from './features/enemy/ai/EnemyChaseSystem';
-import { EnemyContactAttackService } from './features/enemy/combat/EnemyContactAttackService';
-import { playerMeleeAttackService } from './features/player/combat/PlayerMeleeAttackService';
+import { EnemyChaseSystem } from './features/enemy/services/EnemyChaseSystem';
+import { EnemyContactAttackService } from './features/enemy/services/EnemyContactAttackService';
+import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
 
 logger.info('Server', 'サーバーを起動中...');
 

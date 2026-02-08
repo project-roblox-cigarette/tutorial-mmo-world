@@ -9,7 +9,7 @@ import type { PlaceKey } from 'shared/types/teleport';
 import { logger } from 'shared/utils/logger';
 import { getPlaceId } from 'shared/utils/places';
 import { BaseService } from '../../../core/Service';
-import { enemySpawnService } from '../EnemySpawnService';
+import { enemySpawnService } from './EnemySpawnService';
 
 export class EnemyContactAttackService extends BaseService {
   /** 敵モデル -> 接触監視の接続 */

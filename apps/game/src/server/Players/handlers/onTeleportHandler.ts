@@ -5,7 +5,7 @@ import { CollectionService } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { assertIsPlaceKey } from 'shared/utils/type-guards';
-import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
+import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 
 // すでにバインドされたProximityPromptを記録、2重処理を避ける。
