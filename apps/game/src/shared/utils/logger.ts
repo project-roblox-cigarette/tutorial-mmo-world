@@ -91,8 +91,7 @@ class Logger {
         warn(formattedMessage);
         break;
       case LogLevel.ERROR:
-        warn(formattedMessage); // Robloxではエラーにwarn()を使用
-        break;
+        error(formattedMessage);
     }
   }
 
