@@ -9,43 +9,44 @@ export const ENEMY_SPAWN_CONFIG: Record<
   Record<AreaLevel, AreaSpawnConfig>
 > = {
   EnemySpawnArea: {
+    // 敵スポーンエリア
     1: {
-      spawnIntervalSec: 3.0,
-      maxAlivePerPlayer: 2,
-      templateName: 'EnemyObject_Lv1',
+      spawnIntervalSec: 3.0, // スポーン間隔
+      maxAlivePerPlayer: 2, // プレイヤーごとの最大同時生存数
+      templateName: 'EnemyObject_Lv1', // 敵テンプレート名
       chase: {
-        speed: 5,
-        aggroRange: 60,
-        stopDistance: 4,
-        chaseTickSec: 0.2,
-        followLagSec: 0,
-        stopDurationSec: 3,
+        speed: 5, // 移動速度
+        aggroRange: 60, // 追跡範囲
+        stopDistance: 4, // 停止距離
+        chaseTickSec: 0.2, // 追跡更新間隔
+        followLagSec: 0, // 追尾遅延時間
+        stopDurationSec: 3, // 停止継続時間
       },
     },
     2: {
-      spawnIntervalSec: 2.0,
-      maxAlivePerPlayer: 2,
-      templateName: 'EnemyObject_Lv2',
+      spawnIntervalSec: 2.0, // スポーン間隔
+      maxAlivePerPlayer: 2, // プレイヤーごとの最大同時生存数
+      templateName: 'EnemyObject_Lv2', // 敵テンプレート名
       chase: {
-        speed: 7,
-        aggroRange: 70,
-        stopDistance: 4,
-        chaseTickSec: 0.2,
-        followLagSec: 0,
-        stopDurationSec: 3,
+        speed: 7, // 移動速度
+        aggroRange: 70, // 追跡範囲
+        stopDistance: 4, // 停止距離
+        chaseTickSec: 0.2, // 追跡更新間隔
+        followLagSec: 0, // 追尾遅延時間
+        stopDurationSec: 3, // 停止継続時間
       },
     },
     3: {
-      spawnIntervalSec: 1.0,
-      maxAlivePerPlayer: 2,
-      templateName: 'EnemyObject_Lv3',
+      spawnIntervalSec: 1.0, // スポーン間隔
+      maxAlivePerPlayer: 2, // プレイヤーごとの最大同時生存数
+      templateName: 'EnemyObject_Lv3', // 敵テンプレート名
       chase: {
-        speed: 9,
-        aggroRange: 80,
-        stopDistance: 4,
-        chaseTickSec: 0.15,
-        followLagSec: 0,
-        stopDurationSec: 3,
+        speed: 9, // 移動速度
+        aggroRange: 80, // 追跡範囲
+        stopDistance: 4, // 停止距離
+        chaseTickSec: 0.15, // 追跡更新間隔
+        followLagSec: 0, // 追尾遅延時間
+        stopDurationSec: 3, // 停止継続時間
       },
     },
   },

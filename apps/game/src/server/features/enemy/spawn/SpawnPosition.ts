@@ -1,7 +1,17 @@
-// EnemyAreaの範囲内からランダム座標を作る
+/**
+ * 敵スポーン位置の計算ユーティリティ
+ * EnemyAreaの範囲内からランダムな座標を生成
+ */
 
 import type { SpawnPositionOptions } from 'shared/types/enemy';
 
+/**
+ * エリア内のランダムなスポーン位置を取得
+ * @param areaPart スポーンエリアのBasePart
+ * @param range 乱数ジェネレーター
+ * @param options パディングやY軸オフセットなどのオプション
+ * @returns スポーン位置のCFrame
+ */
 export function getSpawnCFrameInArea(
   areaPart: BasePart,
   range: Random,

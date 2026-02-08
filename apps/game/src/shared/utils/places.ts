@@ -6,7 +6,7 @@ import { PLACES } from '../constants';
 import type { PlaceKey } from '../types/teleport';
 
 /**
- * PlaceKeyからPlaceIdを取得。
+ * PlaceKeyからPlaceIdを取得
  * @param key PlaceKey
  * @returns PlaceId
  */

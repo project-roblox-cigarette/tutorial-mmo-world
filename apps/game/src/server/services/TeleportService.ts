@@ -8,6 +8,7 @@ import type {
   TeleportRequest,
   TeleportResponse,
 } from 'shared/types/teleport';
+import { logger } from 'shared/utils/logger';
 import { getPlaceId } from 'shared/utils/places';
 
 /**
@@ -79,8 +80,9 @@ export function requestTeleport(req: TeleportRequest): TeleportResponse {
   // 失敗時：エラー内容をログに残し、呼び出し元へ失敗を返す
   if (!success) {
     const detail = tostring(err);
-    warn(
-      `[Teleport] failed userId=${req.player.UserId} dest=${req.destination} placeId=${placeId} err=${detail}`,
+    logger.error(
+      'Teleport',
+      `テレポート失敗: userId=${req.player.UserId} dest=${req.destination} placeId=${placeId} error=${detail}`,
     );
     return { ...failureRes, detail };
   }

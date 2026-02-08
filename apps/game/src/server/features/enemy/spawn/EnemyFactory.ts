@@ -1,31 +1,32 @@
-// server/features/enemy/spawn/EnemyFactory.ts
+/**
+ * 敵生成ファクトリー
+ * - テンプレートから敵モデルを生成
+ * - デフォルト属性の設定
+ * - タグ付与と初期化
+ */
+
 import { CollectionService, ServerStorage } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
+import { logger } from 'shared/utils/logger';
 
 const templatesFolder = ServerStorage.WaitForChild('EnemyTemplates') as Folder;
 
+/**
+ * テンプレート名から敵モデルを生成
+ * @param templateName 敵テンプレート名
+ * @returns 初期化された敵モデル
+ * @throws テンプレートが見つからない場合
+ */
 export function createEnemyFromTemplateName(templateName: string): Model {
   const inst = templatesFolder.FindFirstChild(templateName);
   if (!inst || !inst.IsA('Model')) {
-    error(`Enemy template not found or not a Model: ${templateName}`);
+    error(`敵テンプレートが見つかりません: ${templateName}`);
   }
 
-  print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
+  logger.debug('EnemyFactory', `敵を生成: template=${templateName}`);
 
   const instanceEnemyModel = inst.Clone();
   instanceEnemyModel.SetAttribute('TemplateName', templateName);
-
-  print(`[EnemyFactory][DBG] createEnemyFromTemplateName: ${templateName}`);
-
-  CollectionService.GetInstanceAddedSignal(TAGS.ENEMY).Connect((inst) => {
-    print(
-      `[EnemyTag][DBG] added: class=${inst.ClassName} name=${inst.GetFullName()} parent=${inst.Parent ? inst.Parent.GetFullName() : 'nil'}`,
-    );
-  });
-
-  CollectionService.GetInstanceRemovedSignal(TAGS.ENEMY).Connect((inst) => {
-    print(`[EnemyTag][DBG] removed: name=${inst.GetFullName()}`);
-  });
 
   // Tag付与
   CollectionService.AddTag(instanceEnemyModel, TAGS.ENEMY);

@@ -9,20 +9,20 @@ import type { PlaceKey } from '../types/teleport';
  */
 export const PLACES = {
   Lobby: {
-    placeId: 106990103180926,
-    displayName: 'Lobby',
+    placeId: 106990103180926, // ロビー
+    displayName: 'Lobby', // ロビー
   },
   EnemyArea_Lv1: {
-    placeId: 124280982303998,
-    displayName: 'EnemyArea - Lv1',
+    placeId: 124280982303998, // 敵エリア_レベル1
+    displayName: 'EnemyArea - Lv1', // 敵エリア_レベル1
   },
   EnemyArea_Lv2: {
-    placeId: 76297845057406,
-    displayName: 'EnemyArea - Lv2',
+    placeId: 76297845057406, // 敵エリア_レベル2
+    displayName: 'EnemyArea - Lv2', // 敵エリア_レベル2
   },
   EnemyArea_Lv3: {
-    placeId: 72150023649118,
-    displayName: 'EnemyArea - Lv3',
+    placeId: 72150023649118, // 敵エリア_レベル3
+    displayName: 'EnemyArea - Lv3', // 敵エリア_レベル3
   },
 } as const;
 
@@ -31,8 +31,8 @@ export const PLACES = {
  * Studio環境でのテレポート先座標
  */
 export const DEBUG_WARP_POS: Partial<Record<PlaceKey, Vector3>> = {
-  Lobby: new Vector3(0, 5, 0),
-  EnemyArea_Lv1: new Vector3(-100, 0.5, -250),
-  EnemyArea_Lv2: new Vector3(50, 0.5, -250),
-  EnemyArea_Lv3: new Vector3(200, 0.5, -250),
+  Lobby: new Vector3(0, 5, 0), // ロビー
+  EnemyArea_Lv1: new Vector3(-100, 0.5, -250), // 敵エリア_レベル1
+  EnemyArea_Lv2: new Vector3(50, 0.5, -250), // 敵エリア_レベル2
+  EnemyArea_Lv3: new Vector3(200, 0.5, -250), // 敵エリア_レベル3
 } as const;

@@ -2,21 +2,22 @@
 // プレイヤーのデバイスで実行される初期化処理
 
 import { Players } from '@rbxts/services';
+import { logger } from 'shared/utils/logger';
 import { waitSeconds } from 'shared/utils/time';
 import { startPlayerAttackController } from './features/player/combat/PlayerAttackController';
 
 // ゲーム初期化
 async function initialize(): Promise<void> {
-  print(`[Client] ${Players.LocalPlayer.Name} がゲームに参加しました`);
+  logger.info('Client', `${Players.LocalPlayer.Name} がゲームに参加しました`);
 
-  print('[Client] 入力ハンドラを設定しました');
+  logger.info('Client', '入力ハンドラを設定しました');
 
   startPlayerAttackController();
 
   // 少し待機（UIのロードなどをシミュレート）
   await waitSeconds(0.5);
 
-  print('[Client] クライアント初期化完了');
+  logger.info('Client', 'クライアント初期化完了');
 }
 
 initialize();

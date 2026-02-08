@@ -1,38 +1,41 @@
 import { ReplicatedStorage } from '@rbxts/services';
+import { Result } from 'shared/types/result';
 import type { WeaponConfig } from 'shared/types/weapon';
+import { logger } from 'shared/utils/logger';
 import { tryGetWeaponIdFromTool } from 'shared/utils/weapons';
 import { REMOTES, WEAPON_CATALOG } from '../../../../shared/constants';
+import { BaseService } from '../../../core/Service';
 import {
   applyDamageToEnemy,
   finalizeEnemyDeath,
-} from '../../combat/DamageService';
-import { detectSwordEnemiesByBox } from '../../combat/MeleeHitDetectionService';
+} from '../../combat/DamageUtils';
+import { detectSwordEnemiesByBox } from '../../combat/MeleeHitDetectionUtils';
 
-export class PlayerMeleeAttackService {
-  // デバッグログの出力を切り替える
-  private static readonly DEBUG = true;
-
+export class PlayerMeleeAttackService extends BaseService {
   // サーバ側クールダウン管理
-  private readonly lastAttackAt = new Map<number, number>();
+  private readonly _lastAttackAt = new Map<number, number>();
 
   /**
    * 攻撃ウィンドウ制御用トークン
    * - 同一プレイヤーが次の攻撃を開始したらトークンを更新し、古い判定ループを停止させる
    */
-  private readonly swingToken = new Map<number, number>();
+  private readonly _swingToken = new Map<number, number>();
+
+  constructor() {
+    super('PlayerMeleeAttack');
+  }
 
   /**
    * サーバ起動時に RemoteEvent を用意し、攻撃リクエストを受け付ける
    */
   public start(): void {
-    const remote = this.getOrCreateMeleeAttackRemote();
+    super.start();
+    const remote = this._getOrCreateMeleeAttackRemote();
 
     // Remote は誰でも叩ける前提なので、サーバ側で必ず検証して処理する
     remote.OnServerEvent.Connect((player) => {
-      if (PlayerMeleeAttackService.DEBUG) {
-        print(`[MeleeAttack] from ${player.Name}`);
-      }
-      this.onMeleeAttack(player);
+      logger.debug('PlayerMeleeAttack', `${player.Name} から攻撃リクエスト`);
+      this._onMeleeAttack(player);
     });
   }
 
@@ -41,7 +44,7 @@ export class PlayerMeleeAttackService {
    * - 既存があれば再利用
    * - フォルダが無ければ作成
    */
-  private getOrCreateMeleeAttackRemote(): RemoteEvent {
+  private _getOrCreateMeleeAttackRemote(): RemoteEvent {
     let folder = ReplicatedStorage.FindFirstChild(REMOTES.FOLDER_NAME);
     if (!folder) {
       folder = new Instance('Folder');
@@ -65,7 +68,7 @@ export class PlayerMeleeAttackService {
    * - サーバ側クールダウンを検証
    * - 有効フレーム中の当たり判定ループ（HitWindow）を開始
    */
-  private onMeleeAttack(player: Player): void {
+  private _onMeleeAttack(player: Player): void {
     const char = player.Character;
     if (!char) return;
 
@@ -86,19 +89,17 @@ export class PlayerMeleeAttackService {
 
     // サーバ側クールダウン検証
     const now = os.clock();
-    const last = this.lastAttackAt.get(player.UserId);
+    const last = this._lastAttackAt.get(player.UserId);
     if (last !== undefined && now - last < weapon.cooldownSec) {
       // 連打抑止（クライアント改造対策）
       return;
     }
-    this.lastAttackAt.set(player.UserId, now);
+    this._lastAttackAt.set(player.UserId, now);
 
-    if (PlayerMeleeAttackService.DEBUG) {
-      print(`equipped tool: ${tool.Name}`);
-    }
+    logger.debug('PlayerMeleeAttack', `装備中のツール: ${tool.Name}`);
 
     // 有効フレーム中だけ当たり判定を出す（自然さを保ちつつ当たりやすくする）
-    this.startHitWindow(player, char, tool, weapon);
+    this._startHitWindow(player, char, tool, weapon);
   }
 
   /**
@@ -107,15 +108,15 @@ export class PlayerMeleeAttackService {
    * - hitEndSec:   攻撃開始（Remote受信）から何秒後に判定終了するか
    * - hitSampleIntervalSec: サンプリング間隔（短いほど当たりやすいが負荷は増える）
    */
-  private startHitWindow(
+  private _startHitWindow(
     player: Player,
     char: Model,
     tool: Tool,
     weapon: WeaponConfig,
   ): void {
     // 新しい攻撃が開始されるたびにトークンを更新
-    const token = (this.swingToken.get(player.UserId) ?? 0) + 1;
-    this.swingToken.set(player.UserId, token);
+    const token = (this._swingToken.get(player.UserId) ?? 0) + 1;
+    this._swingToken.set(player.UserId, token);
 
     // 有効フレームの終了時刻（絶対時刻）
     const endAt = os.clock() + weapon.hitEndSec;
@@ -126,7 +127,7 @@ export class PlayerMeleeAttackService {
     // hitStartSec まで待ってから判定ループを開始する（構え中に当たる不自然さを防ぐ）
     task.delay(weapon.hitStartSec, () => {
       // 途中で次の攻撃が始まっていたら、このウィンドウは中止
-      if (this.swingToken.get(player.UserId) !== token) return;
+      if (this._swingToken.get(player.UserId) !== token) return;
 
       // 有効フレーム中、一定間隔で繰り返し判定
       while (os.clock() < endAt) {
@@ -141,7 +142,7 @@ export class PlayerMeleeAttackService {
         if (equipped !== tool) break;
 
         // トークンが更新されていたら停止（次の攻撃が開始されている）
-        if (this.swingToken.get(player.UserId) !== token) break;
+        if (this._swingToken.get(player.UserId) !== token) break;
 
         // --- 空間クエリ：剣が当たった敵を取得 ---
         const hit = detectSwordEnemiesByBox(
@@ -151,11 +152,10 @@ export class PlayerMeleeAttackService {
           weapon.maxHitsPerSwing,
         );
 
-        if (PlayerMeleeAttackService.DEBUG) {
-          print(
-            `[HitDetect] enemies=${hit.enemies.size()} (max=${weapon.maxHitsPerSwing})`,
-          );
-        }
+        logger.debug(
+          'PlayerMeleeAttack',
+          `ヒット判定: enemies=${hit.enemies.size()} (max=${weapon.maxHitsPerSwing})`,
+        );
 
         // 敵にダメージ適用（最大 maxHitsPerSwing まで）
         for (const enemy of hit.enemies) {
@@ -165,19 +165,21 @@ export class PlayerMeleeAttackService {
 
           const result = applyDamageToEnemy(enemy, weapon.damage);
 
-          if (PlayerMeleeAttackService.DEBUG) {
-            if (result.ok) {
-              print(
-                `[Damage] enemy=${enemy.Name} killed=${tostring(result.killed)} damage=${weapon.damage}`,
-              );
-            } else {
-              print(`[Damage] enemy=${enemy.Name} NG reason=${result.reason}`);
-            }
-          }
+          if (Result.isOk(result)) {
+            logger.debug(
+              'PlayerMeleeAttack',
+              `ダメージ適用: enemy=${enemy.Name} killed=${tostring(result.value.killed)} damage=${weapon.damage}`,
+            );
 
-          // killed なら死亡後処理
-          if (result.ok && result.killed) {
-            finalizeEnemyDeath(enemy);
+            // killed なら死亡後処理
+            if (result.value.killed) {
+              finalizeEnemyDeath(enemy);
+            }
+          } else {
+            logger.debug(
+              'PlayerMeleeAttack',
+              `ダメージ失敗: enemy=${enemy.Name} reason=${result.error}`,
+            );
           }
 
           // 上限に達したらこのスイングの判定を終了

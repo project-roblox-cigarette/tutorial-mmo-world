@@ -1,21 +1,34 @@
+/**
+ * ダメージ処理ユーティリティ
+ * - 敵へのダメージ適用
+ * - 死亡処理
+ */
+
 import { CollectionService } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
 import type { DamageApplyResult } from 'shared/types/combat';
+import { Result } from 'shared/types/result';
 
+/**
+ * 敵にダメージを適用
+ * @param enemy 敵のモデル
+ * @param amount ダメージ量
+ * @returns ダメージ適用結果（成功/失敗、撃破フラグ）
+ */
 export function applyDamageToEnemy(
   enemy: Model,
   amount: number,
 ): DamageApplyResult {
   //
-  if (!enemy || !enemy.Parent) return { ok: false, reason: 'NO_TARGET' };
+  if (!enemy || !enemy.Parent) return Result.err('NO_TARGET');
 
   // Enemyタグがついているか確認。
   if (!CollectionService.HasTag(enemy, TAGS.ENEMY))
-    return { ok: false, reason: 'NOT_ENEMY' };
+    return Result.err('NOT_ENEMY');
 
   // 二重処理防止
   if (enemy.GetAttribute(ATTRS.DEAD) === true)
-    return { ok: false, reason: 'ALREADY_DEAD' };
+    return Result.err('ALREADY_DEAD');
 
   // Humanoid方式
   const humanoid = enemy.FindFirstChildWhichIsA('Humanoid', true);
@@ -24,9 +37,9 @@ export function applyDamageToEnemy(
 
     if (humanoid.Health <= 0) {
       enemy.SetAttribute(ATTRS.DEAD, true);
-      return { ok: true, killed: true };
+      return Result.ok({ killed: true });
     }
-    return { ok: true, killed: false };
+    return Result.ok({ killed: false });
   }
 
   // Attrubute方式
@@ -37,16 +50,17 @@ export function applyDamageToEnemy(
 
     if (newHP <= 0) {
       enemy.SetAttribute(ATTRS.DEAD, true);
-      return { ok: true, killed: true };
+      return Result.ok({ killed: true });
     }
-    return { ok: true, killed: false };
+    return Result.ok({ killed: false });
   }
 
-  return { ok: false, reason: 'NO_HEALTH_COMPONENT' };
+  return Result.err('NO_HEALTH_COMPONENT');
 }
 
 /**
  * 死亡確定後の後処理
+ * @param enemy 敵のモデル
  */
 export function finalizeEnemyDeath(enemy: Model): void {
   if (!enemy || !enemy.Parent) return;

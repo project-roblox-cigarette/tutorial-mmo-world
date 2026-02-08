@@ -1,9 +1,18 @@
+/**
+ * 近接攻撃のヒット判定ユーティリティ
+ * - ボックスベースの空間クエリ
+ * - 剣の刃に沿った判定範囲の生成
+ */
+
 import { CollectionService, Workspace } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
 import type { HitDetectionResult } from 'shared/types/combat';
+import { logger } from 'shared/utils/logger';
 
 /**
  * 判定ボックスのデバッグ表示
+ * @param cf ボックスの位置と向き
+ * @param size ボックスのサイズ
  */
 function debugDrawBox(cf: CFrame, size: Vector3) {
   const p = new Instance('Part');
@@ -20,6 +29,14 @@ function debugDrawBox(cf: CFrame, size: Vector3) {
   task.delay(0.15, () => p.Destroy());
 }
 
+/**
+ * 剣の範囲内の敵をボックス判定で検出
+ * @param attackkerChar 攻撃者のキャラクター
+ * @param swordTool 剣のToolオブジェクト
+ * @param thickness 判定ボックスの厚み
+ * @param maxHits 最大ヒット数
+ * @returns ヒットした敵のリスト
+ */
 export function detectSwordEnemiesByBox(
   attackkerChar: Model,
   swordTool: Tool,
@@ -78,6 +95,10 @@ export function detectSwordEnemiesByBox(
 
     if (enemySet.size() >= maxHits) break;
   }
-  print(`[HitDetect] parts=${parts.size()} enemies=${enemySet.size()}`);
+
+  logger.debug(
+    'HitDetect',
+    `判定結果: parts=${parts.size()} enemies=${enemySet.size()}`,
+  );
   return { enemies: [...enemySet] };
 }

@@ -1,5 +1,7 @@
 import { CollectionService, Players, RunService } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
+import { logger } from 'shared/utils/logger';
+import { BaseService } from '../../../core/Service';
 
 function getHumanoid(model: Model): Humanoid | undefined {
   return model.FindFirstChildOfClass('Humanoid');
@@ -44,38 +46,44 @@ function pickNearestPlayer(
   return bastChar;
 }
 
-export class EnemyChaseSystem {
-  private acc = 0;
+export class EnemyChaseSystem extends BaseService {
+  private _acc = 0;
+
+  constructor() {
+    super('EnemyChase');
+  }
 
   start() {
+    super.start();
     // 追加観測：タグ付与された瞬間
     CollectionService.GetInstanceAddedSignal(TAGS.ENEMY).Connect((inst) => {
-      print(
-        `[Chase][DBG] Enemy tagged: class=${inst.ClassName} name=${inst.GetFullName()}`,
+      logger.debug(
+        'EnemyChase',
+        `敵にタグ付与: class=${inst.ClassName} name=${inst.GetFullName()}`,
       );
     });
 
     // （任意）外れた瞬間も
     CollectionService.GetInstanceRemovedSignal(TAGS.ENEMY).Connect((inst) => {
-      print(`[Chase][DBG] Enemy untagged: ${inst.GetFullName()}`);
+      logger.debug('EnemyChase', `敵のタグ削除: ${inst.GetFullName()}`);
     });
 
     const conn = RunService.Heartbeat.Connect((dt) => {
-      this.acc += dt;
+      this._acc += dt;
 
-      if (this.acc < 0.1) return;
-      this.acc = 0;
+      if (this._acc < 0.1) return;
+      this._acc = 0;
 
       const tagged = CollectionService.GetTagged(TAGS.ENEMY);
       for (const inst of tagged) {
         if (!inst.IsA('Model')) continue;
-        this.updateEnemy(inst);
+        this._updateEnemy(inst);
       }
     });
     return () => conn.Disconnect();
   }
 
-  private updateEnemy(enemy: Model) {
+  private _updateEnemy(enemy: Model) {
     const hum = getHumanoid(enemy);
     const root = getRoot(enemy);
     if (!hum || !root) return;

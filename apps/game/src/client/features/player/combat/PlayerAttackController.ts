@@ -10,6 +10,7 @@ import {
   REMOTES,
 } from 'shared/constants';
 import type { MeleeAttackRequest } from 'shared/types/combat';
+import { logger } from 'shared/utils/logger';
 
 /**
  * Toolが剣かどうかを判定する。
@@ -100,7 +101,7 @@ export function startPlayerAttackController() {
         debugWeaponName: tool?.Name,
       };
 
-      print('[Attack] FireServer MeleeAttack');
+      logger.debug('PlayerAttack', 'サーバーに近接攻撃をリクエスト');
       meleeRemote.FireServer(req);
     };
 

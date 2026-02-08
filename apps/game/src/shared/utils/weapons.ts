@@ -5,7 +5,9 @@
 import type { WeaponId } from '../types/weapon';
 
 /**
- * Tool から WeaponId を取得する。
+ * ToolからWeaponIdを取得
+ * @param tool 武器のToolオブジェクト
+ * @returns WeaponId、見つからない場合はundefined
  */
 export function tryGetWeaponIdFromTool(tool: Tool): WeaponId | undefined {
   const name = tool.Name;

@@ -3,6 +3,7 @@
 
 import { CollectionService } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
+import { logger } from 'shared/utils/logger';
 import { assertIsPlaceKey } from 'shared/utils/type-guards';
 import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
@@ -18,15 +19,17 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
   const conn = prompt.Triggered.Connect((Player) => {
     const placeName = prompt.GetAttribute(ATTRS.DESTINATION);
     if (!assertIsPlaceKey(placeName)) {
-      warn(
-        `[Teleport] 定義されていない目的地： prompt=${prompt.GetFullName()} placeName=${tostring(
-          placeName,
-        )}`,
+      logger.warn(
+        'Teleport',
+        `定義されていない目的地: prompt=${prompt.GetFullName()} placeName=${tostring(placeName)}`,
       );
       return;
     }
 
-    print(`[Server] ${Player.Name} が ${placeName} にテレポートしました`);
+    logger.info(
+      'Teleport',
+      `${Player.Name} が ${placeName} にテレポートしました`,
+    );
     const result = requestTeleport({
       player: Player,
       destination: placeName,
@@ -53,7 +56,10 @@ function applyBindTeleportPrompt(inst: Instance) {
   if (inst.IsA('ProximityPrompt')) {
     bindTeleportPrompt(inst);
   } else {
-    warn(`[Teleport] ProximityPromptタグがありません。: ${inst.GetFullName()}`);
+    logger.warn(
+      'Teleport',
+      `ProximityPromptタグがありません: ${inst.GetFullName()}`,
+    );
   }
 }
 
@@ -62,11 +68,12 @@ function applyBindTeleportPrompt(inst: Instance) {
  */
 export function initTeleportHandler() {
   const tagged = CollectionService.GetTagged(TAGS.TELEPORT_PROMPT);
-  print(`[Teleport] Teleportタグを ${tagged.size()} 件検出`);
+  logger.info('Teleport', `Teleportタグを ${tagged.size()} 件検出`);
 
   for (const inst of tagged) {
-    print(
-      `[Teleport] Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
+    logger.debug(
+      'Teleport',
+      `Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
     );
     applyBindTeleportPrompt(inst);
   }

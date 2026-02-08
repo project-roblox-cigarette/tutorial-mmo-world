@@ -1,8 +1,10 @@
 import { ServerStorage, Workspace } from '@rbxts/services';
 import { ATTRS } from 'shared/constants';
 import type { AreaLevel, AreaSpawnConfig } from 'shared/types/enemy';
-import { getAreaSpawnConfig } from 'shared/utils/enemys';
+import { getAreaSpawnConfig } from 'shared/utils/enemies';
+import { logger } from 'shared/utils/logger';
 import { toAreaLevel } from 'shared/utils/type-guards';
+import { BaseService } from '../../core/Service';
 import { resolveEnemyAreaByPlaceKey } from './spawn/AreaResolver';
 import { getSpawnCFrameInArea } from './spawn/SpawnPosition';
 
@@ -127,7 +129,10 @@ class PlayerSpawner {
 
     if (!spawnable || !spawnable.IsA('Folder')) {
       // フォルダがない時
-      warn(`[EnemySpawn] ServerStorage/Spawnables フォルダーがありません`);
+      logger.warn(
+        'EnemySpawn',
+        'ServerStorage/Spawnables フォルダーがありません',
+      );
       return false;
     }
 
@@ -139,8 +144,9 @@ class PlayerSpawner {
         .GetChildren()
         .map((c) => c.Name)
         .join(', ');
-      warn(
-        `[EnemySpawn] Spawn template not found or not Model: ` +
+      logger.warn(
+        'EnemySpawn',
+        `スポーンテンプレートが見つからないかModelではありません: ` +
           `requested="${templateName}" actual="${enemyTemplateModel ? enemyTemplateModel.ClassName : 'nil'}" ` +
           `available=[${available}]`,
       );
@@ -203,21 +209,26 @@ class PlayerSpawner {
 }
 
 // 敵スポーン管理サービス
-export class EnemySpawnService {
+export class EnemySpawnService extends BaseService {
   private readonly _enemiesFolder = getOrCreateFolder(Workspace, 'Enemies');
   private readonly _spawners = new Map<number, PlayerSpawner>(); // userId -> spawner
+
+  constructor() {
+    super('EnemySpawn');
+  }
 
   // プレイヤーのスポーン状態を更新
   public updateSpawnStateByPlayer(player: Player, placeKey: string): void {
     const spawner = this._spawners.get(player.UserId);
     if (!spawner) {
-      warn(`[EnemySpawnService] spawner missing for ${player.Name}`);
+      logger.warn('EnemySpawn', `${player.Name} のスポーナーがありません`);
       return;
     }
 
     const area = resolveEnemyAreaByPlaceKey(placeKey);
-    print(
-      `[EnemySpawnService] updateSpawnState player=${player.Name} area=${area ? area.GetFullName() : 'none'}`,
+    logger.debug(
+      'EnemySpawn',
+      `スポーン状態を更新: player=${player.Name} area=${area ? area.GetFullName() : 'none'}`,
     );
 
     if (!area) {
@@ -236,14 +247,16 @@ export class EnemySpawnService {
 
     const resolved = resolveSpawnConfigFromArea(area);
     if (resolved) {
-      print(
-        `[EnemySpawnService] Start spawning player=${player.Name} areaId=${resolved.areaId} areaLevel=${resolved.areaLevel} template=${resolved.spawnConfig.templateName}`,
+      logger.info(
+        'EnemySpawn',
+        `スポーン開始: player=${player.Name} areaId=${resolved.areaId} areaLevel=${resolved.areaLevel} template=${resolved.spawnConfig.templateName}`,
       );
     } else {
       const areaId = area.GetAttribute(ATTRS.AREA_ID);
       const level = area.GetAttribute(ATTRS.AREA_LEVEL);
-      print(
-        `[EnemySpawnService] Start spawning player=${player.Name} area=${areaId} level=${level} (config unresolved)`,
+      logger.warn(
+        'EnemySpawn',
+        `未解決の設定でスポーン開始: player=${player.Name} area=${areaId} level=${level}`,
       );
     }
   }
