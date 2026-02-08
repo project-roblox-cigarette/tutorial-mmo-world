@@ -1,6 +1,6 @@
 import { ReplicatedStorage } from '@rbxts/services';
-import { tryGetWeaponIdFromTool } from 'shared/config/WeaponCatalog';
 import type { WeaponConfig } from 'shared/types/weapon';
+import { tryGetWeaponIdFromTool } from 'shared/utils/weapons';
 import { REMOTES, WEAPON_CATALOG } from '../../../../shared/constants';
 import {
   applyDamageToEnemy,

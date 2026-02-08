@@ -3,7 +3,7 @@
 
 import { CollectionService } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
-import { assertIsPlaceKey } from 'shared/Places';
+import { assertIsPlaceKey } from 'shared/utils/type-guards';
 import { enemySpawnService } from '../../features/enemy/EnemySpawnService';
 import { requestTeleport } from '../../services/TeleportService';
 

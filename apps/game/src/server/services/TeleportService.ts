@@ -3,12 +3,12 @@
 
 import { RunService, TeleportService } from '@rbxts/services';
 import { DEBUG_WARP_POS } from 'shared/constants';
-import { getPlaceId } from 'shared/Places';
 import type {
   PlaceKey,
   TeleportRequest,
   TeleportResponse,
 } from 'shared/types/teleport';
+import { getPlaceId } from 'shared/utils/places';
 
 /**
  * 呼び出し元（Handler）が分岐できるように、処理結果を型で表現する。

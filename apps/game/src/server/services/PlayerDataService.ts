@@ -1,7 +1,7 @@
 // プレイヤーデータ管理サービス
 
 import type { PlayerData } from 'shared/types/player';
-import { getCurrentTimestamp } from 'shared/utils';
+import { getCurrentTimestamp } from 'shared/utils/time';
 
 // プレイヤーデータのメモリキャッシュ
 const playerDataCache = new Map<number, PlayerData>();

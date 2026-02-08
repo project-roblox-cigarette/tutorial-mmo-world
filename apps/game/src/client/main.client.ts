@@ -2,7 +2,7 @@
 // プレイヤーのデバイスで実行される初期化処理
 
 import { Players } from '@rbxts/services';
-import { waitSeconds } from 'shared/utils';
+import { waitSeconds } from 'shared/utils/time';
 import { startPlayerAttackController } from './features/player/combat/PlayerAttackController';
 
 // ゲーム初期化

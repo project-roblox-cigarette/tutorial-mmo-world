@@ -1,6 +1,6 @@
 import { ENEMY_SPAWN_CONFIG } from '../constants';
 import type { AreaId, AreaSpawnConfig } from '../types/enemy';
-import { toAreaLevel } from '../utils';
+import { toAreaLevel } from './type-guards';
 
 export function getAreaSpawnConfig(
   areaId: AreaId,

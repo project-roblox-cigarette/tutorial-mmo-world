@@ -1,7 +1,7 @@
 import { CollectionService } from '@rbxts/services';
 import { ATTRS, TAGS } from 'shared/constants';
 import type { AreaContext, AreaId, AreaLevel } from 'shared/types/enemy';
-import { toAreaLevel } from 'shared/utils';
+import { toAreaLevel } from 'shared/utils/type-guards';
 
 export function resolveEnemyAreaByPlaceKey(
   placeKey: string,

@@ -5,8 +5,8 @@ import {
   TeleportService,
 } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
-import { getPlaceId } from 'shared/Places';
 import type { PlaceKey } from 'shared/types/teleport';
+import { getPlaceId } from 'shared/utils/places';
 import { enemySpawnService } from '../EnemySpawnService';
 
 export class EnemyContactAttackService {

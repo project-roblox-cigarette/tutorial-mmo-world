@@ -1,3 +1,7 @@
+/**
+ * 武器関連のユーティリティ関数
+ */
+
 import type { WeaponId } from '../types/weapon';
 
 /**
