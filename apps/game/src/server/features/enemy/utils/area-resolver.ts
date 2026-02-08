@@ -5,7 +5,7 @@
  */
 
 import { CollectionService } from '@rbxts/services';
-import { ATTRS, TAGS } from 'shared/constants';
+import { ATTRIBUTES, TAGS } from 'shared/constants';
 import type { AreaContext, AreaId, AreaLevel } from 'shared/types/enemy';
 import { toAreaLevel } from 'shared/utils/type-guards';
 
@@ -19,9 +19,13 @@ export function resolveEnemyAreaByPlaceKey(
 ): BasePart | undefined {
   for (const inst of CollectionService.GetTagged(TAGS.ENEMY_AREA)) {
     if (!inst.IsA('BasePart')) continue;
-    const key = inst.GetAttribute(ATTRS.PLACE_KEY);
-    if (typeOf(key) === 'string' && key === placeKey) return inst;
+
+    const key = inst.GetAttribute(ATTRIBUTES.PlaceKey);
+    if (typeIs(key, 'string') && key === placeKey) {
+      return inst;
+    }
   }
+
   return undefined;
 }
 
@@ -29,8 +33,11 @@ export function resolveEnemyAreaByPlaceKey(
  * エリアIDを解決（Attributeから取得、なければName）
  */
 function resolveAreaId(area: Instance): AreaId {
-  const attribute = area.GetAttribute(ATTRS.AREA_ID);
-  if (typeIs(attribute, 'string') && attribute !== '') return attribute;
+  const getAttribute = area.GetAttribute(ATTRIBUTES.AreaId);
+  if (typeIs(getAttribute, 'string') && getAttribute !== '') {
+    return getAttribute;
+  }
+
   return area.Name;
 }
 
@@ -38,11 +45,14 @@ function resolveAreaId(area: Instance): AreaId {
  * エリアレベルを解決（Attributeから取得、なければ1）
  */
 function resolveAreaLevel(area: Instance): AreaLevel {
-  const attribute = area.GetAttribute(ATTRS.AREA_LEVEL);
-  if (typeIs(attribute, 'number')) {
-    const lv = toAreaLevel(attribute);
-    if (lv !== undefined) return lv;
+  const getAttribute = area.GetAttribute(ATTRIBUTES.AreaLevel);
+  if (typeIs(getAttribute, 'number')) {
+    const areaLevel = toAreaLevel(getAttribute);
+    if (areaLevel !== undefined) {
+      return areaLevel;
+    }
   }
+
   return 1;
 }
 
@@ -52,9 +62,11 @@ function resolveAreaLevel(area: Instance): AreaLevel {
  */
 export function resolveAreas(): AreaContext[] {
   const areas = CollectionService.GetTagged(TAGS.ENEMY_AREA);
-  return areas.map((area) => ({
-    area: area,
-    areaId: resolveAreaId(area),
-    level: resolveAreaLevel(area),
-  }));
+  return areas.map(
+    (area): AreaContext => ({
+      Area: area,
+      AreaId: resolveAreaId(area),
+      Level: resolveAreaLevel(area),
+    }),
+  );
 }

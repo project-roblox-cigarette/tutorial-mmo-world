@@ -18,7 +18,7 @@ export type DamageError =
  */
 export interface DamageSuccess {
   /** 敵を撃破したかどうか */
-  killed: boolean;
+  Killed: boolean;
 }
 
 /**
@@ -31,7 +31,7 @@ export type DamageApplyResult = Result<DamageSuccess, DamageError>;
  */
 export type HitDetectionResult = {
   /** ヒットした敵のリスト */
-  enemies: Model[];
+  Enemies: Model[];
 };
 
 /**
@@ -40,5 +40,5 @@ export type HitDetectionResult = {
  */
 export type MeleeAttackRequest = {
   /** デバッグ用の武器名（オプション） */
-  debugWeaponName?: string;
+  DebugWeaponName?: string;
 };

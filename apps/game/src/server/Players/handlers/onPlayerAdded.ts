@@ -15,6 +15,6 @@ export function onPlayerAdded(player: Player): void {
 
   logger.info(
     'PlayerJoin',
-    `プレイヤーデータを初期化: ${data.displayName} (レベル: ${data.level})`,
+    `プレイヤーデータを初期化: ${data.DisplayName} (レベル: ${data.Level})`,
   );
 }

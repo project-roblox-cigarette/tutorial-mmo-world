@@ -12,19 +12,19 @@ export type WeaponId = 'Sword_Lv0' | 'Sword_Lv1' | 'Sword_Lv2' | 'Sword_Lv3';
  */
 export type WeaponConfig = {
   /** 武器ID */
-  id: WeaponId;
+  Id: WeaponId;
   /** ダメージ量 */
-  damage: number;
+  Damage: number;
   /** 判定ボックスの厚み */
-  hitboxThickness: number;
+  HitboxThickness: number;
   /** 1回の振りで当たる最大敵数 */
-  maxHitsPerSwing: number;
+  MaxHitsPerSwing: number;
   /** 攻撃のクールダウン時間（秒） */
-  cooldownSec: number;
+  CooldownSec: number;
   /** 判定開始タイミング（秒） */
-  hitStartSec: number;
+  HitStartSec: number;
   /** 判定終了タイミング（秒） */
-  hitEndSec: number;
+  HitEndSec: number;
   /** 判定サンプリング間隔（秒） */
-  hitSampleIntervalSec: number;
+  HitSampleIntervalSec: number;
 };

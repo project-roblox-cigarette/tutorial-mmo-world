@@ -3,8 +3,8 @@
  * - 成功した値(Ok)またはエラー(Err)のどちらかを表現
  */
 export type Result<T, E = string> =
-  | { ok: true; value: T }
-  | { ok: false; error: E };
+  | { Success: true; Value: T }
+  | { Success: false; Error: E };
 
 /**
  * Result型のヘルパー関数を提供する名前空間
@@ -13,52 +13,59 @@ export namespace Result {
   /**
    * 成功したResultを作成
    */
-  export function ok<T, E = string>(value: T): Result<T, E> {
-    return { ok: true, value };
+  export function success<T, E = string>(value: T): Result<T, E> {
+    return {
+      Success: true,
+      Value: value,
+    };
   }
 
   /**
    * エラーのResultを作成
    */
-  export function err<T, E = string>(errorValue: E): Result<T, E> {
-    return { ok: false, error: errorValue };
+  export function failure<T, E = string>(errorValue: E): Result<T, E> {
+    return {
+      Success: false,
+      Error: errorValue,
+    };
   }
 
   /**
-   * ResultがOkかどうかを判定する型ガード
+   * Resultが成功かどうかを判定する型ガード
    */
-  export function isOk<T, E>(
+  export function isSuccess<T, E>(
     result: Result<T, E>,
-  ): result is { ok: true; value: T } {
-    return result.ok === true;
+  ): result is { Success: true; Value: T } {
+    return result.Success === true;
   }
 
   /**
-   * ResultがErrかどうかを判定する型ガード
+   * Resultが失敗かどうかを判定する型ガード
    */
-  export function isErr<T, E>(
+  export function isFailure<T, E>(
     result: Result<T, E>,
-  ): result is { ok: false; error: E } {
-    return result.ok === false;
+  ): result is { Success: false; Error: E } {
+    return result.Success === false;
   }
 
   /**
    * Resultをアンラップして値を返すか、エラーをthrow
-   * - 注意して使用: isOk/isErrでのパターンマッチングを推奨
+   * - 注意して使用: isSuccess/isFailureでのパターンマッチングを推奨
    */
   export function unwrap<T, E>(result: Result<T, E>): T {
-    if (result.ok) {
-      return result.value;
+    if (result.Success) {
+      return result.Value;
     }
-    throw `Attempted to unwrap an Err result: ${result.error}`;
+
+    throw `Attempted to unwrap an Failure result: ${result.Error}`;
   }
 
   /**
    * Resultをアンラップして値を返すか、デフォルト値を返す
    */
   export function unwrapOr<T, E>(result: Result<T, E>, defaultValue: T): T {
-    if (result.ok) {
-      return result.value;
+    if (result.Success) {
+      return result.Value;
     }
     return defaultValue;
   }
@@ -70,8 +77,8 @@ export namespace Result {
     result: Result<T, E>,
     fn: (value: T) => U,
   ): Result<U, E> {
-    if (result.ok) {
-      return ok(fn(result.value));
+    if (result.Success) {
+      return success(fn(result.Value));
     }
     return result;
   }
@@ -83,8 +90,8 @@ export namespace Result {
     result: Result<T, E>,
     fn: (errorValue: E) => F,
   ): Result<T, F> {
-    if (!result.ok) {
-      return err(fn(result.error));
+    if (!result.Success) {
+      return failure(fn(result.Error));
     }
     return result;
   }
@@ -96,8 +103,8 @@ export namespace Result {
     result: Result<T, E>,
     fn: (value: T) => Result<U, E>,
   ): Result<U, E> {
-    if (result.ok) {
-      return fn(result.value);
+    if (result.Success) {
+      return fn(result.Value);
     }
     return result;
   }

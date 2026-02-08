@@ -6,8 +6,8 @@ import type { IService } from './Service';
  * - サービスの集中登録と初期化を提供
  */
 class ServiceRegistryClass {
-  private readonly _services = new Map<string, IService>();
-  private _started = false;
+  private readonly _servicesMap = new Map<string, IService>();
+  private _isStarted = false;
 
   /**
    * サービスを登録
@@ -15,7 +15,7 @@ class ServiceRegistryClass {
    * @param service サービスインスタンス
    */
   public register(name: string, service: IService): void {
-    if (this._started) {
+    if (this._isStarted) {
       logger.warn(
         'ServiceRegistry',
         `startAll() 呼び出し後はサービス '${name}' を登録できません`,
@@ -23,14 +23,14 @@ class ServiceRegistryClass {
       return;
     }
 
-    if (this._services.has(name)) {
+    if (this._servicesMap.has(name)) {
       logger.warn(
         'ServiceRegistry',
         `サービス '${name}' は既に登録済みです。上書きします`,
       );
     }
 
-    this._services.set(name, service);
+    this._servicesMap.set(name, service);
     logger.debug('ServiceRegistry', `サービスを登録: ${name}`);
   }
 
@@ -40,7 +40,7 @@ class ServiceRegistryClass {
    * @returns サービスインスタンス、見つからない場合はundefined
    */
   public get<T extends IService>(name: string): T | undefined {
-    return this._services.get(name) as T | undefined;
+    return this._servicesMap.get(name) as T | undefined;
   }
 
   /**
@@ -48,20 +48,20 @@ class ServiceRegistryClass {
    * - 登録順にサービスが起動される
    */
   public startAll(): void {
-    if (this._started) {
+    if (this._isStarted) {
       logger.warn('ServiceRegistry', 'サービスは既に起動済みです');
       return;
     }
 
     logger.info(
       'ServiceRegistry',
-      `${this._services.size()} 個のサービスを起動中...`,
+      `${this._servicesMap.size()} 個のサービスを起動中...`,
     );
 
     let successCount = 0;
     let errorCount = 0;
 
-    for (const [name, service] of this._services) {
+    for (const [name, service] of this._servicesMap) {
       const [ok, err] = pcall(() => {
         service.start();
       });
@@ -78,7 +78,7 @@ class ServiceRegistryClass {
       }
     }
 
-    this._started = true;
+    this._isStarted = true;
     logger.info(
       'ServiceRegistry',
       `サービス初期化完了: ${successCount} 成功, ${errorCount} 失敗`,
@@ -90,18 +90,18 @@ class ServiceRegistryClass {
    * - 登録順の逆順にサービスが停止される
    */
   public stopAll(): void {
-    if (!this._started) {
+    if (!this._isStarted) {
       logger.warn('ServiceRegistry', 'サービスはまだ起動していません');
       return;
     }
 
     logger.info(
       'ServiceRegistry',
-      `${this._services.size()} 個のサービスを停止中...`,
+      `${this._servicesMap.size()} 個のサービスを停止中...`,
     );
 
     const entries: Array<[string, IService]> = [];
-    for (const [name, service] of this._services) {
+    for (const [name, service] of this._servicesMap) {
       entries.push([name, service]);
     }
 
@@ -126,7 +126,7 @@ class ServiceRegistryClass {
       }
     }
 
-    this._started = false;
+    this._isStarted = false;
     logger.info('ServiceRegistry', '全てのサービスを停止しました');
   }
 
@@ -135,15 +135,15 @@ class ServiceRegistryClass {
    * - 警告: サービスは停止されません。先にstopAll()を呼び出してください
    */
   public clear(): void {
-    if (this._started) {
+    if (this._isStarted) {
       logger.warn(
         'ServiceRegistry',
         'サービスが実行中の状態でクリアしています',
       );
     }
 
-    this._services.clear();
-    this._started = false;
+    this._servicesMap.clear();
+    this._isStarted = false;
     logger.debug('ServiceRegistry', 'サービスレジストリをクリアしました');
   }
 
@@ -152,7 +152,7 @@ class ServiceRegistryClass {
    */
   public getServiceNames(): string[] {
     const names: string[] = [];
-    for (const [name] of this._services) {
+    for (const [name] of this._servicesMap) {
       names.push(name);
     }
     return names;

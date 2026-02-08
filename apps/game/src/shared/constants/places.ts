@@ -9,20 +9,20 @@ import type { PlaceKey } from '../types/teleport';
  */
 export const PLACES = {
   Lobby: {
-    placeId: 106990103180926, // ロビー
-    displayName: 'Lobby', // ロビー
+    PlaceId: 106990103180926, // ロビー
+    DisplayName: 'Lobby', // ロビー
   },
   EnemyArea_Lv1: {
-    placeId: 124280982303998, // 敵エリア_レベル1
-    displayName: 'EnemyArea - Lv1', // 敵エリア_レベル1
+    PlaceId: 124280982303998, // 敵エリア_レベル1
+    DisplayName: 'EnemyArea - Lv1', // 敵エリア_レベル1
   },
   EnemyArea_Lv2: {
-    placeId: 76297845057406, // 敵エリア_レベル2
-    displayName: 'EnemyArea - Lv2', // 敵エリア_レベル2
+    PlaceId: 76297845057406, // 敵エリア_レベル2
+    DisplayName: 'EnemyArea - Lv2', // 敵エリア_レベル2
   },
   EnemyArea_Lv3: {
-    placeId: 72150023649118, // 敵エリア_レベル3
-    displayName: 'EnemyArea - Lv3', // 敵エリア_レベル3
+    PlaceId: 72150023649118, // 敵エリア_レベル3
+    DisplayName: 'EnemyArea - Lv3', // 敵エリア_レベル3
   },
 } as const;
 

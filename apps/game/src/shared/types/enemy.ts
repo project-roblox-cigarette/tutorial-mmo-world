@@ -13,17 +13,17 @@ export type AreaId = string;
  */
 export type EnemyChaseConfig = {
   /** 移動速度 */
-  speed: number;
+  Speed: number;
   /** 追跡開始範囲 */
-  aggroRange: number;
+  AggroRange: number;
   /** 停止する距離 */
-  stopDistance: number;
+  StopDistance: number;
   /** 追跡更新間隔（秒） */
-  chaseTickSec: number;
+  ChaseTickSec: number;
   /** 追尾遅延時間（秒） */
-  followLagSec: number;
+  FollowLagSec: number;
   /** 停止継続時間（秒） */
-  stopDurationSec: number;
+  StopDurationSec: number;
 };
 
 /**
@@ -31,13 +31,13 @@ export type EnemyChaseConfig = {
  */
 export type AreaSpawnConfig = {
   /** スポーン間隔（秒） */
-  spawnIntervalSec: number;
+  SpawnIntervalSec: number;
   /** プレイヤーごとの最大同時生存数 */
-  maxAlivePerPlayer: number;
+  MaxAlivePerPlayer: number;
   /** 敵テンプレート名 */
-  templateName: string;
+  TemplateName: string;
   /** 追跡設定 */
-  chase: EnemyChaseConfig;
+  Chase: EnemyChaseConfig;
 };
 
 /**
@@ -46,11 +46,11 @@ export type AreaSpawnConfig = {
  */
 export type AreaContext = {
   /** エリアのインスタンス */
-  area: Instance;
+  Area: Instance;
   /** エリアID */
-  areaId: AreaId;
+  AreaId: AreaId;
   /** エリアレベル */
-  level: AreaLevel;
+  Level: AreaLevel;
 };
 
 /**
@@ -58,7 +58,7 @@ export type AreaContext = {
  */
 export type SpawnPositionOptions = {
   /** エリア境界からの余白（スタッド） */
-  paddingStuds?: number;
+  PaddingStuds?: number;
   /** Y軸方向のオフセット（スタッド） */
-  yOffsetStuds?: number;
+  YOffsetStuds?: number;
 };

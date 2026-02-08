@@ -18,11 +18,11 @@ const playerDataCache = new Map<number, PlayerData>();
  */
 export function initializePlayerData(player: Player): PlayerData {
   const data: PlayerData = {
-    userId: player.UserId,
-    displayName: player.DisplayName,
-    joinedAt: getCurrentTimestamp(),
-    score: 0,
-    level: 1,
+    UserId: player.UserId,
+    DisplayName: player.DisplayName,
+    JoinedAt: getCurrentTimestamp(),
+    Score: 0,
+    Level: 1,
   };
 
   playerDataCache.set(player.UserId, data);
@@ -46,17 +46,17 @@ export function getPlayerData(userId: number): PlayerData | undefined {
  */
 export function updatePlayerData(
   userId: number,
-  updates: Partial<Omit<PlayerData, 'userId' | 'joinedAt'>>,
+  updates: Partial<Omit<PlayerData, 'UserId' | 'JoinedAt'>>,
 ): PlayerData | undefined {
   const existing = playerDataCache.get(userId);
   if (!existing) return undefined;
 
-  const updated: PlayerData = {
+  const updatedData: PlayerData = {
     ...existing,
     ...updates,
   };
-  playerDataCache.set(userId, updated);
-  return updated;
+  playerDataCache.set(userId, updatedData);
+  return updatedData;
 }
 
 /**
@@ -73,11 +73,12 @@ export function removePlayerData(userId: number): boolean {
  * @returns 全プレイヤーデータの配列
  */
 export function getAllPlayerData(): PlayerData[] {
-  const result: PlayerData[] = [];
+  const allPlayerData: PlayerData[] = [];
   playerDataCache.forEach((data) => {
-    result.push(data);
+    allPlayerData.push(data);
   });
-  return result;
+
+  return allPlayerData;
 }
 
 /**

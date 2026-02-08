@@ -11,5 +11,5 @@ import type { PlaceKey } from '../types/teleport';
  * @returns PlaceId
  */
 export function getPlaceId(key: PlaceKey): number {
-  return PLACES[key].placeId;
+  return PLACES[key].PlaceId;
 }

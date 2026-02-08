@@ -2,7 +2,7 @@
 // ROBLOX Studio依存の処理はすべてここで行う。
 
 import { CollectionService } from '@rbxts/services';
-import { ATTRS, TAGS } from 'shared/constants';
+import { ATTRIBUTES, TAGS } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { assertIsPlaceKey } from 'shared/utils/type-guards';
 import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
@@ -16,8 +16,8 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
   boundPrompts.add(prompt);
 
   // プレイヤーがProximityPromptをトリガーしたときの処理
-  const conn = prompt.Triggered.Connect((Player) => {
-    const placeName = prompt.GetAttribute(ATTRS.DESTINATION);
+  const connection = prompt.Triggered.Connect((player) => {
+    const placeName = prompt.GetAttribute(ATTRIBUTES.Destination);
     if (!assertIsPlaceKey(placeName)) {
       logger.warn(
         'Teleport',
@@ -28,23 +28,23 @@ function bindTeleportPrompt(prompt: ProximityPrompt) {
 
     logger.info(
       'Teleport',
-      `${Player.Name} が ${placeName} にテレポートしました`,
+      `${player.Name} が ${placeName} にテレポートしました`,
     );
     const result = requestTeleport({
-      player: Player,
-      destination: placeName,
+      Player: player,
+      Destination: placeName,
     });
-    if (!result.status) return;
+    if (!result.Status) return;
 
     // テレポート成功後、敵が生成されるべきか確認する
     task.delay(0.2, () => {
       // テレポート後の処理: 敵スポーンの更新
-      enemySpawnService.updateSpawnStateByPlayer(Player, placeName);
+      enemySpawnService.updateSpawnStateByPlayer(player, placeName);
     });
   });
 
   prompt.Destroying.Connect(() => {
-    conn.Disconnect();
+    connection.Disconnect();
     boundPrompts.delete(prompt);
   });
 }
@@ -67,21 +67,21 @@ function applyBindTeleportPrompt(inst: Instance) {
  * 起動時に既存のタグインスタンスをバインドする
  */
 export function initTeleportHandler() {
-  const tagged = CollectionService.GetTagged(TAGS.TELEPORT_PROMPT);
-  logger.info('Teleport', `Teleportタグを ${tagged.size()} 件検出`);
+  const taggedPrompts = CollectionService.GetTagged(TAGS.TELEPORT_PROMPT);
+  logger.info('Teleport', `Teleportタグを ${taggedPrompts.size()} 件検出`);
 
-  for (const inst of tagged) {
+  for (const prompt of taggedPrompts) {
     logger.debug(
       'Teleport',
-      `Teleportタグ: class=${inst.ClassName} name=${inst.GetFullName()}`,
+      `Teleportタグ: class=${prompt.ClassName} name=${prompt.GetFullName()}`,
     );
-    applyBindTeleportPrompt(inst);
+    applyBindTeleportPrompt(prompt);
   }
 }
 
 // タグ付与イベントの監視を開始
 CollectionService.GetInstanceAddedSignal(TAGS.TELEPORT_PROMPT).Connect(
-  (inst) => {
-    applyBindTeleportPrompt(inst);
+  (prompt) => {
+    applyBindTeleportPrompt(prompt);
   },
 );

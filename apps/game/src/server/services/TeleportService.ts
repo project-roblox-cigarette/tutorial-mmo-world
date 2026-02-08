@@ -17,76 +17,82 @@ import { getPlaceId } from 'shared/utils/places';
  * - status: false → pcallの実行エラー
  */
 
-const successRes = { status: true as const };
-const failureRes = {
-  status: false as const,
-  reason: 'TELEPORT_ERROR' as const,
-  detail: '',
+const successResponse = {
+  Status: true as const,
+};
+const failureResponse = {
+  Status: false as const,
+  Reason: 'TELEPORT_ERROR' as const,
+  Detail: '',
 };
 
 function warpWithinPlace(
   player: Player,
   destination: PlaceKey,
 ): TeleportResponse {
-  const pos = DEBUG_WARP_POS[destination];
-  if (!pos) {
+  const warpPos = DEBUG_WARP_POS[destination];
+  if (!warpPos) {
     return {
-      ...failureRes,
-      detail: 'No debug position defined',
+      ...failureResponse,
+      Detail: 'デバッグ用の座標が定義されていません',
     };
   }
 
   const character = player.Character;
   if (!character) {
     return {
-      ...failureRes,
-      detail: 'Character not found',
+      ...failureResponse,
+      Detail: 'キャラクターが見つかりません',
     };
   }
 
   // 少し上に置いて埋まりを軽減（必要なら調整）
-  const cf = new CFrame(pos.add(new Vector3(0, 5, 0)));
-  character.PivotTo(cf);
+  const cframe = new CFrame(warpPos.add(new Vector3(0, 5, 0)));
+  character.PivotTo(cframe);
 
   // 任意：移動直後の滑りを抑える
-  const hrp = character.FindFirstChild('HumanoidRootPart');
-  if (hrp?.IsA('BasePart')) {
-    hrp.AssemblyLinearVelocity = new Vector3(0, 0, 0);
-    hrp.AssemblyAngularVelocity = new Vector3(0, 0, 0);
+  const getHumanoidRootPart = character.FindFirstChild('HumanoidRootPart');
+  if (getHumanoidRootPart?.IsA('BasePart')) {
+    getHumanoidRootPart.AssemblyLinearVelocity = new Vector3(0, 0, 0);
+    getHumanoidRootPart.AssemblyAngularVelocity = new Vector3(0, 0, 0);
   }
 
-  return successRes;
+  return successResponse;
 }
 
 /**
  * ワープの処理
- * @param req プレイヤーと目的地
- * @returns Teleport の実行成否（成功 or エラー理由 + detail）
+ * @param request プレイヤーと目的地
+ * @returns Teleport の実行成否（成功 or エラー理由 + 詳細）
  */
-export function requestTeleport(req: TeleportRequest): TeleportResponse {
+export function requestTeleport(request: TeleportRequest): TeleportResponse {
   // Studioで確認するときは座標ワープ。
   if (RunService.IsStudio()) {
-    return warpWithinPlace(req.player, req.destination);
+    return warpWithinPlace(request.Player, request.Destination);
   }
 
   // 安全にplaceIdを取得
-  const placeId = getPlaceId(req.destination);
+  const placeId = getPlaceId(request.Destination);
 
   // テレポート実行、pcallで例外対応
   const [success, err] = pcall(() => {
-    TeleportService.TeleportAsync(placeId, [req.player]);
+    TeleportService.TeleportAsync(placeId, [request.Player]);
   });
 
   // 失敗時：エラー内容をログに残し、呼び出し元へ失敗を返す
   if (!success) {
-    const detail = tostring(err);
+    const errorDetail = tostring(err);
     logger.error(
       'Teleport',
-      `テレポート失敗: userId=${req.player.UserId} dest=${req.destination} placeId=${placeId} error=${detail}`,
+      `テレポート失敗: userId=${request.Player.UserId} dest=${request.Destination} placeId=${placeId} error=${errorDetail}`,
     );
-    return { ...failureRes, detail };
+
+    return {
+      ...failureResponse,
+      Detail: errorDetail,
+    };
   }
 
   // 呼び出し元に成功を通知。
-  return successRes;
+  return successResponse;
 }

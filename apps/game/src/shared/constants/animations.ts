@@ -4,5 +4,5 @@
  */
 export const PLAYER_ANIMS = {
   /** 剣の振りアニメーション */
-  swordSwing: 'rbxassetid://136379405054134',
+  SwordSwing: 'rbxassetid://136379405054134',
 } as const;

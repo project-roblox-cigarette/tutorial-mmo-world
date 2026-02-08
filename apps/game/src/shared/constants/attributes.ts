@@ -2,36 +2,36 @@
  * Instance属性名の定数
  * Robloxオブジェクトの属性として使用される文字列キー
  */
-export const ATTRS = {
+export const ATTRIBUTES = {
   // === Enemy関連の属性 ===
   /** 敵の追跡範囲（AggroRange） */
-  AGGRO_RANGE: 'AggroRange',
+  AggroRange: 'AggroRange',
   /** 敵の停止距離（StopDistance） */
-  STOP_DISTANCE: 'StopDistance',
+  StopDistance: 'StopDistance',
   /** 敵の追跡速度（ChaseSpeed） */
-  CHASE_SPEED: 'ChaseSpeed',
+  ChaseSpeed: 'ChaseSpeed',
   /** 敵の追跡更新間隔（ChaseTick） */
-  CHASE_TICK: 'ChaseTick',
+  ChaseTick: 'ChaseTick',
   /** 敵の過去位置追尾遅延時間（FollowLagSec） */
-  FOLLOW_LAG_SEC: 'FollowLagSec',
+  FollowLagSec: 'FollowLagSec',
   /** 敵が近づいたときの一時停止時間（StopDurationSec） */
-  STOP_DURATION_SEC: 'StopDurationSec',
+  StopDurationSec: 'StopDurationSec',
   /** 敵の死亡フラグ（Dead） */
-  DEAD: 'Dead',
+  Dead: 'Dead',
   /** 敵の体力（HP） */
-  HP: 'HP',
+  Hp: 'Hp',
   /** 敵の所有者ユーザーID（OwnerUserId） */
-  OWNER_USER_ID: 'OwnerUserId',
+  OwnerUserId: 'OwnerUserId',
 
   // === Area関連の属性 ===
   /** エリアID（AreaId） */
-  AREA_ID: 'AreaId',
+  AreaId: 'AreaId',
   /** エリアレベル（Level） */
-  AREA_LEVEL: 'Level',
+  AreaLevel: 'Level',
 
   // === Teleport関連の属性 ===
   /** テレポート先の場所キー（Destination） */
-  DESTINATION: 'Destination',
+  Destination: 'Destination',
   /** テレポート元の場所キー（PlaceKey） */
-  PLACE_KEY: 'PlaceKey',
+  PlaceKey: 'PlaceKey',
 } as const;

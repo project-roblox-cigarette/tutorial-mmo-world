@@ -13,7 +13,7 @@ import { detectSwordEnemiesByBox } from '../../combat/utils/melee-hit-detection'
 
 export class PlayerMeleeAttackService extends BaseService {
   // サーバ側クールダウン管理
-  private readonly _lastAttackAt = new Map<number, number>();
+  private readonly _lastAttackAtTimes = new Map<number, number>();
 
   /**
    * 攻撃ウィンドウ制御用トークン
@@ -45,20 +45,22 @@ export class PlayerMeleeAttackService extends BaseService {
    * - フォルダが無ければ作成
    */
   private _getOrCreateMeleeAttackRemote(): RemoteEvent {
-    let folder = ReplicatedStorage.FindFirstChild(REMOTES.FOLDER_NAME);
-    if (!folder) {
-      folder = new Instance('Folder');
-      folder.Name = REMOTES.FOLDER_NAME;
-      folder.Parent = ReplicatedStorage;
+    let getFolder = ReplicatedStorage.FindFirstChild(REMOTES.FolderName);
+    if (!getFolder) {
+      getFolder = new Instance('Folder');
+      getFolder.Name = REMOTES.FolderName;
+      getFolder.Parent = ReplicatedStorage;
     }
 
-    const existing = folder.FindFirstChild(REMOTES.MELEE_ATTACK);
-    if (existing?.IsA('RemoteEvent')) return existing;
+    const getRemoteEvent = getFolder.FindFirstChild(REMOTES.MeleeAttack);
+    if (getRemoteEvent?.IsA('RemoteEvent')) {
+      return getRemoteEvent as RemoteEvent;
+    }
 
-    const re = new Instance('RemoteEvent');
-    re.Name = REMOTES.MELEE_ATTACK;
-    re.Parent = folder;
-    return re;
+    const newRemoteEvent = new Instance('RemoteEvent');
+    newRemoteEvent.Name = REMOTES.MeleeAttack;
+    newRemoteEvent.Parent = getFolder;
+    return newRemoteEvent;
   }
 
   /**
@@ -69,37 +71,41 @@ export class PlayerMeleeAttackService extends BaseService {
    * - 有効フレーム中の当たり判定ループ（HitWindow）を開始
    */
   private _onMeleeAttack(player: Player): void {
-    const char = player.Character;
-    if (!char) return;
+    const model = player.Character as Model | undefined;
+    if (!model) return;
 
     // キャラの生存確認（死んでいる間は攻撃を無視）
-    const hum = char.FindFirstChildOfClass('Humanoid');
-    if (!hum || hum.Health <= 0) return;
+    const getHumanoid = model.FindFirstChildOfClass('Humanoid');
+    if (!getHumanoid || getHumanoid.Health <= 0) return;
 
     // Character直下の Tool（装備中の武器）を取得
     // ※ 今の仕様は「装備中のToolが武器」という前提。将来複数Toolを扱う場合は見直す。
-    const tool = char.FindFirstChildOfClass('Tool');
-    if (!tool) return;
+    const getTool = model.FindFirstChildOfClass('Tool');
+    if (!getTool) return;
 
     // Tool名から武器IDを特定
-    const weaponId = tryGetWeaponIdFromTool(tool);
+    const weaponId = tryGetWeaponIdFromTool(getTool);
     if (!weaponId) return;
 
     const weapon = WEAPON_CATALOG[weaponId];
 
     // サーバ側クールダウン検証
     const now = os.clock();
-    const last = this._lastAttackAt.get(player.UserId);
-    if (last !== undefined && now - last < weapon.cooldownSec) {
+    const lastAttackAtTime = this._lastAttackAtTimes.get(player.UserId);
+    if (
+      lastAttackAtTime !== undefined &&
+      now - lastAttackAtTime < weapon.CooldownSec
+    ) {
       // 連打抑止（クライアント改造対策）
       return;
     }
-    this._lastAttackAt.set(player.UserId, now);
 
-    logger.debug('PlayerMeleeAttack', `装備中のツール: ${tool.Name}`);
+    this._lastAttackAtTimes.set(player.UserId, now);
+
+    logger.debug('PlayerMeleeAttack', `装備中のツール: ${getTool.Name}`);
 
     // 有効フレーム中だけ当たり判定を出す（自然さを保ちつつ当たりやすくする）
-    this._startHitWindow(player, char, tool, weapon);
+    this._startHitWindow(player, model, getTool, weapon);
   }
 
   /**
@@ -110,7 +116,7 @@ export class PlayerMeleeAttackService extends BaseService {
    */
   private _startHitWindow(
     player: Player,
-    char: Model,
+    model: Model,
     tool: Tool,
     weapon: WeaponConfig,
   ): void {
@@ -119,13 +125,13 @@ export class PlayerMeleeAttackService extends BaseService {
     this._swingToken.set(player.UserId, token);
 
     // 有効フレームの終了時刻（絶対時刻）
-    const endAt = os.clock() + weapon.hitEndSec;
+    const endAt = os.clock() + weapon.HitEndSec;
 
     // 1スイング中に既にヒット処理した敵（多段ヒット防止）
-    const hitAlready = new Set<Model>();
+    const _hitAlreadyEnemies = new Set<Model>();
 
     // hitStartSec まで待ってから判定ループを開始する（構え中に当たる不自然さを防ぐ）
-    task.delay(weapon.hitStartSec, () => {
+    task.delay(weapon.HitStartSec, () => {
       // 途中で次の攻撃が始まっていたら、このウィンドウは中止
       if (this._swingToken.get(player.UserId) !== token) return;
 
@@ -133,12 +139,13 @@ export class PlayerMeleeAttackService extends BaseService {
       while (os.clock() < endAt) {
         // --- 安全策：状態が変わったら停止 ---
         if (!player.Parent) break; // プレイヤーが離脱などで無効になった
-        if (!char.Parent) break; // キャラが消えた（リスポーン等）
-        const hum = char.FindFirstChildOfClass('Humanoid');
-        if (!hum || hum.Health <= 0) break;
+        if (!model.Parent) break; // キャラが消えた（リスポーン等）
+
+        const getHumanoid = model.FindFirstChildOfClass('Humanoid');
+        if (!getHumanoid || getHumanoid.Health <= 0) break;
 
         // 装備解除されていたら停止（攻撃中に武器を外した等）
-        const equipped = char.FindFirstChildOfClass('Tool');
+        const equipped = model.FindFirstChildOfClass('Tool');
         if (equipped !== tool) break;
 
         // トークンが更新されていたら停止（次の攻撃が開始されている）
@@ -146,51 +153,51 @@ export class PlayerMeleeAttackService extends BaseService {
 
         // --- 空間クエリ：剣が当たった敵を取得 ---
         const hit = detectSwordEnemiesByBox(
-          char,
+          model,
           tool,
-          weapon.hitboxThickness,
-          weapon.maxHitsPerSwing,
+          weapon.HitboxThickness,
+          weapon.MaxHitsPerSwing,
         );
 
         logger.debug(
           'PlayerMeleeAttack',
-          `ヒット判定: enemies=${hit.enemies.size()} (max=${weapon.maxHitsPerSwing})`,
+          `ヒット判定: enemies=${hit.Enemies.size()} (max=${weapon.MaxHitsPerSwing})`,
         );
 
         // 敵にダメージ適用（最大 maxHitsPerSwing まで）
-        for (const enemy of hit.enemies) {
+        for (const enemy of hit.Enemies) {
           // 1スイング中の多段ヒット防止
-          if (hitAlready.has(enemy)) continue;
-          hitAlready.add(enemy);
+          if (_hitAlreadyEnemies.has(enemy)) continue;
+          _hitAlreadyEnemies.add(enemy);
 
-          const result = applyDamageToEnemy(enemy, weapon.damage);
+          const result = applyDamageToEnemy(enemy, weapon.Damage);
 
-          if (Result.isOk(result)) {
+          if (Result.isSuccess(result)) {
             logger.debug(
               'PlayerMeleeAttack',
-              `ダメージ適用: enemy=${enemy.Name} killed=${tostring(result.value.killed)} damage=${weapon.damage}`,
+              `ダメージ適用: enemy=${enemy.Name} killed=${tostring(result.Value.Killed)} damage=${weapon.Damage}`,
             );
 
             // killed なら死亡後処理
-            if (result.value.killed) {
+            if (result.Value.Killed) {
               finalizeEnemyDeath(enemy);
             }
           } else {
             logger.debug(
               'PlayerMeleeAttack',
-              `ダメージ失敗: enemy=${enemy.Name} reason=${result.error}`,
+              `ダメージ失敗: enemy=${enemy.Name} reason=${result.Error}`,
             );
           }
 
           // 上限に達したらこのスイングの判定を終了
-          if (hitAlready.size() >= weapon.maxHitsPerSwing) break;
+          if (_hitAlreadyEnemies.size() >= weapon.MaxHitsPerSwing) break;
         }
 
         // 上限に達したらループを抜ける（軽量化）
-        if (hitAlready.size() >= weapon.maxHitsPerSwing) break;
+        if (_hitAlreadyEnemies.size() >= weapon.MaxHitsPerSwing) break;
 
         // 次サンプルまで待機
-        task.wait(weapon.hitSampleIntervalSec);
+        task.wait(weapon.HitSampleIntervalSec);
       }
     });
   }

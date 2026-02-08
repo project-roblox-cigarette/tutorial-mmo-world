@@ -2,7 +2,7 @@
  * 敵関連のユーティリティ関数
  */
 
-import { ENEMY_SPAWN_CONFIG } from '../constants';
+import { ENEMY_SPAWN_CONFIGS } from '../constants';
 import type { AreaId, AreaSpawnConfig } from '../types/enemy';
 import { toAreaLevel } from './type-guards';
 
@@ -18,5 +18,5 @@ export function getAreaSpawnConfig(
 ): AreaSpawnConfig | undefined {
   const lv = toAreaLevel(level);
   if (!lv) return undefined;
-  return ENEMY_SPAWN_CONFIG[areaId]?.[lv];
+  return ENEMY_SPAWN_CONFIGS[areaId]?.[lv];
 }

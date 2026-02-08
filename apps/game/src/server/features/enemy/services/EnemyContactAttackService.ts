@@ -5,51 +5,57 @@ import {
   TeleportService,
 } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
-import type { PlaceKey } from 'shared/types/teleport';
 import { logger } from 'shared/utils/logger';
 import { getPlaceId } from 'shared/utils/places';
+import type { PlaceKey } from '../../../../shared/types';
 import { BaseService } from '../../../core/Service';
 import { enemySpawnService } from './EnemySpawnService';
 
 export class EnemyContactAttackService extends BaseService {
   /** 敵モデル -> 接触監視の接続 */
-  private readonly _conns = new Map<Model, RBXScriptConnection>();
+  private readonly _connections = new Map<Model, RBXScriptConnection>();
 
   /** プレイヤーごとの連続ヒット防止（秒） */
-  private readonly _hitCooldownSec = 1.0;
-  private readonly _lastHitAt = new Map<number, number>();
+  private readonly _hitCooldownSeconds = 1.0;
+  private readonly _lastHitAtTimes = new Map<number, number>();
 
   /** テレポート二重発火防止 */
   private readonly _teleporting = new Set<number>();
 
   /** ロビーのPlaceKey */
-  private readonly _lobbyKey: PlaceKey = 'Lobby' as PlaceKey;
+  private readonly _lobbyPlaceKey: PlaceKey = 'Lobby' as PlaceKey;
 
   constructor() {
     super('EnemyContactAttack');
-  }
-
-  public start(): void {
     super.start();
+
     // 既存のEnemyにもバインド
     for (const inst of CollectionService.GetTagged(TAGS.ENEMY)) {
-      if (inst.IsA('Model')) this._bind(inst);
+      if (inst.IsA('Model')) {
+        this._bind(inst);
+      }
     }
 
     // 追加されたEnemyにバインド
     CollectionService.GetInstanceAddedSignal(TAGS.ENEMY).Connect((inst) => {
-      if (inst.IsA('Model')) this._bind(inst);
+      if (inst.IsA('Model')) {
+        this._bind(inst);
+      }
     });
 
     // 削除されたEnemyのバインド解除
     CollectionService.GetInstanceRemovedSignal(TAGS.ENEMY).Connect((inst) => {
-      if (inst.IsA('Model')) this._unbind(inst);
+      if (inst.IsA('Model')) {
+        this._unbind(inst);
+      }
     });
   }
 
   // バインド処理
   private _bind(enemy: Model): void {
-    if (this._conns.has(enemy)) return; // 既にバインド済み
+    if (this._connections.has(enemy)) {
+      return; // 既にバインド済み
+    }
 
     const root =
       enemy.PrimaryPart ??
@@ -64,23 +70,27 @@ export class EnemyContactAttackService extends BaseService {
 
     root.CanTouch = true;
 
-    const conn = root.Touched.Connect((hit) => {
+    const connection = root.Touched.Connect((hit) => {
       this._onTouched(enemy, hit);
     });
-    this._conns.set(enemy, conn);
+    this._connections.set(enemy, connection);
 
     // 破棄されたら解除
     enemy.AncestryChanged.Connect((_, parent) => {
       if (parent) return;
+
       this._unbind(enemy);
     });
   }
 
   // バインド解除
   private _unbind(enemy: Model): void {
-    const conn = this._conns.get(enemy);
-    if (conn) conn.Disconnect();
-    this._conns.delete(enemy);
+    const connection = this._connections.get(enemy);
+    if (connection) {
+      connection.Disconnect();
+    }
+
+    this._connections.delete(enemy);
   }
 
   // 敵が何かに触れたときの処理
@@ -91,50 +101,60 @@ export class EnemyContactAttackService extends BaseService {
 
     const player = Players.GetPlayerFromCharacter(char);
     if (!player) return;
-
     if (!enemy.Parent) return; // 敵である前提を確認
 
     // 連続ヒット防止
-    const now = os.clock();
-    const last = this._lastHitAt.get(player.UserId);
-    if (last !== undefined && now - last < this._hitCooldownSec) return;
-    this._lastHitAt.set(player.UserId, now);
+    const nowTime = os.clock();
+    const lastHitAtTime = this._lastHitAtTimes.get(player.UserId);
+    if (
+      lastHitAtTime !== undefined &&
+      nowTime - lastHitAtTime < this._hitCooldownSeconds
+    ) {
+      return;
+    }
+    this._lastHitAtTimes.set(player.UserId, nowTime);
 
     // テレポート中は無効化
-    if (this._teleporting.has(player.UserId)) return;
+    if (this._teleporting.has(player.UserId)) {
+      return;
+    }
 
     const root =
       enemy.PrimaryPart ??
       (enemy.FindFirstChild('HumanoidRootPart') as BasePart | undefined);
-    if (root) root.CanTouch = false;
+    if (root) {
+      root.CanTouch = false;
+    }
 
     this._teleporting.add(player.UserId);
 
     // ロビーにテレポート
-    this._returntoLobby(player);
+    this._returnToLobby(player);
   }
 
   // ロビーにテレポートする処理
-  private _returntoLobby(player: Player): void {
+  private _returnToLobby(player: Player): void {
     if (RunService.IsStudio()) {
       player.CharacterAdded.Once(() => {
         enemySpawnService.despawnAllForPlayer(player);
       });
 
-      const char = player.Character;
-      const hum = char?.FindFirstChildOfClass('Humanoid');
-      if (hum) hum.Health = 0;
+      const character = player.Character;
+      const humanoid = character?.FindFirstChildOfClass('Humanoid');
+      if (humanoid) {
+        humanoid.Health = 0;
+      }
 
       this._teleporting.delete(player.UserId);
       return;
     }
-    const placeId = getPlaceId(this._lobbyKey);
+    const placeId = getPlaceId(this._lobbyPlaceKey);
 
-    const [ok, err] = pcall(() => {
+    const [success, err] = pcall(() => {
       TeleportService.Teleport(placeId, player);
     });
 
-    if (!ok) {
+    if (!success) {
       logger.error(
         'EnemyContactAttack',
         `テレポート失敗: player=${player.Name} error=${tostring(err)}`,

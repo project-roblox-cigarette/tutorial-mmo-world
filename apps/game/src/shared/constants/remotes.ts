@@ -4,11 +4,11 @@
  */
 export const REMOTES = {
   /** Remotesフォルダ名（ReplicatedStorage配下） */
-  FOLDER_NAME: 'Remotes',
+  FolderName: 'Remotes',
   /** 近接攻撃のRemoteEvent名 */
-  MELEE_ATTACK: 'MeleeAttack',
+  MeleeAttack: 'MeleeAttack',
   /** プレイヤーアクションのRemoteEvent名（汎用） */
-  PLAYER_ACTION: 'PlayerAction',
+  PlayerAction: 'PlayerAction',
   /** 状態同期のRemoteEvent名 */
-  SYNC_STATE: 'SyncState',
+  SyncState: 'SyncState',
 } as const;

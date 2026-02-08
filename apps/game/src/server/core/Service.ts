@@ -26,7 +26,7 @@ export interface IService {
  * ライフサイクル管理とログ出力などの共通機能を提供
  */
 export abstract class BaseService implements IService {
-  private _started = false;
+  private _isStarted = false;
   protected readonly _serviceName: string;
 
   constructor(serviceName?: string) {
@@ -46,7 +46,7 @@ export abstract class BaseService implements IService {
    * 二重起動を防止し、起動イベントをログ出力
    */
   public start(): void {
-    if (this._started) {
+    if (this._isStarted) {
       logger.warn(
         this.getServiceName(),
         'サービスは既に起動済みです。重複するstart()を無視します',
@@ -54,7 +54,7 @@ export abstract class BaseService implements IService {
       return;
     }
 
-    this._started = true;
+    this._isStarted = true;
     logger.info(this.getServiceName(), 'サービスを起動しました');
   }
 
@@ -67,6 +67,6 @@ export abstract class BaseService implements IService {
    * サービスが起動しているかどうかを確認
    */
   protected isStarted(): boolean {
-    return this._started;
+    return this._isStarted;
   }
 }

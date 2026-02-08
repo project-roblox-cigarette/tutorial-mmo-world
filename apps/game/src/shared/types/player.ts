@@ -1,22 +1,18 @@
 /**
- * プレイヤーシステム関連の型定義
- */
-
-/**
  * プレイヤーデータ
  * サーバー側でメモリキャッシュされるプレイヤー情報
  */
 export type PlayerData = {
   /** ユーザーID（Robloxのユーザー識別子） */
-  userId: number;
+  UserId: number;
   /** 表示名 */
-  displayName: string;
+  DisplayName: string;
   /** 参加時刻（Unixタイムスタンプ） */
-  joinedAt: number;
+  JoinedAt: number;
   /** スコア */
-  score: number;
+  Score: number;
   /** レベル */
-  level: number;
+  Level: number;
 };
 
 /**
@@ -32,11 +28,11 @@ export type ScoreUpdateType = 'add' | 'subtract' | 'set';
  */
 export type LeaderboardEntry = {
   /** ユーザーID */
-  userId: number;
+  UserId: number;
   /** 表示名 */
-  displayName: string;
+  DisplayName: string;
   /** スコア */
-  score: number;
+  Score: number;
   /** 順位 */
-  rank: number;
+  Rank: number;
 };

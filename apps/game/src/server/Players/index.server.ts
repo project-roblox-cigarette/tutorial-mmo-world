@@ -28,6 +28,7 @@ if (existingPlayers.size() > 0) {
     'PlayerManager',
     `既存プレイヤーを初期化: ${existingPlayers.size()}人`,
   );
+
   for (const player of existingPlayers) {
     task.spawn(() => onPlayerAdded(player));
   }

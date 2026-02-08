@@ -19,9 +19,9 @@ export type PlaceKey =
  */
 export type TeleportRequest = {
   /** テレポートするプレイヤー */
-  player: Player;
+  Player: Player;
   /** テレポート先のPlaceKey */
-  destination: PlaceKey;
+  Destination: PlaceKey;
 };
 
 /**
@@ -29,5 +29,5 @@ export type TeleportRequest = {
  * 成功時はstatus: true、失敗時はエラー理由と詳細を含む
  */
 export type TeleportResponse =
-  | { status: true }
-  | { status: false; reason: 'TELEPORT_ERROR'; detail: string };
+  | { Status: true }
+  | { Status: false; Reason: 'TELEPORT_ERROR'; Detail: string };

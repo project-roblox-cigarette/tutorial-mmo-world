@@ -26,6 +26,7 @@ export function calculateLevel(score: number): number {
       return i + 1;
     }
   }
+
   return 1;
 }
 
@@ -39,6 +40,7 @@ export function getScoreForNextLevel(currentLevel: number): number | undefined {
   if (nextThresholdIndex >= LEVEL_THRESHOLDS.size()) {
     return undefined; // 最大レベル到達
   }
+
   return LEVEL_THRESHOLDS[nextThresholdIndex];
 }
 
@@ -60,21 +62,21 @@ export function updateScore(
   let newScore: number;
   switch (updateType) {
     case 'add':
-      newScore = playerData.score + amount;
+      newScore = playerData.Score + amount;
       break;
     case 'subtract':
-      newScore = playerData.score - amount;
+      newScore = playerData.Score - amount;
       break;
     case 'set':
       newScore = amount;
       break;
   }
 
-  newScore = clamp(newScore, SCORES.MIN, SCORES.MAX);
+  newScore = clamp(newScore, SCORES.Min, SCORES.Max);
   const newLevel = calculateLevel(newScore);
 
-  const previousLevel = playerData.level;
-  updatePlayerData(userId, { score: newScore, level: newLevel });
+  const previousLevel = playerData.Level;
+  updatePlayerData(userId, { Score: newScore, Level: newLevel });
 
   // レベルアップ検知
   if (newLevel > previousLevel) {
@@ -93,7 +95,7 @@ export function updateScore(
  * @returns スコア、プレイヤーが見つからない場合はundefined
  */
 export function getScore(userId: number): number | undefined {
-  return getPlayerData(userId)?.score;
+  return getPlayerData(userId)?.Score;
 }
 
 /**
@@ -102,18 +104,20 @@ export function getScore(userId: number): number | undefined {
  * @returns リーダーボードエントリーの配列
  */
 export function getLeaderboard(limit: number = 10): LeaderboardEntry[] {
-  const allData = getAllPlayerData();
+  const allPlayerData = getAllPlayerData();
 
   // スコア降順でソート
-  allData.sort((a, b) => a.score < b.score);
+  allPlayerData.sort((a, b) => a.Score < b.Score);
 
   // 上位N人を取得
-  const topPlayers = allData.filter((_, i) => i < limit);
+  const topPlayers = allPlayerData.filter(
+    (_playerData, index) => index < limit,
+  );
 
-  return topPlayers.map((data, index) => ({
-    userId: data.userId,
-    displayName: data.displayName,
-    score: data.score,
-    rank: index + 1,
+  return topPlayers.map((playerData, index) => ({
+    UserId: playerData.UserId,
+    DisplayName: playerData.DisplayName,
+    Score: playerData.Score,
+    Rank: index + 1,
   }));
 }

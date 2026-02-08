@@ -17,22 +17,22 @@ export function getSpawnCFrameInArea(
   range: Random,
   options: SpawnPositionOptions = {},
 ): CFrame {
-  const padding = options.paddingStuds ?? 0;
-  const yOffset = options.yOffsetStuds ?? 0;
+  const PaddingStuds = options.PaddingStuds ?? 0;
+  const YOffsetStuds = options.YOffsetStuds ?? 0;
 
   // サイズから半分を取得し、padding分を引く
   const half = areaPart.Size.mul(0.5);
-  const maxX = math.max(0, half.X - padding);
-  const maxZ = math.max(0, half.Z - padding);
+  const maxXStuds = math.max(0, half.X - PaddingStuds);
+  const maxZStuds = math.max(0, half.Z - PaddingStuds);
 
-  const localX = range.NextNumber(-maxX, maxX);
-  const localZ = range.NextNumber(-maxZ, maxZ);
+  const localXStuds = range.NextNumber(-maxXStuds, maxXStuds);
+  const localZStuds = range.NextNumber(-maxZStuds, maxZStuds);
 
   // ワールド座標に変換
   const worldPos = areaPart.CFrame.PointToWorldSpace(
-    new Vector3(localX, 0, localZ),
+    new Vector3(localXStuds, 0, localZStuds),
   );
 
   // 方向をareaPartの向きに合わせる
-  return new CFrame(worldPos.add(new Vector3(0, yOffset, 0)));
+  return new CFrame(worldPos.add(new Vector3(0, YOffsetStuds, 0)));
 }

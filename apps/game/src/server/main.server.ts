@@ -2,8 +2,10 @@ import { CollectionService } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { ServiceRegistry } from './core/ServiceRegistry';
-import { EnemyChaseSystem } from './features/enemy/services/EnemyChaseSystem';
-import { EnemyContactAttackService } from './features/enemy/services/EnemyContactAttackService';
+import {
+  EnemyChaseSystem,
+  EnemyContactAttackService,
+} from './features/enemy/services';
 import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
 
 logger.info('Server', 'サーバーを起動中...');
@@ -23,14 +25,14 @@ logger.info('Server', 'サーバーが起動しました');
 
 // デバッグ: 遅延後にタグ付き敵をチェック
 task.delay(2, () => {
-  const tagged = CollectionService.GetTagged(TAGS.ENEMY);
-  const n = tagged.size();
-  logger.debug('Server', `タグ付き敵の数: ${n}`);
+  const taggedEnemies = CollectionService.GetTagged(TAGS.ENEMY);
+  const enemyCount = taggedEnemies.size();
+  logger.debug('Server', `タグ付き敵の数: ${enemyCount}`);
 
-  for (const inst of tagged) {
+  for (const enemy of taggedEnemies) {
     logger.debug(
       'Server',
-      `敵: ${inst.GetFullName()} parent=${inst.Parent ? inst.Parent.GetFullName() : 'nil'}`,
+      `敵: ${enemy.GetFullName()} parent=${enemy.Parent ? enemy.Parent.GetFullName() : 'nil'}`,
     );
   }
 });
