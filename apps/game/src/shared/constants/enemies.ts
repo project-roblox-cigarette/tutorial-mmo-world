@@ -49,4 +49,4 @@ export const ENEMY_SPAWN_CONFIG: Record<
       },
     },
   },
-};
+} as const;

@@ -45,4 +45,4 @@ export const WEAPON_CATALOG: Record<WeaponId, WeaponConfig> = {
     hitEndSec: 0.4,
     hitSampleIntervalSec: 0.03,
   },
-};
+} as const;

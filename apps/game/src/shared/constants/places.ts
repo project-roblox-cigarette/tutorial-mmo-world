@@ -35,4 +35,4 @@ export const DEBUG_WARP_POS: Partial<Record<PlaceKey, Vector3>> = {
   EnemyArea_Lv1: new Vector3(-100, 0.5, -250),
   EnemyArea_Lv2: new Vector3(50, 0.5, -250),
   EnemyArea_Lv3: new Vector3(200, 0.5, -250),
-};
+} as const;
