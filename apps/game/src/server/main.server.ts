@@ -5,29 +5,34 @@ import { ServiceRegistry } from './core/ServiceRegistry';
 import { EnemyContactAttackService } from './features/enemy/services';
 import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
 
-logger.info('Server', 'サーバーを起動中...');
+// サーバーメイン関数
+function main(): void {
+  logger.info('Server', 'サーバーを起動中...');
 
-// サービスを登録
-const enemyContactAttackService = new EnemyContactAttackService();
+  // サービスを登録
+  const enemyContactAttackService = new EnemyContactAttackService();
 
-ServiceRegistry.register('PlayerMeleeAttack', playerMeleeAttackService);
-ServiceRegistry.register('EnemyContactAttack', enemyContactAttackService);
+  ServiceRegistry.register('PlayerMeleeAttack', playerMeleeAttackService);
+  ServiceRegistry.register('EnemyContactAttack', enemyContactAttackService);
 
-// 全サービスを起動
-ServiceRegistry.startAll();
+  // 全サービスを起動
+  ServiceRegistry.startAll();
 
-logger.info('Server', 'サーバーが起動しました');
+  logger.info('Server', 'サーバーが起動しました');
 
-// デバッグ: 遅延後にタグ付き敵をチェック
-task.delay(2, () => {
-  const taggedEnemies = CollectionService.GetTagged(TAGS.ENEMY);
-  const enemyCount = taggedEnemies.size();
-  logger.debug('Server', `タグ付き敵の数: ${enemyCount}`);
+  // デバッグ: 遅延後にタグ付き敵をチェック
+  task.delay(2, () => {
+    const taggedEnemies = CollectionService.GetTagged(TAGS.ENEMY);
+    const enemyCount = taggedEnemies.size();
+    logger.debug('Server', `タグ付き敵の数: ${enemyCount}`);
 
-  for (const enemy of taggedEnemies) {
-    logger.debug(
-      'Server',
-      `敵: ${enemy.GetFullName()} parent=${enemy.Parent ? enemy.Parent.GetFullName() : 'nil'}`,
-    );
-  }
-});
+    for (const enemy of taggedEnemies) {
+      logger.debug(
+        'Server',
+        `敵: ${enemy.GetFullName()} parent=${enemy.Parent ? enemy.Parent.GetFullName() : 'nil'}`,
+      );
+    }
+  });
+}
+
+main();
