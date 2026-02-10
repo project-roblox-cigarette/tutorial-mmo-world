@@ -68,9 +68,10 @@ class ServiceRegistryClass {
 
       if (!ok) {
         errorCount++;
+        const stackTrace = debug.traceback();
         logger.error(
           'ServiceRegistry',
-          `サービス '${name}' の起動に失敗: ${tostring(err)}`,
+          `サービス '${name}' の起動に失敗: ${tostring(err)}\nスタックトレース:\n${stackTrace}`,
         );
       } else {
         successCount++;
@@ -117,9 +118,10 @@ class ServiceRegistryClass {
       });
 
       if (!ok) {
+        const stackTrace = debug.traceback();
         logger.error(
           'ServiceRegistry',
-          `サービス '${name}' の停止に失敗: ${tostring(err)}`,
+          `サービス '${name}' の停止に失敗: ${tostring(err)}\nスタックトレース:\n${stackTrace}`,
         );
       } else if ('stop' in service) {
         logger.debug('ServiceRegistry', `サービスを停止: ${name}`);

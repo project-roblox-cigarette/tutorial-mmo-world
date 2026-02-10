@@ -1,59 +1,69 @@
 /**
- * 敵キャラクターAIスクリプト
+ * 敵の追跡AIスクリプト
  *
  * このスクリプトは各敵Model内に配置され、スポーン時に自動実行されます。
- * 敵ごとに異なる動作を実装できるよう、Model名やAttributeで動作を分岐できます。
+ * プレイヤーを追跡し、一定距離で停止する動作を実装します。
  *
- * 配置場所：ServerStorage/Spawnables/[敵Model名]/EnemyAI
+ * 配置場所：
+ *   Roblox: ServerStorage/Spawnables/[敵Model名]/EnemyAI
+ *   Source: src/server/features/enemy/ai/EnemyChaseAI.server.ts
  */
 
-import { Players, RunService } from '@rbxts/services';
+import { RunService } from '@rbxts/services';
 import { ATTRIBUTES } from 'shared/constants';
-import { logger } from 'shared/utils/logger';
+import { getEnemyType } from 'shared/types/enemy';
+import {
+  findNearestPlayer,
+  getHumanoidFromModel,
+  getNumberAttribute,
+  getRootPartFromModel,
+  logger,
+} from 'shared/utils';
 
 // このスクリプトの親Model（敵キャラクター）を取得
 const enemyModel = script.Parent;
 
 if (!enemyModel || !enemyModel.IsA('Model')) {
-  logger.error('EnemyAI', 'スクリプトの親がModelではありません');
-  throw 'EnemyAI script must be placed inside a Model';
+  const parentInfo = enemyModel
+    ? `親: ${enemyModel.ClassName} (${enemyModel.GetFullName()})`
+    : '親: nil';
+  logger.error(
+    'EnemyChaseAI',
+    `スクリプトの親がModelではありません - ${parentInfo}`,
+  );
+  throw 'EnemyChaseAIスクリプトはModel内に配置されなければなりません';
 }
 
 // Humanoidを取得
-const humanoid = enemyModel.FindFirstChildOfClass('Humanoid');
+const humanoid = getHumanoidFromModel(enemyModel);
 if (!humanoid) {
   logger.warn(
-    'EnemyAI',
-    `敵にHumanoidがありません: ${enemyModel.GetFullName()}`,
+    'EnemyChaseAI',
+    `敵にHumanoidがありません: Model=${enemyModel.Name} FullPath=${enemyModel.GetFullName()} Parent=${enemyModel.Parent?.GetFullName() ?? 'nil'}`,
   );
-  throw 'Enemy Model must have a Humanoid';
+  throw '敵ModelにHumanoidがありません';
 }
 
 // RootPartを取得
-const rootPart =
-  enemyModel.PrimaryPart ??
-  (enemyModel.FindFirstChild('HumanoidRootPart') as BasePart | undefined);
-
+const rootPart = getRootPartFromModel(enemyModel);
 if (!rootPart) {
+  const children = enemyModel.GetChildren().map((c) => c.Name);
   logger.warn(
-    'EnemyAI',
-    `敵にRootPartがありません: ${enemyModel.GetFullName()}`,
+    'EnemyChaseAI',
+    `敵にRootPartがありません: Model=${enemyModel.Name} FullPath=${enemyModel.GetFullName()} PrimaryPart=${enemyModel.PrimaryPart?.Name ?? 'nil'} Children=[${children.join(', ')}]`,
   );
-  throw 'Enemy Model must have a RootPart';
+  throw '敵ModelにRootPartがありません';
 }
 
-logger.debug('EnemyAI', `起動: ${enemyModel.Name}`);
+logger.debug('EnemyChaseAI', `起動: ${enemyModel.Name}`);
 
 // AI設定を読み取り
-const aggroRange =
-  (enemyModel.GetAttribute(ATTRIBUTES.AggroRange) as number) ?? 60;
-const stopDistance =
-  (enemyModel.GetAttribute(ATTRIBUTES.StopDistance) as number) ?? 4;
-const chaseSpeed =
-  (enemyModel.GetAttribute(ATTRIBUTES.ChaseSpeed) as number) ?? 14;
+const aggroRange = getNumberAttribute(enemyModel, ATTRIBUTES.AggroRange, 60);
+const stopDistance = getNumberAttribute(enemyModel, ATTRIBUTES.StopDistance, 4);
+const chaseSpeed = getNumberAttribute(enemyModel, ATTRIBUTES.ChaseSpeed, 14);
 
 // 敵タイプの判定（将来の拡張用）
-const enemyType = (enemyModel.GetAttribute('EnemyType') as string) ?? 'Chase';
+const enemyType = getEnemyType(enemyModel);
 
 // AI更新のスロットリング
 let accumulatedTime = 0;
@@ -92,7 +102,7 @@ const heartbeatConnection = RunService.Heartbeat.Connect((deltaTime) => {
 // クリーンアップ（Modelが削除されたら停止）
 enemyModel.AncestryChanged.Connect((_, parent) => {
   if (!parent) {
-    logger.debug('EnemyAI', `停止: ${enemyModel.Name}`);
+    logger.debug('EnemyChaseAI', `停止: ${enemyModel.Name}`);
     heartbeatConnection.Disconnect();
   }
 });
@@ -113,7 +123,7 @@ function updateChaseAI(): void {
     return;
   }
 
-  const targetRoot = getRootByModel(targetModel);
+  const targetRoot = getRootPartFromModel(targetModel);
   if (!targetRoot) {
     return;
   }
@@ -150,59 +160,4 @@ function updateChaseAI(): void {
     humanoid.MoveTo(targetPos);
     lastMoveToPosition = targetPos;
   }
-}
-
-/**
- * 最近傍のプレイヤーを検索
- */
-function findNearestPlayer(
-  position: Vector3,
-  range: number,
-): Model | undefined {
-  const range2 = range * range;
-  let bestChar: Model | undefined;
-  let bestDist2 = math.huge;
-
-  for (const player of Players.GetPlayers()) {
-    const model = player.Character;
-    if (!isAliveCharacter(model)) {
-      continue;
-    }
-
-    const root = getRootByModel(model);
-    if (!root) {
-      continue;
-    }
-
-    const dVector = root.Position.sub(position);
-    const dist2 = dVector.Dot(dVector);
-    if (dist2 <= range2 && dist2 < bestDist2) {
-      bestDist2 = dist2;
-      bestChar = model;
-    }
-  }
-
-  return bestChar;
-}
-
-/**
- * ModelからRootPartを取得
- */
-function getRootByModel(model: Model): BasePart | undefined {
-  return (
-    model.PrimaryPart ??
-    (model.FindFirstChild('HumanoidRootPart') as BasePart | undefined)
-  );
-}
-
-/**
- * キャラクターが生存しているか判定
- */
-function isAliveCharacter(model?: Model): model is Model {
-  if (!model) {
-    return false;
-  }
-
-  const getHumanoid = model.FindFirstChildOfClass('Humanoid');
-  return getHumanoid !== undefined && getHumanoid.Health > 0;
 }

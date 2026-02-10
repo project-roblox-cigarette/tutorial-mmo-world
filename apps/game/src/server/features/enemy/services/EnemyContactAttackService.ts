@@ -5,8 +5,7 @@ import {
   TeleportService,
 } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
-import { logger } from 'shared/utils/logger';
-import { getPlaceId } from 'shared/utils/places';
+import { getPlaceId, getRootPartFromModel, logger } from 'shared/utils';
 import type { PlaceKey } from '../../../../shared/types';
 import { BaseService } from '../../../core/Service';
 import { enemySpawnService } from './EnemySpawnService';
@@ -27,6 +26,9 @@ export class EnemyContactAttackService extends BaseService {
 
   constructor() {
     super('EnemyContactAttack');
+  }
+
+  public start() {
     super.start();
 
     // 既存のEnemyにもバインド
@@ -57,9 +59,7 @@ export class EnemyContactAttackService extends BaseService {
       return; // 既にバインド済み
     }
 
-    const root =
-      enemy.PrimaryPart ??
-      (enemy.FindFirstChild('HumanoidRootPart') as BasePart | undefined);
+    const root = getRootPartFromModel(enemy);
     if (!root) {
       logger.warn(
         'EnemyContactAttack',
@@ -119,9 +119,7 @@ export class EnemyContactAttackService extends BaseService {
       return;
     }
 
-    const root =
-      enemy.PrimaryPart ??
-      (enemy.FindFirstChild('HumanoidRootPart') as BasePart | undefined);
+    const root = getRootPartFromModel(enemy);
     if (root) {
       root.CanTouch = false;
     }
@@ -159,6 +157,23 @@ export class EnemyContactAttackService extends BaseService {
         'EnemyContactAttack',
         `テレポート失敗: player=${player.Name} error=${tostring(err)}`,
       );
+
+      // フォールバック: キャラクターをリセットして敵をデスポーン
+      logger.warn(
+        'EnemyContactAttack',
+        `フォールバック処理を実行: player=${player.Name}`,
+      );
+
+      player.CharacterAdded.Once(() => {
+        enemySpawnService.despawnAllForPlayer(player);
+      });
+
+      const character = player.Character;
+      const humanoid = character?.FindFirstChildOfClass('Humanoid');
+      if (humanoid) {
+        humanoid.Health = 0;
+      }
+
       this._teleporting.delete(player.UserId);
       return;
     }
@@ -166,3 +181,6 @@ export class EnemyContactAttackService extends BaseService {
     task.delay(3, () => this._teleporting.delete(player.UserId));
   }
 }
+
+/** EnemyContactAttackServiceのシングルトンインスタンス */
+export const enemyContactAttackService = new EnemyContactAttackService();

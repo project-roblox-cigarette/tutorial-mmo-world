@@ -104,7 +104,7 @@ export class PlayerSpawner {
 
   // 敵ModelにAIスクリプトを配置
   private _attachEnemyAI(enemyModel: Model): void {
-    // ServerStorage/CharacterScripts/enemy/EnemyAI を取得
+    // ServerStorage/CharacterScripts/enemy/EnemyChaseAI を取得
     const characterScripts = ServerStorage.FindFirstChild('CharacterScripts');
     if (!characterScripts || !characterScripts.IsA('Folder')) {
       logger.warn(
@@ -123,11 +123,11 @@ export class PlayerSpawner {
       return;
     }
 
-    const enemyAIScript = enemyFolder.FindFirstChild('EnemyAI');
+    const enemyAIScript = enemyFolder.FindFirstChild('EnemyChaseAI');
     if (!enemyAIScript || !enemyAIScript.IsA('Script')) {
       logger.warn(
         'EnemySpawn',
-        'ServerStorage/CharacterScripts/enemy/EnemyAI スクリプトがありません',
+        'ServerStorage/CharacterScripts/enemy/EnemyChaseAI スクリプトがありません',
       );
       return;
     }
@@ -136,7 +136,10 @@ export class PlayerSpawner {
     const clonedScript = enemyAIScript.Clone();
     clonedScript.Parent = enemyModel;
 
-    logger.debug('EnemySpawn', `EnemyAIスクリプトを配置: ${enemyModel.Name}`);
+    logger.debug(
+      'EnemySpawn',
+      `EnemyChaseAIスクリプトを配置: ${enemyModel.Name}`,
+    );
   }
 
   // 倒されたら次をスポーンさせる維持処理

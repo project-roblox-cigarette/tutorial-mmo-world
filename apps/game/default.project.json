@@ -26,7 +26,10 @@
 
     "ServerStorage": {
       "CharacterScripts": {
-        "$path": "out/character"
+        "$className": "Folder",
+        "enemy": {
+          "$path": "out/character/enemy"
+        }
       }
     },
 

@@ -2,6 +2,9 @@
  * 敵システム関連の型定義
  */
 
+/** 敵のAIタイプ */
+export type EnemyType = 'Chase' | 'Patrol' | 'Ranged';
+
 /** エリアのレベル（1〜3） */
 export type AreaLevel = 1 | 2 | 3;
 
@@ -62,3 +65,27 @@ export type SpawnPositionOptions = {
   /** Y軸方向のオフセット（スタッド） */
   YOffsetStuds?: number;
 };
+
+/**
+ * 値がEnemyType型であるかを判定（Type Guard）
+ * @param value 判定する値
+ * @returns EnemyType型の場合true
+ */
+export function isEnemyType(value: unknown): value is EnemyType {
+  if (!typeIs(value, 'string')) return false;
+  return value === 'Chase' || value === 'Patrol' || value === 'Ranged';
+}
+
+/**
+ * ModelのAttributeからEnemyTypeを安全に取得
+ * @param model 対象のModel
+ * @param defaultType 取得できない場合のデフォルト値（デフォルト: 'Chase'）
+ * @returns EnemyType
+ */
+export function getEnemyType(
+  model: Model,
+  defaultType: EnemyType = 'Chase',
+): EnemyType {
+  const value = model.GetAttribute('EnemyType');
+  return isEnemyType(value) ? value : defaultType;
+}

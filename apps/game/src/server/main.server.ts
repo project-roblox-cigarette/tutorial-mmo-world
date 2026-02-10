@@ -2,7 +2,7 @@ import { CollectionService } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { ServiceRegistry } from './core/ServiceRegistry';
-import { EnemyContactAttackService } from './features/enemy/services';
+import { enemyContactAttackService } from './features/enemy/services';
 import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
 
 // サーバーメイン関数
@@ -10,8 +10,6 @@ function main(): void {
   logger.info('Server', 'サーバーを起動中...');
 
   // サービスを登録
-  const enemyContactAttackService = new EnemyContactAttackService();
-
   ServiceRegistry.register('PlayerMeleeAttack', playerMeleeAttackService);
   ServiceRegistry.register('EnemyContactAttack', enemyContactAttackService);
 
