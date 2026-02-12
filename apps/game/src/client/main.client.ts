@@ -6,8 +6,8 @@ import { logger } from 'shared/utils/logger';
 import { waitSeconds } from 'shared/utils/time';
 import { startPlayerAttackController } from './features/player/combat/PlayerAttackController';
 
-// ゲーム初期化
-async function initialize(): Promise<void> {
+// クライアントメイン関数
+async function main(): Promise<void> {
   logger.info('Client', `${Players.LocalPlayer.Name} がゲームに参加しました`);
 
   logger.info('Client', '入力ハンドラを設定しました');
@@ -20,4 +20,4 @@ async function initialize(): Promise<void> {
   logger.info('Client', 'クライアント初期化完了');
 }
 
-initialize();
+main();

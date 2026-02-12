@@ -23,3 +23,44 @@ export function assertIsPlaceKey(value: unknown): value is PlaceKey {
   if (!typeIs(value, 'string')) return false;
   return (PLACES as Record<string, unknown>)[value] !== undefined;
 }
+
+/**
+ * Attributeから数値を安全に取得
+ * @param instance 対象のInstance
+ * @param attributeName Attribute名
+ * @param defaultValue 取得できない場合のデフォルト値
+ * @returns 数値、取得できない場合はdefaultValue
+ */
+export function getNumberAttribute(
+  instance: Instance,
+  attributeName: string,
+  defaultValue: number,
+): number {
+  const value = instance.GetAttribute(attributeName);
+  return typeIs(value, 'number') ? value : defaultValue;
+}
+
+/**
+ * Attributeから文字列を安全に取得
+ * @param instance 対象のInstance
+ * @param attributeName Attribute名
+ * @param defaultValue 取得できない場合のデフォルト値
+ * @returns 文字列、取得できない場合はdefaultValue
+ */
+export function getStringAttribute(
+  instance: Instance,
+  attributeName: string,
+  defaultValue: string,
+): string {
+  const value = instance.GetAttribute(attributeName);
+  return typeIs(value, 'string') ? value : defaultValue;
+}
+
+/**
+ * 値がBasePart型であるかを判定（Type Guard）
+ * @param value 判定する値
+ * @returns BasePart型の場合true
+ */
+export function isBasePart(value: unknown): value is BasePart {
+  return typeIs(value, 'Instance') && value.IsA('BasePart');
+}
