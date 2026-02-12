@@ -24,6 +24,12 @@
       }
     },
 
+    "ServerStorage": {
+      "CharacterScripts": {
+        "$path": "out/character"
+      }
+    },
+
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "Client": {

@@ -68,6 +68,7 @@ export class PlayerSpawner {
   public stop(): void {
     this._isRunning = false;
 
+    // 全敵を削除（Model内のScriptが自動的にクリーンアップ）
     for (const model of this._aliveEnemies) {
       model.Destroy();
     }
@@ -99,6 +100,43 @@ export class PlayerSpawner {
   // 指定エリアでスポーン中か
   public isRunningIn(area: BasePart): boolean {
     return this._isRunning && this._currentArea === area;
+  }
+
+  // 敵ModelにAIスクリプトを配置
+  private _attachEnemyAI(enemyModel: Model): void {
+    // ServerStorage/CharacterScripts/enemy/EnemyAI を取得
+    const characterScripts = ServerStorage.FindFirstChild('CharacterScripts');
+    if (!characterScripts || !characterScripts.IsA('Folder')) {
+      logger.warn(
+        'EnemySpawn',
+        'ServerStorage/CharacterScripts フォルダーがありません',
+      );
+      return;
+    }
+
+    const enemyFolder = characterScripts.FindFirstChild('enemy');
+    if (!enemyFolder || !enemyFolder.IsA('Folder')) {
+      logger.warn(
+        'EnemySpawn',
+        'ServerStorage/CharacterScripts/enemy フォルダーがありません',
+      );
+      return;
+    }
+
+    const enemyAIScript = enemyFolder.FindFirstChild('EnemyAI');
+    if (!enemyAIScript || !enemyAIScript.IsA('Script')) {
+      logger.warn(
+        'EnemySpawn',
+        'ServerStorage/CharacterScripts/enemy/EnemyAI スクリプトがありません',
+      );
+      return;
+    }
+
+    // スクリプトをクローンして敵Model内に配置
+    const clonedScript = enemyAIScript.Clone();
+    clonedScript.Parent = enemyModel;
+
+    logger.debug('EnemySpawn', `EnemyAIスクリプトを配置: ${enemyModel.Name}`);
   }
 
   // 倒されたら次をスポーンさせる維持処理
@@ -201,6 +239,9 @@ export class PlayerSpawner {
     });
     clonedEnemyModel.PivotTo(spawnCFrame);
 
+    // EnemyAIスクリプトを配置（Model設定完了後に配置して自動実行）
+    this._attachEnemyAI(clonedEnemyModel);
+
     this._aliveEnemies.add(clonedEnemyModel);
 
     // 倒されたらaliveから削除
@@ -209,6 +250,7 @@ export class PlayerSpawner {
         return;
       }
 
+      // Model内のスクリプトが自動的にクリーンアップされる
       this._aliveEnemies.delete(clonedEnemyModel);
 
       // const resolved = resolveSpawnConfigFromArea(area);

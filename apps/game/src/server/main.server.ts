@@ -2,20 +2,15 @@ import { CollectionService } from '@rbxts/services';
 import { TAGS } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { ServiceRegistry } from './core/ServiceRegistry';
-import {
-  EnemyChaseSystem,
-  EnemyContactAttackService,
-} from './features/enemy/services';
+import { EnemyContactAttackService } from './features/enemy/services';
 import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
 
 logger.info('Server', 'サーバーを起動中...');
 
 // サービスを登録
-const enemyChaseSystem = new EnemyChaseSystem();
 const enemyContactAttackService = new EnemyContactAttackService();
 
 ServiceRegistry.register('PlayerMeleeAttack', playerMeleeAttackService);
-ServiceRegistry.register('EnemyChase', enemyChaseSystem);
 ServiceRegistry.register('EnemyContactAttack', enemyContactAttackService);
 
 // 全サービスを起動
