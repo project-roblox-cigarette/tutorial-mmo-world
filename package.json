@@ -11,7 +11,8 @@
     "format:check": "biome format .",
     "format:lua": "stylua .",
     "format:lua:check": "stylua --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "pnpm -r test"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
