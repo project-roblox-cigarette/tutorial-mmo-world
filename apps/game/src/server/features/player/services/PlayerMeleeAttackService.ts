@@ -180,7 +180,7 @@ export class PlayerMeleeAttackService extends BaseService {
 
             // killed なら死亡後処理
             if (result.Value.Killed) {
-              finalizeEnemyDeath(enemy);
+              finalizeEnemyDeath(enemy, player);
             }
           } else {
             logger.debug(

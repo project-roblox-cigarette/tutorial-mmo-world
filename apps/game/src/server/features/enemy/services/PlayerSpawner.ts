@@ -1,9 +1,10 @@
 import { ServerStorage } from '@rbxts/services';
-import { ATTRIBUTES } from 'shared/constants';
+import { ATTRIBUTES, ENEMY_BALANCE_BY_LEVEL } from 'shared/constants';
 import type { AreaId, AreaLevel, AreaSpawnConfig } from 'shared/types/enemy';
 import { getAreaSpawnConfig } from 'shared/utils/enemies';
 import { logger } from 'shared/utils/logger';
 import { toAreaLevel } from 'shared/utils/type-guards';
+import { finalizeEnemyDeath } from '../../combat/utils/damage';
 import { getSpawnCFrameInArea } from '../utils/spawn-position';
 
 // エリア情報からスポーン設定を解決する
@@ -156,13 +157,17 @@ export class PlayerSpawner {
         task.wait(1);
         continue;
       }
-      const { spawnConfig } = getResolved;
+      const { spawnConfig, areaLevel } = getResolved;
 
       while (
         this._isRunning &&
         this._aliveEnemies.size() < spawnConfig.MaxAlivePerPlayer
       ) {
-        const isSuccessSpawn = this.spawnOne(spawnConfig.TemplateName, area);
+        const isSuccessSpawn = this.spawnOne(
+          spawnConfig.TemplateName,
+          area,
+          areaLevel,
+        );
         if (!isSuccessSpawn) break;
 
         task.wait(0.05);
@@ -173,7 +178,11 @@ export class PlayerSpawner {
   }
 
   // 敵を1体スポーンさせる
-  private spawnOne(templateName: string, area: BasePart): boolean {
+  private spawnOne(
+    templateName: string,
+    area: BasePart,
+    enemyLevel: AreaLevel,
+  ): boolean {
     const spawnable = ServerStorage.FindFirstChild('Spawnables');
 
     if (!spawnable || !spawnable.IsA('Folder')) {
@@ -204,9 +213,16 @@ export class PlayerSpawner {
     const clonedEnemyModel = getEnemyTemplateModel.Clone();
     const uptimeMs = math.floor(os.clock() * this._MILLISECONDS_PER_SECOND);
     clonedEnemyModel.Name = `${getEnemyTemplateModel.Name}_${this._player.UserId}_${uptimeMs}`;
-    clonedEnemyModel.SetAttribute('OwnerUserId', this._player.UserId);
 
-    // 倒す用の ProximityPrompt （なければつける）
+    // Attribute付与
+    clonedEnemyModel.SetAttribute(ATTRIBUTES.OwnerUserId, this._player.UserId);
+    clonedEnemyModel.SetAttribute(ATTRIBUTES.EnemyLevel, enemyLevel);
+    clonedEnemyModel.SetAttribute(
+      ATTRIBUTES.Hp,
+      ENEMY_BALANCE_BY_LEVEL[enemyLevel].Hp,
+    );
+
+    // ProximityPromptの配置
     let getProximityPrompt =
       clonedEnemyModel.FindFirstChildOfClass('ProximityPrompt');
     if (!getProximityPrompt) {
@@ -226,15 +242,15 @@ export class PlayerSpawner {
       getProximityPrompt = newProximityPrompt;
     }
 
-    getProximityPrompt.Triggered.Connect((player) => {
-      if (player !== this._player) {
+    // Destroyを直呼びせず、finalizeEnemyDeathを経由
+    getProximityPrompt.Triggered.Connect((triggeredPlayer) => {
+      if (triggeredPlayer !== this._player) {
         return;
       }
-
-      clonedEnemyModel.Destroy();
+      finalizeEnemyDeath(clonedEnemyModel, triggeredPlayer);
     });
 
-    // 配置
+    // スポーン位置を決めて配置
     clonedEnemyModel.Parent = this._enemiesFolder;
     const spawnCFrame = getSpawnCFrameInArea(area, this._randomizer, {
       PaddingStuds: 2,

@@ -44,6 +44,28 @@ export type AreaSpawnConfig = {
 };
 
 /**
+ * 数値の範囲を表す型
+ */
+export type Range = {
+  Min: number;
+  Max: number;
+};
+
+/**
+ * 敵のバランス設定
+ */
+export type EnemyBalanceConfig = {
+  /** 敵の体力 */
+  Hp: number;
+  /** 経験値ドロップ範囲 */
+  ExpDrop: Range;
+  /** お金ドロップ範囲 */
+  MoneyDrop: Range;
+  /** 敵の攻撃力 */
+  EnemyDamage: number;
+};
+
+/**
  * エリアコンテキスト
  * エリアインスタンスと関連情報を保持
  */

@@ -3,6 +3,7 @@ export * from './animations';
 export * from './attributes';
 export * from './configs';
 export * from './enemies';
+export * from './enemyBalance';
 export * from './places';
 export * from './remotes';
 export * from './scores';
