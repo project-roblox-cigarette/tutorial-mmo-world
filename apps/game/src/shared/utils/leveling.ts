@@ -36,8 +36,11 @@ export function remainingExpToNextLevel(
   level: number,
   expInLevel: number,
 ): number {
+  const normalizedLevel = math.max(1, math.floor(level));
+  const normalizedExpInLevel = math.max(0, math.floor(expInLevel));
+
   return math.max(
     0,
-    expRequiredForNextLevel(level) - math.max(0, math.floor(expInLevel)),
+    expRequiredForNextLevel(normalizedLevel) - normalizedExpInLevel,
   );
 }

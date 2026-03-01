@@ -66,6 +66,11 @@ export = () => {
       expect(remainingExpToNextLevel(2, 4)).to.equal(5);
     });
 
+    it('0以下や小数の level を正規化して扱う', () => {
+      expect(remainingExpToNextLevel(0.2, 1.9)).to.equal(3);
+      expect(remainingExpToNextLevel(-10, 1)).to.equal(3);
+    });
+
     it('負の expInLevel を 0 として扱う', () => {
       expect(remainingExpToNextLevel(2, -5)).to.equal(9);
     });
