@@ -42,26 +42,26 @@ export function addExp(userId: number, gainedExp: number): void {
   // プレイヤーデータを更新
   updatePlayerData(userId, {
     Exp: afterExp,
-    Level: nextProgress.Level,
-    ExpInLevel: nextProgress.ExpInLevel,
+    Level: nextProgress.level,
+    ExpInLevel: nextProgress.expInLevel,
   });
 
-  const leveledUp = nextProgress.Level > beforeLevel;
+  const leveledUp = nextProgress.level > beforeLevel;
   const remainingToNext = remainingExpToNextLevel(
-    nextProgress.Level,
-    nextProgress.ExpInLevel,
+    nextProgress.level,
+    nextProgress.expInLevel,
   );
 
   logger.info(
     'ExpService',
-    `ExpGained userId=${userId} gained=${normalizedGainedExp} effectiveGained=${effectiveGainedExp} exp=${beforeExp}->${afterExp} level=${beforeLevel}->${nextProgress.Level} expInLevel=${beforeExpInLevel}->${nextProgress.ExpInLevel} leveledUp=${leveledUp} remainingToNext=${remainingToNext}`,
+    `ExpGained userId=${userId} gained=${normalizedGainedExp} effectiveGained=${effectiveGainedExp} exp=${beforeExp}->${afterExp} level=${beforeLevel}->${nextProgress.level} expInLevel=${beforeExpInLevel}->${nextProgress.expInLevel} leveledUp=${leveledUp} remainingToNext=${remainingToNext}`,
   );
 
   // レベルアップした場合はログに記録
   if (leveledUp) {
     logger.info(
       'ExpService',
-      `Player(${userId}) LevelUp: ${beforeLevel} -> ${nextProgress.Level}`,
+      `Player(${userId}) LevelUp: ${beforeLevel} -> ${nextProgress.level}`,
     );
   }
 }

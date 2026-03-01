@@ -14,7 +14,7 @@ export function applyExpGain(
   level: number,
   expInLevel: number,
   gainedExp: number,
-): { Level: number; ExpInLevel: number } {
+): { level: number; expInLevel: number } {
   let currentLevel = math.max(1, math.floor(level));
   let currentExpInLevel =
     math.max(0, math.floor(expInLevel)) + math.max(0, math.floor(gainedExp));
@@ -26,7 +26,7 @@ export function applyExpGain(
     if (currentLevel > 10_000) break; // 無限ループ防止のセーフガード
   }
 
-  return { Level: currentLevel, ExpInLevel: currentExpInLevel };
+  return { level: currentLevel, expInLevel: currentExpInLevel };
 }
 
 /**
