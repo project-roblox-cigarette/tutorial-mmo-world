@@ -214,13 +214,19 @@ export class PlayerSpawner {
     const uptimeMs = math.floor(os.clock() * this._MILLISECONDS_PER_SECOND);
     clonedEnemyModel.Name = `${getEnemyTemplateModel.Name}_${this._player.UserId}_${uptimeMs}`;
 
+    const enemyHealthFromBalance = ENEMY_BALANCE_BY_LEVEL[enemyLevel].Hp;
+
     // Attribute付与
     clonedEnemyModel.SetAttribute(ATTRIBUTES.OwnerUserId, this._player.UserId);
     clonedEnemyModel.SetAttribute(ATTRIBUTES.EnemyLevel, enemyLevel);
-    clonedEnemyModel.SetAttribute(
-      ATTRIBUTES.Hp,
-      ENEMY_BALANCE_BY_LEVEL[enemyLevel].Hp,
-    );
+    clonedEnemyModel.SetAttribute(ATTRIBUTES.Hp, enemyHealthFromBalance);
+
+    // 実耐久はHumanoidをSSOTとして初期化
+    const humanoid = clonedEnemyModel.FindFirstChildWhichIsA('Humanoid', true);
+    if (humanoid?.IsA('Humanoid')) {
+      humanoid.MaxHealth = enemyHealthFromBalance;
+      humanoid.Health = enemyHealthFromBalance;
+    }
 
     // ProximityPromptの配置
     let getProximityPrompt =

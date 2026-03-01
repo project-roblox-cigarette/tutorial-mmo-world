@@ -41,6 +41,7 @@ export function applyDamageToEnemy(
   const getHumanoid = enemy.FindFirstChildWhichIsA('Humanoid', true);
   if (getHumanoid?.IsA('Humanoid')) {
     getHumanoid.TakeDamage(amount);
+    enemy.SetAttribute(ATTRIBUTES.Hp, getHumanoid.Health);
 
     if (getHumanoid.Health <= 0) {
       enemy.SetAttribute(ATTRIBUTES.Dead, true);
