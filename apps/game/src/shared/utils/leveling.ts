@@ -23,8 +23,6 @@ export function applyExpGain(
   while (currentExpInLevel >= expRequiredForNextLevel(currentLevel)) {
     currentExpInLevel -= expRequiredForNextLevel(currentLevel);
     currentLevel += 1;
-
-    if (currentLevel > 10_000) break; // 無限ループ防止のセーフガード
   }
 
   return { level: currentLevel, expInLevel: currentExpInLevel };

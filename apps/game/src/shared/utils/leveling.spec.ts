@@ -64,6 +64,15 @@ export = () => {
       expect(result.level).to.equal(2);
       expect(result.expInLevel).to.equal(5);
     });
+
+    it('高レベル帯でも進行を欠落させず複数レベルアップする', () => {
+      const gainedExp =
+        expRequiredForNextLevel(10_000) + expRequiredForNextLevel(10_001) + 5;
+      const result = applyExpGain(10_000, 0, gainedExp);
+
+      expect(result.level).to.equal(10_002);
+      expect(result.expInLevel).to.equal(5);
+    });
   });
 
   describe('remainingExpToNextLevel', () => {
