@@ -1,5 +1,6 @@
 export function expRequiredForNextLevel(level: number): number {
-  const nextLevel = math.floor(level) + 1;
+  const currentLevel = math.max(1, math.floor(level));
+  const nextLevel = currentLevel + 1;
   return nextLevel ** 2; // Lv2 = 4, Lv3 = 9, Lv4 = 16, Lv5 = 25, ...
 }
 

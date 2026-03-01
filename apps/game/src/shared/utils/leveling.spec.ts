@@ -18,6 +18,11 @@ export = () => {
       expect(expRequiredForNextLevel(3)).to.equal(16);
     });
 
+    it('0以下の level は 1 として正規化する', () => {
+      expect(expRequiredForNextLevel(0)).to.equal(4);
+      expect(expRequiredForNextLevel(-10)).to.equal(4);
+    });
+
     it('小数レベル入力を切り捨てて計算する', () => {
       expect(expRequiredForNextLevel(1.9)).to.equal(4);
       expect(expRequiredForNextLevel(2.1)).to.equal(9);
