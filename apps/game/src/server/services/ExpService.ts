@@ -23,17 +23,20 @@ export function addExp(userId: number, gainedExp: number): void {
   const beforeExp = playerData.Exp;
   const beforeLevel = playerData.Level;
   const beforeExpInLevel = playerData.ExpInLevel;
+  const afterExp = clamp(
+    beforeExp + normalizedGainedExp,
+    EXP_LIMITS.Min,
+    EXP_LIMITS.Max,
+  );
+  const effectiveGainedExp = afterExp - beforeExp;
+
+  if (effectiveGainedExp <= 0) return;
 
   // 現在のレベルと経験値をもとに、レベルアップの計算を行う
   const nextProgress = applyExpGain(
     beforeLevel,
     beforeExpInLevel,
-    normalizedGainedExp,
-  );
-  const afterExp = clamp(
-    beforeExp + normalizedGainedExp,
-    EXP_LIMITS.Min,
-    EXP_LIMITS.Max,
+    effectiveGainedExp,
   );
 
   // プレイヤーデータを更新
@@ -51,7 +54,7 @@ export function addExp(userId: number, gainedExp: number): void {
 
   logger.info(
     'ExpService',
-    `ExpGained userId=${userId} gained=${normalizedGainedExp} exp=${beforeExp}->${afterExp} level=${beforeLevel}->${nextProgress.Level} expInLevel=${beforeExpInLevel}->${nextProgress.ExpInLevel} leveledUp=${leveledUp} remainingToNext=${remainingToNext}`,
+    `ExpGained userId=${userId} gained=${normalizedGainedExp} effectiveGained=${effectiveGainedExp} exp=${beforeExp}->${afterExp} level=${beforeLevel}->${nextProgress.Level} expInLevel=${beforeExpInLevel}->${nextProgress.ExpInLevel} leveledUp=${leveledUp} remainingToNext=${remainingToNext}`,
   );
 
   // レベルアップした場合はログに記録
