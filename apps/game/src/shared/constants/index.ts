@@ -7,5 +7,6 @@ export * from './enemyBalance';
 export * from './places';
 export * from './remotes';
 export * from './scores';
+export * from './shops';
 export * from './tags';
 export * from './weapons';
