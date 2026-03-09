@@ -4,6 +4,7 @@ import { logger } from 'shared/utils/logger';
 import { ServiceRegistry } from './core/ServiceRegistry';
 import { enemyContactAttackService } from './features/enemy/services';
 import { playerMeleeAttackService } from './features/player/services/PlayerMeleeAttackService';
+import { shopPromptService } from './features/shop/services';
 
 // サーバーメイン関数
 function main(): void {
@@ -12,6 +13,7 @@ function main(): void {
   // サービスを登録
   ServiceRegistry.register('PlayerMeleeAttack', playerMeleeAttackService);
   ServiceRegistry.register('EnemyContactAttack', enemyContactAttackService);
+  ServiceRegistry.register('ShopPrompt', shopPromptService);
 
   // 全サービスを起動
   ServiceRegistry.startAll();

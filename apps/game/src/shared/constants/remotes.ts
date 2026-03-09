@@ -13,6 +13,4 @@ export const REMOTES = {
   SyncState: 'SyncState',
   /** ショップ関連のRemoteEvent名 */
   Shop_open: 'Shop_open',
-  Shop_buy: 'Shop_buy',
-  Shop_sell: 'Shop_sell',
 } as const;
