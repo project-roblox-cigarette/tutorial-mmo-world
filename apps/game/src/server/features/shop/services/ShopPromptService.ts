@@ -23,6 +23,8 @@ export class ShopPromptService extends BaseService {
   public start(): void {
     super.start();
 
+    this._getOrCreateShopOpenRemote();
+
     const shopNpcs = CollectionService.GetTagged(TAGS.SHOP_NPC);
     logger.info('ShopPrompt', `ShopNPCタグを ${shopNpcs.size()} 件検出`);
 
