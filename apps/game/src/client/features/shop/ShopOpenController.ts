@@ -4,6 +4,7 @@ import type { ShopOpenPayload } from 'shared/types/shop';
 import { isShopId } from 'shared/types/shop';
 import { logger } from 'shared/utils/logger';
 
+// ショップオープン通知を受け取るためのRemoteEventの名前
 const SHOP_PREVIEW_GUI_NAME = 'ShopPreviewGui';
 
 /**
@@ -31,6 +32,7 @@ function isShopOpenPayload(value: unknown): value is ShopOpenPayload {
 
 /**
  * 受信確認用の最小仮UIを PlayerGui に表示する。
+ * @param payload サーバーから受け取ったショップオープン通知のペイロード
  */
 function openShopPreview(payload: ShopOpenPayload): void {
   const localPlayer = Players.LocalPlayer;
@@ -40,15 +42,18 @@ function openShopPreview(payload: ShopOpenPayload): void {
     return;
   }
 
+  // 既に同名のUIが存在する場合は削除してから新規作成する
   const existing = playerGui.FindFirstChild(SHOP_PREVIEW_GUI_NAME);
   if (existing) {
     existing.Destroy();
   }
 
+  // 仮UIを構築してPlayerGuiに配置する
   const screenGui = new Instance('ScreenGui');
   screenGui.Name = SHOP_PREVIEW_GUI_NAME;
   screenGui.ResetOnSpawn = false;
 
+  // フレームを作成して配置する
   const frame = new Instance('Frame');
   frame.Name = 'Container';
   frame.Size = new UDim2(0, 360, 0, 180);
@@ -58,6 +63,7 @@ function openShopPreview(payload: ShopOpenPayload): void {
   frame.BorderSizePixel = 0;
   frame.Parent = screenGui;
 
+  // タイトルと説明、閉じるボタンを作成して配置する
   const title = new Instance('TextLabel');
   title.Name = 'Title';
   title.Size = new UDim2(1, -24, 0, 56);
@@ -71,6 +77,7 @@ function openShopPreview(payload: ShopOpenPayload): void {
   title.Text = `${payload.ShopId} を開く予定`;
   title.Parent = frame;
 
+  // 受信確認用の説明テキストを配置する
   const description = new Instance('TextLabel');
   description.Name = 'Description';
   description.Size = new UDim2(1, -24, 0, 42);
@@ -84,6 +91,7 @@ function openShopPreview(payload: ShopOpenPayload): void {
   description.Text = 'これは受信確認用の仮UIです';
   description.Parent = frame;
 
+  // 閉じるボタンを配置する
   const closeButton = new Instance('TextButton');
   closeButton.Name = 'CloseButton';
   closeButton.Size = new UDim2(0, 108, 0, 36);
@@ -97,10 +105,12 @@ function openShopPreview(payload: ShopOpenPayload): void {
   closeButton.Text = '閉じる';
   closeButton.Parent = frame;
 
+  // 閉じるボタンがクリックされたらUIを破棄する
   closeButton.Activated.Connect(() => {
     screenGui.Destroy();
   });
 
+  // 最後にPlayerGuiに配置する
   screenGui.Parent = playerGui;
 }
 

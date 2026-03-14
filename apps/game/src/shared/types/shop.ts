@@ -22,7 +22,9 @@ export type ShopItemConfig = {
 };
 
 /**
- * 店設定（将来、複数店に拡張する前提で型を切る）
+ * 店設定
+ * - Items はこの店で売る商品のIDリスト。
+ * - 商品詳細は SHOP_ITEM_CATALOG から参照する。
  */
 export type ShopConfig = {
   Id: ShopId;
@@ -39,12 +41,19 @@ export type ShopOpenPayload = {
 };
 
 /**
- * 文字列の型ガード（Remote入力検証で使う）
+ * 文字列の型ガード
+ * @param value 検証する値
+ * @returns value が ShopId 型である場合は true、それ以外は false
  */
 export function isShopId(value: unknown): value is ShopId {
   return typeIs(value, 'string') && value === 'ToolShop';
 }
 
+/**
+ * 文字列の型ガード
+ * @param value 検証する値
+ * @returns value が ShopItemId 型である場合は true、それ以外は false
+ */
 export function isShopItemId(value: unknown): value is ShopItemId {
   if (!typeIs(value, 'string')) return false;
   return value === 'Sword_Lv0' || value === 'FishingRod_Lv0';
