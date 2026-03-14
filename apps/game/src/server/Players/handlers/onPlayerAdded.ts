@@ -1,5 +1,5 @@
-import { logger } from 'shared/utils/logger';
 import { ATTRIBUTES } from 'shared/constants';
+import { logger } from 'shared/utils/logger';
 import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
 import { initializePlayerData } from '../../services/PlayerDataService';
 
