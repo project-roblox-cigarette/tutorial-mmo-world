@@ -25,6 +25,7 @@ export function initializePlayerData(player: Player): PlayerData {
     Level: 1,
     Exp: 0,
     ExpInLevel: 0,
+    Money: 0,
   };
 
   playerDataCache.set(player.UserId, data);

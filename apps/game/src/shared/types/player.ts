@@ -17,6 +17,8 @@ export type PlayerData = {
   Exp: number;
   /** レベル内経験値 */
   ExpInLevel: number;
+  /** 所持金 */
+  Money: number;
 };
 
 /**
