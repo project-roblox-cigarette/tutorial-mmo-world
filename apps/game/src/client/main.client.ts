@@ -5,6 +5,7 @@ import { Players } from '@rbxts/services';
 import { logger } from 'shared/utils/logger';
 import { waitSeconds } from 'shared/utils/time';
 import { startPlayerAttackController } from './features/player/combat/PlayerAttackController';
+import { startMoneyHudController } from './features/player/ui/MoneyHudController';
 import { startShopOpenController } from './features/shop/ShopOpenController';
 
 // クライアントメイン関数
@@ -15,6 +16,7 @@ async function main(): Promise<void> {
 
   startPlayerAttackController();
   startShopOpenController();
+  startMoneyHudController();
 
   // 少し待機（UIのロードなどをシミュレート）
   await waitSeconds(0.5);
