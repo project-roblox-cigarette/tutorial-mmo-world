@@ -17,7 +17,9 @@ export type MoneyError =
  * @returns 整数の場合は true、そうでない場合は false
  */
 function isIntegerAmount(amount: number): boolean {
-  return math.floor(amount) === amount;
+  return (
+    amount > -math.huge && amount < math.huge && math.floor(amount) === amount
+  );
 }
 
 /**
