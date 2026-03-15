@@ -12,12 +12,47 @@ export type MoneyError =
   | 'InsufficientFunds';
 
 /**
- * 正の整数に変換された金額を返す
- * @param amount 変換する金額
- * @returns 正の整数に変換された金額
+ * 指定した金額が整数かどうかを確認する
+ * @param amount 金額
+ * @returns 整数の場合は true、そうでない場合は false
  */
-function normalizeMoneyAmount(amount: number): number {
-  return math.max(0, math.floor(amount));
+function isIntegerAmount(amount: number): boolean {
+  return math.floor(amount) === amount;
+}
+
+/**
+ * 所持金そのものの値として有効かを確認する。
+ *
+ * 用途:
+ * - setMoney() のように、最終的に保存する残高を検証するときに使う
+ *
+ * ルール:
+ * - 整数であること
+ * - 0以上であること
+ *
+ * @param amount 検証したい所持金の値
+ * @returns 所持金として保存可能なら true
+ */
+function isValidMoneyValue(amount: number): boolean {
+  return isIntegerAmount(amount) && amount >= 0;
+}
+
+/**
+ * 取引金額として有効かを確認する。
+ *
+ * 用途:
+ * - addMoney() / spendMoney() / canAfford() のように、
+ *   「いくら増やすか」「いくら使うか」を検証するときに使う
+ *
+ * ルール:
+ * - 整数であること
+ * - 1以上であること
+ *
+ * @param amount 検証したい取引金額
+ * @returns 取引金額として利用可能なら true
+ */
+function isValidTransactionAmount(amount: number): boolean {
+  return isIntegerAmount(amount) && amount > 0;
 }
 
 /**
@@ -30,20 +65,11 @@ function syncMoneyAttribute(player: Player, amount: number): void {
 }
 
 /**
- * プレイヤーの所持金データを取得する
- * @param player プレイヤー
- * @returns プレイヤーの所持金データ
- */
-function requireMoneyData(player: Player) {
-  return getPlayerData(player.UserId);
-}
-
-/**
  * プレイヤーのデータを取得する
  * @param player プレイヤー
- * @returns プレイヤーのデータ
+ * @returns プレイヤーのデータ、または undefined
  */
-function requirePlayerData(player: Player) {
+function getRequiredPlayerData(player: Player) {
   return getPlayerData(player.UserId);
 }
 
@@ -64,11 +90,15 @@ export function getMoney(player: Player): number | undefined {
  * @returns 支払える場合は true、そうでない場合は false
  */
 export function canAfford(player: Player, amount: number): boolean {
-  const normalized = normalizeMoneyAmount(amount);
+  if (!isValidTransactionAmount(amount)) {
+    return false;
+  }
   const currentMoney = getMoney(player);
 
-  if (currentMoney === undefined) return false;
-  return currentMoney >= normalized;
+  if (currentMoney === undefined) {
+    return false;
+  }
+  return currentMoney >= amount;
 }
 
 /**
@@ -81,18 +111,20 @@ export function setMoney(
   player: Player,
   amount: number,
 ): Result<number, MoneyError> {
-  const data = requirePlayerData(player);
+  const data = getRequiredPlayerData(player);
   if (!data) {
     return Result.failure('PlayerDataNotFound');
   }
 
-  const normalized = normalizeMoneyAmount(amount);
-  const updated = updatePlayerData(player.UserId, { Money: normalized });
+  if (!isValidMoneyValue(amount)) {
+    return Result.failure('InvalidAmount');
+  }
+  const updated = updatePlayerData(player.UserId, { Money: amount });
   if (!updated) {
     return Result.failure('PlayerDataNotFound');
   }
 
-  syncMoneyAttribute(player, normalized);
+  syncMoneyAttribute(player, amount);
   logger.info(
     'MoneyService',
     `${player.Name} の所持金を設定: ${updated.Money}`,
@@ -111,17 +143,16 @@ export function addMoney(
   player: Player,
   amount: number,
 ): Result<number, MoneyError> {
-  const data = requireMoneyData(player);
+  const data = getRequiredPlayerData(player);
   if (!data) {
     return Result.failure('PlayerDataNotFound');
   }
 
-  const normalized = normalizeMoneyAmount(amount);
-  if (normalized <= 0) {
+  if (!isValidTransactionAmount(amount)) {
     return Result.failure('InvalidAmount');
   }
 
-  return setMoney(player, data.Money + normalized);
+  return setMoney(player, data.Money + amount);
 }
 
 /**
@@ -134,19 +165,18 @@ export function spendMoney(
   player: Player,
   amount: number,
 ): Result<number, MoneyError> {
-  const data = requireMoneyData(player);
+  const data = getRequiredPlayerData(player);
   if (!data) {
     return Result.failure('PlayerDataNotFound');
   }
 
-  const normalized = normalizeMoneyAmount(amount);
-  if (normalized <= 0) {
+  if (!isValidTransactionAmount(amount)) {
     return Result.failure('InvalidAmount');
   }
 
-  if (data.Money < normalized) {
+  if (data.Money < amount) {
     return Result.failure('InsufficientFunds');
   }
 
-  return setMoney(player, data.Money - normalized);
+  return setMoney(player, data.Money - amount);
 }
