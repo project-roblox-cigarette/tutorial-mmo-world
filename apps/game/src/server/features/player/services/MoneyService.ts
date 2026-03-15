@@ -12,14 +12,25 @@ export type MoneyError =
   | 'InsufficientFunds';
 
 /**
- * 指定した金額が整数かどうかを確認する
+ * 指定した金額が有限な数値かどうかを確認する
+ * - NaN は不可
+ * - math.huge / -math.huge は不可
  * @param amount 金額
- * @returns 整数の場合は true、そうでない場合は false
+ * @returns 有限な数値の場合は true、そうでない場合は false
+ */
+function isFiniteNumber(amount: number): boolean {
+  return amount > -math.huge && amount < math.huge;
+}
+
+/**
+ * 指定した金額が有限な整数かどうかを確認する
+ * - 小数は不可
+ * - NaN / ±∞ は不可
+ * @param amount 金額
+ * @returns 有限な整数の場合は true、そうでない場合は false
  */
 function isIntegerAmount(amount: number): boolean {
-  return (
-    amount > -math.huge && amount < math.huge && math.floor(amount) === amount
-  );
+  return isFiniteNumber(amount) && math.floor(amount) === amount;
 }
 
 /**
