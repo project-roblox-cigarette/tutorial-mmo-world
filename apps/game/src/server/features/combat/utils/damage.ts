@@ -12,7 +12,7 @@ import { randomInt } from 'shared/utils/math';
 import { toAreaLevel } from 'shared/utils/type-guards';
 import { logger } from '../../../../shared/utils';
 import { addExp } from '../../../services/ExpService';
-import { addMoney } from '../../player/services';
+import { addMoney } from '../../player/services/MoneyService';
 
 /**
  * 敵にダメージを適用
