@@ -69,7 +69,7 @@ function syncMoneyAttribute(player: Player, amount: number): void {
  * @param player プレイヤー
  * @returns プレイヤーのデータ、または undefined
  */
-function getRequiredPlayerData(player: Player) {
+function getPlayerDataFromPlayer(player: Player) {
   return getPlayerData(player.UserId);
 }
 
@@ -111,7 +111,7 @@ export function setMoney(
   player: Player,
   amount: number,
 ): Result<number, MoneyError> {
-  const data = getRequiredPlayerData(player);
+  const data = getPlayerDataFromPlayer(player);
   if (!data) {
     return Result.failure('PlayerDataNotFound');
   }
@@ -143,7 +143,7 @@ export function addMoney(
   player: Player,
   amount: number,
 ): Result<number, MoneyError> {
-  const data = getRequiredPlayerData(player);
+  const data = getPlayerDataFromPlayer(player);
   if (!data) {
     return Result.failure('PlayerDataNotFound');
   }
@@ -165,7 +165,7 @@ export function spendMoney(
   player: Player,
   amount: number,
 ): Result<number, MoneyError> {
-  const data = getRequiredPlayerData(player);
+  const data = getPlayerDataFromPlayer(player);
   if (!data) {
     return Result.failure('PlayerDataNotFound');
   }
