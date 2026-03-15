@@ -7,7 +7,7 @@ const MONEY_LABEL_NAME = 'MoneyLabel';
 
 function getOrCreateMoneyLabel(): TextLabel | undefined {
   const localPlayer = Players.LocalPlayer;
-  const playerGui = localPlayer.FindFirstChildOfClass('PlayerGui');
+  const playerGui = localPlayer.WaitForChild('PlayerGui') as PlayerGui;
 
   if (!playerGui) {
     logger.warn(
