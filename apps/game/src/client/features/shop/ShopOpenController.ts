@@ -100,7 +100,7 @@ function openShopUi(payload: ShopOpenPayload): void {
   statusLabel.Text = '';
   statusLabel.Parent = frame;
 
-  function _setStatusMessage(message: string): void {
+  function setStatusMessage(message: string): void {
     statusLabel.Text = message;
   }
 
@@ -121,7 +121,7 @@ function openShopUi(payload: ShopOpenPayload): void {
     screenGui.Destroy();
   });
 
-  _renderShopItems(listContainer, payload.ShopId, _setStatusMessage);
+  _renderShopItems(listContainer, payload.ShopId, setStatusMessage);
 
   screenGui.Parent = playerGui;
 }
