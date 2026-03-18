@@ -3,6 +3,7 @@ import { REMOTES } from 'shared/constants';
 import { SHOP_CONFIGS, SHOP_ITEM_CATALOG } from 'shared/constants/shops';
 import {
   isShopPurchaseRequest,
+  type ShopItemConfig,
   type ShopPurchaseError,
   type ShopPurchaseResult,
 } from 'shared/types/shop';
@@ -80,6 +81,32 @@ export class ShopPurchaseService extends BaseService {
   }
 
   /**
+   * 商品定義から Tool テンプレートを取得する
+   * @param itemConfig 購入対象アイテムの設定
+   * @returns Tool テンプレート。見つからない場合は undefined
+   */
+  private getToolTemplate(itemConfig: ShopItemConfig): Tool | undefined {
+    const weaponsFolder = ServerStorage.FindFirstChild('Weapons');
+    if (!weaponsFolder) return undefined;
+
+    if (!itemConfig.StorageCategory) return undefined;
+
+    const categoryFolder = weaponsFolder.FindFirstChild(
+      itemConfig.StorageCategory,
+    );
+    if (!categoryFolder) return undefined;
+
+    const toolTemplate = categoryFolder.FindFirstChild(
+      itemConfig.ToolTemplateName,
+    );
+    if (!toolTemplate || !toolTemplate.IsA('Tool')) {
+      return undefined;
+    }
+
+    return toolTemplate;
+  }
+
+  /**
    * 購入リクエストを処理する
    * @param player 購入リクエストを送信したプレイヤー
    * @param payload 購入リクエストのペイロード
@@ -108,16 +135,10 @@ export class ShopPurchaseService extends BaseService {
       return this.failure('ItemNotSoldInShop');
     }
 
-    // プレイヤーがアイテムを購入できるかの検証（所持金の確認）
-    const weaponsFolder = ServerStorage.FindFirstChild('Weapons');
-    const swordsFolder = weaponsFolder?.FindFirstChild('Swords');
-
-    const toolTemplate = swordsFolder?.FindFirstChild(
-      itemConfig.ToolTemplateName,
-    );
+    const toolTemplate = this.getToolTemplate(itemConfig);
 
     // Toolテンプレートの存在の検証
-    if (!toolTemplate || !toolTemplate.IsA('Tool')) {
+    if (!toolTemplate) {
       return this.failure('ToolTemplateNotFound');
     }
 

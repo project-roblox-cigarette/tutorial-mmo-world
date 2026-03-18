@@ -4,6 +4,8 @@
 
 export type ShopId = 'ToolShop';
 
+export type ShopStorageCategory = 'Swords' | 'FishingRods';
+
 /**
  * 商品ID（Toolテンプレ名と揃えるのが運用上ラク）
  */
@@ -21,6 +23,8 @@ export type ShopItemConfig = {
   ToolTemplateName: string;
   /** 価格（ゲーム内通貨） */
   Price: number;
+  /** カテゴリ */
+  StorageCategory?: ShopStorageCategory;
 };
 
 /**
