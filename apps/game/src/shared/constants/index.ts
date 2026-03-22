@@ -5,6 +5,7 @@ export * from './configs';
 export * from './enemies';
 export * from './enemyBalance';
 export * from './places';
+export * from './playerHealth';
 export * from './remotes';
 export * from './scores';
 export * from './tags';
