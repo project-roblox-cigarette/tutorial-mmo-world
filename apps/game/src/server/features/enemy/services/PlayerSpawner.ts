@@ -4,7 +4,7 @@ import type { AreaId, AreaLevel, AreaSpawnConfig } from 'shared/types/enemy';
 import { getAreaSpawnConfig } from 'shared/utils/enemies';
 import { logger } from 'shared/utils/logger';
 import { toAreaLevel } from 'shared/utils/type-guards';
-import { finalizeEnemyDeath } from '../../combat/utils/damage';
+import { initializeHealth } from '../../../../shared/utils/health';
 import { getSpawnCFrameInArea } from '../utils/spawn-position';
 
 // エリア情報からスポーン設定を解決する
@@ -216,45 +216,15 @@ export class PlayerSpawner {
 
     const enemyHealthFromBalance = ENEMY_BALANCE_BY_LEVEL[enemyLevel].Hp;
 
-    // Attribute付与
+    // 敵固有の属性
     clonedEnemyModel.SetAttribute(ATTRIBUTES.OwnerUserId, this._player.UserId);
     clonedEnemyModel.SetAttribute(ATTRIBUTES.EnemyLevel, enemyLevel);
-    clonedEnemyModel.SetAttribute(ATTRIBUTES.Hp, enemyHealthFromBalance);
 
-    // 実耐久はHumanoidをSSOTとして初期化
-    const humanoid = clonedEnemyModel.FindFirstChildWhichIsA('Humanoid', true);
-    if (humanoid?.IsA('Humanoid')) {
-      humanoid.MaxHealth = enemyHealthFromBalance;
-      humanoid.Health = enemyHealthFromBalance;
-    }
+    // HP初期化は共通関数へ寄せる
+    initializeHealth(clonedEnemyModel, enemyHealthFromBalance);
 
-    // ProximityPromptの配置
-    let getProximityPrompt =
-      clonedEnemyModel.FindFirstChildOfClass('ProximityPrompt');
-    if (!getProximityPrompt) {
-      const newProximityPrompt = new Instance('ProximityPrompt');
-      newProximityPrompt.ActionText = '攻撃する';
-      newProximityPrompt.ObjectText = clonedEnemyModel.Name;
-      newProximityPrompt.MaxActivationDistance = 10;
-
-      // どのPartにつけるか、PrimaryPartを優先。
-      const getPrimaryPart =
-        clonedEnemyModel.PrimaryPart ??
-        clonedEnemyModel.FindFirstChildWhichIsA('BasePart', true);
-      if (getPrimaryPart) {
-        newProximityPrompt.Parent = getPrimaryPart;
-      }
-
-      getProximityPrompt = newProximityPrompt;
-    }
-
-    // Destroyを直呼びせず、finalizeEnemyDeathを経由
-    getProximityPrompt.Triggered.Connect((triggeredPlayer) => {
-      if (triggeredPlayer !== this._player) {
-        return;
-      }
-      finalizeEnemyDeath(clonedEnemyModel, triggeredPlayer);
-    });
+    // HPシステムを PlayerMeleeAttackService に一本化するため、
+    // ここでは ProximityPrompt による即時撃破は作らない。
 
     // スポーン位置を決めて配置
     clonedEnemyModel.Parent = this._enemiesFolder;

@@ -8,12 +8,15 @@ import { CollectionService } from '@rbxts/services';
 import { ATTRIBUTES, ENEMY_BALANCE_BY_LEVEL, TAGS } from 'shared/constants';
 import type { DamageApplyResult } from 'shared/types/combat';
 import { Result } from 'shared/types/result';
+import { applyDamageToModel } from 'shared/utils/health';
 import { randomInt } from 'shared/utils/math';
 import { toAreaLevel } from 'shared/utils/type-guards';
 import { addExp } from '../../../services/ExpService';
 
 /**
- * 敵にダメージを適用
+ * 敵にダメージを適用する
+ * - 敵モデルの属性やタグを検査して、ダメージを適用できるかどうかを判断する
+ * - ダメージ適用後の体力が0以下になった場合は死亡とみなし、死亡処理を行う
  * @param enemy 敵のモデル
  * @param amount ダメージ量
  * @returns ダメージ適用結果（成功/失敗、撃破フラグ）
@@ -22,64 +25,37 @@ export function applyDamageToEnemy(
   enemy: Model,
   amount: number,
 ): DamageApplyResult {
-  //
   if (!enemy || !enemy.Parent) {
     return Result.failure('NO_TARGET');
   }
 
-  // Enemyタグがついているか確認。
   if (!CollectionService.HasTag(enemy, TAGS.ENEMY)) {
     return Result.failure('NOT_ENEMY');
   }
 
-  // 既に死亡済みなら追加ダメージは適用しない
   if (enemy.GetAttribute(ATTRIBUTES.Dead) === true) {
     return Result.failure('ALREADY_DEAD');
   }
 
-  // Humanoid方式
-  const getHumanoid = enemy.FindFirstChildWhichIsA('Humanoid', true);
-  if (getHumanoid?.IsA('Humanoid')) {
-    getHumanoid.TakeDamage(amount);
-    enemy.SetAttribute(ATTRIBUTES.Hp, getHumanoid.Health);
-
-    if (getHumanoid.Health <= 0) {
-      enemy.SetAttribute(ATTRIBUTES.Dead, true);
-      return Result.success({ Killed: true });
-    }
-
-    return Result.success({ Killed: false });
-  }
-
-  // Attrubute方式
-  const getHP = enemy.GetAttribute(ATTRIBUTES.Hp);
-  if (typeIs(getHP, 'number')) {
-    const newHP = math.max(0, getHP - amount);
-    enemy.SetAttribute(ATTRIBUTES.Hp, newHP);
-
-    if (newHP <= 0) {
-      enemy.SetAttribute(ATTRIBUTES.Dead, true);
-      return Result.success({ Killed: true });
-    }
-
-    return Result.success({ Killed: false });
-  }
-
-  return Result.failure('NO_HEALTH_COMPONENT');
+  return applyDamageToModel(enemy, amount);
 }
 
 /**
  * 敵の死亡処理が既に行われているか確認
- * @param enemyModel 敵のモデル
- * @returns 死亡処理が既に行われている場合は true、それ以外は false
+ * - 敵モデルの属性から死亡処理が行われたかどうかを示すフラグを確認する
+ * - これにより、同じ敵に対して複数回死亡処理が行われるのを防止する
+ * @param enemyModel 確認対象の敵モデル
+ * @returns 死亡処理が既に行われている場合はtrue、そうでない場合はfalse
  */
 function isDeathAlreadyHandled(enemyModel: Model): boolean {
   return enemyModel.GetAttribute(ATTRIBUTES.DeathHandled) === true;
 }
 
 /**
- * 敵の死亡処理をマークする（以降の処理で死亡処理済みかどうかを判定するためのフラグをセット）
- * @param enemyModel 敵のモデル
+ * 敵の死亡処理をマークする
+ * - 敵モデルの属性に死亡処理が行われたことを示すフラグを設定する
+ * - これにより、同じ敵に対して複数回死亡処理が行われるのを防止する
+ * @param enemyModel 死亡処理をマークする対象の敵モデル
  */
 function markDeathHandled(enemyModel: Model): void {
   enemyModel.SetAttribute(ATTRIBUTES.DeathHandled, true);
@@ -88,9 +64,11 @@ function markDeathHandled(enemyModel: Model): void {
 
 /**
  * 敵の報酬対象かどうかを判定
- * @param enemyModel 敵のモデル
- * @param killerPlayer 倒したプレイヤー
- * @returns 報酬対象の場合は true、それ以外は false
+ * - 敵モデルの属性から所有者のUserIdを取得し、キラーのUserIdと比較する
+ * - 所有者がいない場合は誰でも報酬対象とする
+ * @param enemyModel 判定対象の敵モデル
+ * @param killerPlayer キラーのプレイヤーオブジェクト
+ * @returns 報酬対象であればtrue、そうでなければfalse
  */
 function isRewardEligibleKiller(
   enemyModel: Model,
@@ -98,17 +76,17 @@ function isRewardEligibleKiller(
 ): boolean {
   const ownerUserIdAttribute = enemyModel.GetAttribute(ATTRIBUTES.OwnerUserId);
 
-  // OwnerUserId を持たない敵は「誰が倒しても報酬OK」
   if (!typeIs(ownerUserIdAttribute, 'number')) return true;
 
-  // OwnerUserId を持つ敵は「所有者のみ報酬OK」
   return ownerUserIdAttribute === killerPlayer.UserId;
 }
 
 /**
  * 敵のレベルを解決
- * @param enemyModel 敵のモデル
- * @returns 敵のレベル（1〜3）
+ * - 敵モデルの属性からレベルを取得し、適切な型に変換する
+ * - レベル属性が存在しない場合はデフォルトで1を返す
+ * @param enemyModel レベルを解決する対象の敵モデル
+ * @returns 敵のレベル（1, 2, 3のいずれか）
  */
 function resolveEnemyLevel(enemyModel: Model): 1 | 2 | 3 {
   const enemyLevelAttribute = enemyModel.GetAttribute(ATTRIBUTES.EnemyLevel);
@@ -116,21 +94,21 @@ function resolveEnemyLevel(enemyModel: Model): 1 | 2 | 3 {
     ? toAreaLevel(enemyLevelAttribute)
     : undefined;
 
-  // 不正/欠損時はLv1として扱う（安全側）
   return (enemyLevel ?? 1) as 1 | 2 | 3;
 }
 
 /**
  * 敵に経験値報酬を付与
- * @param enemyModel 敵のモデル
- * @param killerPlayer 倒したプレイヤー
+ * - 敵のレベルに応じた経験値をランダムにドロップ
+ * - プレイヤーが報酬対象でない場合は何もしない
+ * @param enemyModel 経験値を付与する対象の敵モデル
+ * @param killerPlayer 経験値を受け取るプレイヤー
  */
 function grantExpReward(enemyModel: Model, killerPlayer: Player): void {
   if (!isRewardEligibleKiller(enemyModel, killerPlayer)) return;
 
   const enemyLevel = resolveEnemyLevel(enemyModel);
   const enemyBalance = ENEMY_BALANCE_BY_LEVEL[enemyLevel];
-
   const expDropRange = enemyBalance.ExpDrop;
   const droppedExp = randomInt(expDropRange.Min, expDropRange.Max);
 
@@ -139,12 +117,9 @@ function grantExpReward(enemyModel: Model, killerPlayer: Player): void {
 
 /**
  * 敵の死亡処理を最終化する
- * - 経験値の付与
- * - タグの後始末
- * - モデルの破壊
- * など、敵が死亡した際に必要な一連の処理をまとめて行う
- * @param enemyModel 敵のモデル
- * @param killerPlayer 倒したプレイヤー
+ * - 敵のモデルを破壊する前に、経験値報酬の付与やタグの削除などの処理を行う
+ * - @param enemyModel 死亡した敵のモデル
+ * - @param killerPlayer 敵を倒したプレイヤー（存在する場合）
  */
 export function finalizeEnemyDeath(
   enemyModel: Model,
@@ -152,7 +127,6 @@ export function finalizeEnemyDeath(
 ): void {
   if (!enemyModel || !enemyModel.Parent) return;
 
-  // 二重処理防止（経験値の二重付与も防ぐ）
   if (isDeathAlreadyHandled(enemyModel)) return;
 
   markDeathHandled(enemyModel);
@@ -161,7 +135,6 @@ export function finalizeEnemyDeath(
     grantExpReward(enemyModel, killerPlayer);
   }
 
-  // タグ後始末 → Destroy
   if (CollectionService.HasTag(enemyModel, TAGS.ENEMY)) {
     CollectionService.RemoveTag(enemyModel, TAGS.ENEMY);
   }
