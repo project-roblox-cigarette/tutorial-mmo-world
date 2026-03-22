@@ -8,9 +8,9 @@ import { CollectionService } from '@rbxts/services';
 import { ATTRIBUTES, ENEMY_BALANCE_BY_LEVEL, TAGS } from 'shared/constants';
 import type { DamageApplyResult } from 'shared/types/combat';
 import { Result } from 'shared/types/result';
-import { applyDamageToModel } from 'shared/utils/health';
 import { randomInt } from 'shared/utils/math';
 import { toAreaLevel } from 'shared/utils/type-guards';
+import { applyDamageToModel } from 'src/server/features/combat/utils/health';
 import { addExp } from '../../../services/ExpService';
 
 /**

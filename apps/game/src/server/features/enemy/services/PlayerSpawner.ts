@@ -4,7 +4,7 @@ import type { AreaId, AreaLevel, AreaSpawnConfig } from 'shared/types/enemy';
 import { getAreaSpawnConfig } from 'shared/utils/enemies';
 import { logger } from 'shared/utils/logger';
 import { toAreaLevel } from 'shared/utils/type-guards';
-import { initializeHealth } from '../../../../shared/utils/health';
+import { initializeHealth } from '../../combat/utils/health';
 import { getSpawnCFrameInArea } from '../utils/spawn-position';
 
 // エリア情報からスポーン設定を解決する

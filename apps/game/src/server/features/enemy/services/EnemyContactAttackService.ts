@@ -2,7 +2,7 @@ import { CollectionService, Players } from '@rbxts/services';
 import { ATTRIBUTES, ENEMY_BALANCE_BY_LEVEL, TAGS } from 'shared/constants';
 import { Result } from 'shared/types/result';
 import { getRootPartFromModel, logger } from 'shared/utils';
-import { applyDamageToModel } from 'shared/utils/health';
+import { applyDamageToModel } from 'src/server/features/combat/utils/health';
 import { BaseService } from '../../../core/Service';
 
 function resolveEnemyLevel(enemy: Model): 1 | 2 | 3 {
