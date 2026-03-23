@@ -97,7 +97,7 @@ export function applyDamageToModel(
     return Result.failure('NO_TARGET');
   }
 
-  // ターゲットが敵でない場合はエラー
+  // ターゲットが既に Dead の場合はエラー
   if (isDead(model)) {
     return Result.failure('ALREADY_DEAD');
   }
