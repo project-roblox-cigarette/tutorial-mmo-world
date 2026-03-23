@@ -1,6 +1,6 @@
 import { Players } from '@rbxts/services';
 import { ATTRIBUTES, getPlayerMaxHpByLevel } from 'shared/constants';
-import { logger } from '../../../../shared/utils/logger';
+import { logger } from 'shared/utils/logger';
 import { getPlayerData } from '../../../services/PlayerDataService';
 import {
   getCurrentHp,
