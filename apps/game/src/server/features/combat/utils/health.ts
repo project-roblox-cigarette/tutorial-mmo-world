@@ -1,6 +1,7 @@
 import { ATTRIBUTES } from 'shared/constants';
 import type { DamageApplyResult } from 'shared/types/combat';
 import { Result } from 'shared/types/result';
+import { logger } from '../../../../shared/utils';
 
 /**
  * モデル内のHumanoidを検索する
@@ -130,6 +131,12 @@ export function applyDamageToModel(
     }
     humanoid.Health = nextHp;
   }
+
+  // ログ出力
+  logger.debug(
+    'Health',
+    `ダメージ適用: Model=${model.Name} Damage=${amount} CurrentHp=${currentHp} NextHp=${nextHp}`,
+  );
 
   // 体力が0以下になった場合は死亡とみなす
   if (nextHp <= 0) {
