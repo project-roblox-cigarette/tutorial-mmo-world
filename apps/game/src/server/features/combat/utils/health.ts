@@ -1,7 +1,7 @@
 import { ATTRIBUTES } from 'shared/constants';
 import type { DamageApplyResult } from 'shared/types/combat';
 import { Result } from 'shared/types/result';
-import { logger } from '../../../../shared/utils';
+import { logger } from 'shared/utils';
 
 /**
  * モデル内のHumanoidを検索する
