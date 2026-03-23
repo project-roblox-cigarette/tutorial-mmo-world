@@ -1,6 +1,7 @@
 import { applyExpGain, remainingExpToNextLevel } from 'shared/utils/leveling';
 import { logger } from 'shared/utils/logger';
 import { clamp } from 'shared/utils/math';
+import { syncPlayerCharacterHealthFromLevel } from '../features/player/services/PlayerHealthService';
 import { getPlayerData, updatePlayerData } from './PlayerDataService';
 
 // 経験値の上限（レベルアップの計算に使用）
@@ -46,7 +47,15 @@ export function addExp(userId: number, gainedExp: number): void {
     ExpInLevel: nextProgress.expInLevel,
   });
 
+  // レベルアップしたかどうかを判定
   const leveledUp = nextProgress.level > beforeLevel;
+
+  // レベルアップした場合はHPをレベルに応じて同期
+  if (leveledUp) {
+    syncPlayerCharacterHealthFromLevel(userId);
+  }
+
+  // 次のレベルに到達するまでに必要な経験値を計算
   const remainingToNext = remainingExpToNextLevel(
     nextProgress.level,
     nextProgress.expInLevel,

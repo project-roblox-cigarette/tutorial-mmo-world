@@ -10,8 +10,8 @@ import type { DamageApplyResult } from 'shared/types/combat';
 import { Result } from 'shared/types/result';
 import { randomInt } from 'shared/utils/math';
 import { toAreaLevel } from 'shared/utils/type-guards';
-import { applyDamageToModel } from 'src/server/features/combat/utils/health';
 import { addExp } from '../../../services/ExpService';
+import { applyDamageToModel } from './health';
 
 /**
  * 敵にダメージを適用する
