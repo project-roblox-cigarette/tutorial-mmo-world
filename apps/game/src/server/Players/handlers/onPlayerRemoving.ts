@@ -16,7 +16,7 @@ export function onPlayerRemoving(player: Player): void {
   if (data) {
     logger.info(
       'PlayerLeave',
-      `${player.Name} が退出しました (最終スコア: ${data.Score}, レベル: ${data.Level})`,
+      `${player.Name} が退出しました (最終スコア: ${data.Score}, レベル: ${data.Level}, 所持金: ${data.Money})`,
     );
     // TODO: ここでデータを保存（DataStoreへ）
 

@@ -42,4 +42,8 @@ export const ATTRIBUTES = {
   // === SHOP関連の属性 ===
   /** ショップID（ShopId） */
   ShopId: 'ShopId',
+
+  // === プレイヤーデータ関連の属性 ===
+  /** 所持金（Money） */
+  Money: 'Money',
 } as const;
