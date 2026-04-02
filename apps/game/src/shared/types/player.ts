@@ -13,6 +13,10 @@ export type PlayerData = {
   Score: number;
   /** レベル */
   Level: number;
+  /** 経験値 */
+  Exp: number;
+  /** レベル内経験値 */
+  ExpInLevel: number;
 };
 
 /**

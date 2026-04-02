@@ -4,6 +4,7 @@
 
 export * from './characters';
 export * from './enemy-detection';
+export * from './leveling';
 export * from './logger';
 export * from './math';
 export * from './places';

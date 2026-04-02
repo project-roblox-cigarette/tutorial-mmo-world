@@ -22,6 +22,10 @@ export const ATTRIBUTES = {
   Hp: 'Hp',
   /** 敵の所有者ユーザーID（OwnerUserId） */
   OwnerUserId: 'OwnerUserId',
+  /** 敵のレベル（EnemyLevel） */
+  EnemyLevel: 'EnemyLevel',
+  /** 敵の死亡処理フラグ（DeathHandled） */
+  DeathHandled: 'DeathHandled',
 
   // === Area関連の属性 ===
   /** エリアID（AreaId） */

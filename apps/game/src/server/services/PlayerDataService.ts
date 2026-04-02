@@ -23,6 +23,8 @@ export function initializePlayerData(player: Player): PlayerData {
     JoinedAt: getCurrentTimestamp(),
     Score: 0,
     Level: 1,
+    Exp: 0,
+    ExpInLevel: 0,
   };
 
   playerDataCache.set(player.UserId, data);
