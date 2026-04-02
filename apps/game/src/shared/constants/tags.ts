@@ -9,4 +9,6 @@ export const TAGS = {
   TELEPORT_PROMPT: 'TeleportPrompt',
   /** 敵のスポーンエリアを識別するタグ */
   ENEMY_AREA: 'EnemyArea',
+  /** ショップNPCを識別するタグ */
+  SHOP_NPC: 'ShopNPC',
 } as const;

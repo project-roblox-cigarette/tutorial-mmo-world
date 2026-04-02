@@ -11,4 +11,6 @@ export const REMOTES = {
   PlayerAction: 'PlayerAction',
   /** 状態同期のRemoteEvent名 */
   SyncState: 'SyncState',
+  /** ショップ関連のRemoteEvent名 */
+  Shop_open: 'Shop_open',
 } as const;

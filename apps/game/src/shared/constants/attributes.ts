@@ -38,4 +38,8 @@ export const ATTRIBUTES = {
   Destination: 'Destination',
   /** テレポート元の場所キー（PlaceKey） */
   PlaceKey: 'PlaceKey',
+
+  // === SHOP関連の属性 ===
+  /** ショップID（ShopId） */
+  ShopId: 'ShopId',
 } as const;
