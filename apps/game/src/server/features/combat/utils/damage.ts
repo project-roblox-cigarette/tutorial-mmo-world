@@ -10,8 +10,10 @@ import type { DamageApplyResult } from 'shared/types/combat';
 import { Result } from 'shared/types/result';
 import { randomInt } from 'shared/utils/math';
 import { toAreaLevel } from 'shared/utils/type-guards';
+import { logger } from '../../../../shared/utils';
 import { addExp } from '../../../services/ExpService';
 import { applyDamageToModel } from './health';
+import { addMoney } from '../../player/services/MoneyService';
 
 /**
  * 敵にダメージを適用する
@@ -116,10 +118,43 @@ function grantExpReward(enemyModel: Model, killerPlayer: Player): void {
 }
 
 /**
+ * 敵に金銭報酬を付与
+ * @param enemyModel 敵のモデル
+ * @param killerPlayer 倒したプレイヤー
+ */
+function grantMoneyReward(enemyModel: Model, killerPlayer: Player): void {
+  if (!isRewardEligibleKiller(enemyModel, killerPlayer)) return;
+
+  const enemyLevel = resolveEnemyLevel(enemyModel);
+  const enemyBalance = ENEMY_BALANCE_BY_LEVEL[enemyLevel];
+  const moneyDropRange = enemyBalance.MoneyDrop;
+  const droppedMoney = randomInt(moneyDropRange.Min, moneyDropRange.Max);
+
+  const result = addMoney(killerPlayer, droppedMoney);
+  if (!result.Success) {
+    logger.warn(
+      'Enemy reward',
+      `Money付与失敗: player=${killerPlayer.Name} userId=${killerPlayer.UserId} amount=${droppedMoney} error=${result.Error}`,
+    );
+    return;
+  }
+
+  logger.info(
+    'Enemy reward',
+    `Money付与: player=${killerPlayer.Name} userId=${killerPlayer.UserId} amount=${droppedMoney} enemyLevel=${enemyLevel} after=${result.Value}`,
+  );
+}
+
+/**
  * 敵の死亡処理を最終化する
  * - 敵のモデルを破壊する前に、経験値報酬の付与やタグの削除などの処理を行う
- * - @param enemyModel 死亡した敵のモデル
- * - @param killerPlayer 敵を倒したプレイヤー（存在する場合）
+ * - 経験値の付与
+ * - 金銭の付与
+ * - タグの後始末
+ * - モデルの破壊
+ * など、敵が死亡した際に必要な一連の処理をまとめて行う
+ * @param enemyModel 敵のモデル
+ * @param killerPlayer 倒したプレイヤー
  */
 export function finalizeEnemyDeath(
   enemyModel: Model,
@@ -133,6 +168,7 @@ export function finalizeEnemyDeath(
 
   if (killerPlayer) {
     grantExpReward(enemyModel, killerPlayer);
+    grantMoneyReward(enemyModel, killerPlayer);
   }
 
   if (CollectionService.HasTag(enemyModel, TAGS.ENEMY)) {

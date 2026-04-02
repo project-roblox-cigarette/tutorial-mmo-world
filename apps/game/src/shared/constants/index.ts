@@ -8,5 +8,6 @@ export * from './places';
 export * from './playerHealth';
 export * from './remotes';
 export * from './scores';
+export * from './shops';
 export * from './tags';
 export * from './weapons';

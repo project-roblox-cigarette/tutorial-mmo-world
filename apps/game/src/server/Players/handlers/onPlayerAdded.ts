@@ -1,5 +1,4 @@
-// プレイヤー参加時の処理
-
+import { ATTRIBUTES } from 'shared/constants';
 import { logger } from 'shared/utils/logger';
 import { enemySpawnService } from '../../features/enemy/services/EnemySpawnService';
 import { initializePlayerData } from '../../services/PlayerDataService';
@@ -27,6 +26,9 @@ export function onPlayerAdded(player: Player): void {
 
   // 敵スポーン管理サービスにプレイヤーの参加を通知
   enemySpawnService.onPlayerAdded(player);
+
+  // プレイヤー属性を初期化
+  player.SetAttribute(ATTRIBUTES.Money, data.Money);
 
   logger.info(
     'PlayerJoin',
