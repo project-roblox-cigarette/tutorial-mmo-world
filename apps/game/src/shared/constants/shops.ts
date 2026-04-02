@@ -13,11 +13,15 @@ export const SHOP_ITEM_CATALOG: Record<ShopItemId, ShopItemConfig> = {
     Id: 'Sword_Lv0',
     DisplayName: '剣',
     ToolTemplateName: 'Sword_Lv0',
+    Price: 100,
+    StorageCategory: 'Swords',
   },
   FishingRod_Lv0: {
     Id: 'FishingRod_Lv0',
     DisplayName: '釣り竿',
     ToolTemplateName: 'FishingRod_Lv0',
+    Price: 80,
+    StorageCategory: 'FishingRods',
   },
 } as const;
 

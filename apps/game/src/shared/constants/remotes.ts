@@ -13,4 +13,6 @@ export const REMOTES = {
   SyncState: 'SyncState',
   /** ショップ関連のRemoteEvent名 */
   Shop_open: 'Shop_open',
+  /** ショップ購入リクエストのRemoteFunction名 */
+  Shop_purchase: 'Shop_purchase',
 } as const;

@@ -1,6 +1,12 @@
 import { Players, ReplicatedStorage } from '@rbxts/services';
 import { REMOTES } from 'shared/constants';
-import type { ShopOpenPayload } from 'shared/types/shop';
+import { SHOP_CONFIGS, SHOP_ITEM_CATALOG } from 'shared/constants/shops';
+import type {
+  ShopId,
+  ShopItemId,
+  ShopOpenPayload,
+  ShopPurchaseResult,
+} from 'shared/types/shop';
 import { isShopId } from 'shared/types/shop';
 import { logger } from 'shared/utils/logger';
 
@@ -34,64 +40,70 @@ function isShopOpenPayload(value: unknown): value is ShopOpenPayload {
  * 受信確認用の最小仮UIを PlayerGui に表示する。
  * @param payload サーバーから受け取ったショップオープン通知のペイロード
  */
-function openShopPreview(payload: ShopOpenPayload): void {
+function openShopUi(payload: ShopOpenPayload): void {
   const localPlayer = Players.LocalPlayer;
   const playerGui = localPlayer.FindFirstChildOfClass('PlayerGui');
   if (!playerGui) {
-    logger.warn('ShopOpen', 'PlayerGui が見つからないため仮UIを表示できません');
+    logger.warn(
+      'ShopOpen',
+      'PlayerGui が見つからないためショップUIを表示できません',
+    );
     return;
   }
 
-  // 既に同名のUIが存在する場合は削除してから新規作成する
   const existing = playerGui.FindFirstChild(SHOP_PREVIEW_GUI_NAME);
   if (existing) {
     existing.Destroy();
   }
 
-  // 仮UIを構築してPlayerGuiに配置する
   const screenGui = new Instance('ScreenGui');
   screenGui.Name = SHOP_PREVIEW_GUI_NAME;
   screenGui.ResetOnSpawn = false;
 
-  // フレームを作成して配置する
   const frame = new Instance('Frame');
   frame.Name = 'Container';
-  frame.Size = new UDim2(0, 360, 0, 180);
+  frame.Size = new UDim2(0, 420, 0, 260);
   frame.AnchorPoint = new Vector2(0.5, 0.5);
   frame.Position = new UDim2(0.5, 0, 0.5, 0);
   frame.BackgroundColor3 = Color3.fromRGB(24, 28, 36);
   frame.BorderSizePixel = 0;
   frame.Parent = screenGui;
 
-  // タイトルと説明、閉じるボタンを作成して配置する
   const title = new Instance('TextLabel');
   title.Name = 'Title';
-  title.Size = new UDim2(1, -24, 0, 56);
+  title.Size = new UDim2(1, -24, 0, 40);
   title.Position = new UDim2(0, 12, 0, 12);
   title.BackgroundTransparency = 1;
   title.Font = Enum.Font.GothamBold;
   title.TextSize = 24;
   title.TextColor3 = Color3.fromRGB(240, 244, 248);
   title.TextXAlignment = Enum.TextXAlignment.Left;
-  title.TextYAlignment = Enum.TextYAlignment.Top;
-  title.Text = `${payload.ShopId} を開く予定`;
+  title.Text = `${payload.ShopId}`;
   title.Parent = frame;
 
-  // 受信確認用の説明テキストを配置する
-  const description = new Instance('TextLabel');
-  description.Name = 'Description';
-  description.Size = new UDim2(1, -24, 0, 42);
-  description.Position = new UDim2(0, 12, 0, 76);
-  description.BackgroundTransparency = 1;
-  description.Font = Enum.Font.Gotham;
-  description.TextSize = 16;
-  description.TextColor3 = Color3.fromRGB(180, 188, 199);
-  description.TextXAlignment = Enum.TextXAlignment.Left;
-  description.TextYAlignment = Enum.TextYAlignment.Top;
-  description.Text = 'これは受信確認用の仮UIです';
-  description.Parent = frame;
+  const listContainer = new Instance('Frame');
+  listContainer.Name = 'ItemList';
+  listContainer.Size = new UDim2(1, -24, 0, 140);
+  listContainer.Position = new UDim2(0, 12, 0, 60);
+  listContainer.BackgroundTransparency = 1;
+  listContainer.Parent = frame;
 
-  // 閉じるボタンを配置する
+  const statusLabel = new Instance('TextLabel');
+  statusLabel.Name = 'StatusLabel';
+  statusLabel.Size = new UDim2(1, -24, 0, 28);
+  statusLabel.Position = new UDim2(0, 12, 1, -44);
+  statusLabel.BackgroundTransparency = 1;
+  statusLabel.TextXAlignment = Enum.TextXAlignment.Left;
+  statusLabel.Font = Enum.Font.Gotham;
+  statusLabel.TextSize = 16;
+  statusLabel.TextColor3 = Color3.fromRGB(255, 220, 120);
+  statusLabel.Text = '';
+  statusLabel.Parent = frame;
+
+  function setStatusMessage(message: string): void {
+    statusLabel.Text = message;
+  }
+
   const closeButton = new Instance('TextButton');
   closeButton.Name = 'CloseButton';
   closeButton.Size = new UDim2(0, 108, 0, 36);
@@ -105,12 +117,12 @@ function openShopPreview(payload: ShopOpenPayload): void {
   closeButton.Text = '閉じる';
   closeButton.Parent = frame;
 
-  // 閉じるボタンがクリックされたらUIを破棄する
   closeButton.Activated.Connect(() => {
     screenGui.Destroy();
   });
 
-  // 最後にPlayerGuiに配置する
+  _renderShopItems(listContainer, payload.ShopId, setStatusMessage);
+
   screenGui.Parent = playerGui;
 }
 
@@ -131,6 +143,111 @@ export function startShopOpenController(): void {
       `ショップオープン通知を受信: shopId=${payload.ShopId}`,
     );
 
-    openShopPreview(payload);
+    openShopUi(payload);
   });
+}
+
+/**
+ * クライアントからサーバーへの購入リクエストを送信するための関数
+ * @returns RemoteFunctionの呼び出し結果（ShopPurchaseResult）
+ */
+function getShopPurchaseRemote(): RemoteFunction {
+  const folder = ReplicatedStorage.WaitForChild(REMOTES.FolderName);
+  const remote = folder.WaitForChild(REMOTES.Shop_purchase);
+  return remote as RemoteFunction;
+}
+
+/**
+ * クライアントからサーバーへの購入リクエストを送信する関数
+ * @param shopId 購入したい商品のショップID
+ * @param itemId 購入したい商品のID
+ * @returns サーバーからの購入処理結果（ShopPurchaseResult）
+ */
+function requestPurchase(
+  shopId: ShopId,
+  itemId: ShopItemId,
+): ShopPurchaseResult {
+  const payload = {
+    ShopId: shopId,
+    ItemId: itemId,
+  };
+
+  return getShopPurchaseRemote().InvokeServer(payload) as ShopPurchaseResult;
+}
+
+function createItemRow(
+  parent: Instance,
+  shopId: ShopId,
+  itemId: ShopItemId,
+  yOffset: number,
+  setStatusMessage: (message: string) => void,
+): void {
+  const itemConfig = SHOP_ITEM_CATALOG[itemId];
+
+  const row = new Instance('Frame');
+  row.Size = new UDim2(1, -24, 0, 44);
+  row.Position = new UDim2(0, 12, 0, yOffset);
+  row.BackgroundTransparency = 1;
+  row.Parent = parent;
+
+  const label = new Instance('TextLabel');
+  label.Size = new UDim2(0.65, 0, 1, 0);
+  label.BackgroundTransparency = 1;
+  label.TextXAlignment = Enum.TextXAlignment.Left;
+  label.Font = Enum.Font.Gotham;
+  label.TextSize = 18;
+  label.TextColor3 = Color3.fromRGB(255, 255, 255);
+  label.Text = `${itemConfig.DisplayName} - ${itemConfig.Price}G`;
+  label.Parent = row;
+
+  const button = new Instance('TextButton');
+  button.Size = new UDim2(0, 96, 0, 32);
+  button.AnchorPoint = new Vector2(1, 0.5);
+  button.Position = new UDim2(1, 0, 0.5, 0);
+  button.Text = '購入';
+  button.Font = Enum.Font.GothamBold;
+  button.TextSize = 16;
+  button.TextColor3 = Color3.fromRGB(255, 255, 255);
+  button.BackgroundColor3 = Color3.fromRGB(60, 120, 220);
+  button.Parent = row;
+
+  button.Activated.Connect(() => {
+    const result = requestPurchase(shopId, itemId);
+
+    if (result.Success) {
+      setStatusMessage(`${itemConfig.DisplayName} を購入しました`);
+      logger.info(
+        'ShopUI',
+        `購入成功: shopId=${shopId} itemId=${itemId} remaining=${result.RemainingMoney}`,
+      );
+      return;
+    }
+
+    if (result.Error === 'InsufficientFunds') {
+      setStatusMessage('お金が足りません');
+      return;
+    }
+
+    setStatusMessage(`購入に失敗しました: ${result.Error}`);
+  });
+}
+
+function _renderShopItems(
+  listContainer: Frame,
+  shopId: ShopId,
+  setStatusMessage: (message: string) => void,
+): void {
+  listContainer.ClearAllChildren();
+
+  const shopConfig = SHOP_CONFIGS[shopId];
+  if (!shopConfig) {
+    setStatusMessage('ショップ設定が見つかりません');
+    return;
+  }
+
+  let yOffset = 0;
+  for (const itemId of shopConfig.Items) {
+    createItemRow(listContainer, shopId, itemId, yOffset, setStatusMessage);
+    yOffset += 48;
+  }
 }
