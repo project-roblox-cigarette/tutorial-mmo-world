@@ -6,6 +6,7 @@ import {
   getCurrentHp,
   getMaxHp,
   initializeHealth,
+  isDead,
 } from '../../combat/utils/health';
 
 /**
@@ -45,6 +46,7 @@ export function syncPlayerCharacterHealthFromLevel(userId: number): void {
   const newMaxHp = getPlayerMaxHpByLevel(data.Level);
   const currentHp = getCurrentHp(character);
   const oldMaxHp = getMaxHp(character);
+  const humanoid = character.FindFirstChildWhichIsA('Humanoid', true);
 
   // 現在のHPまたは最大HPが取得できない場合は初期化
   if (currentHp === undefined || oldMaxHp === undefined) {
@@ -52,9 +54,16 @@ export function syncPlayerCharacterHealthFromLevel(userId: number): void {
     return;
   }
 
+  const shouldPreserveDeadState =
+    isDead(character) ||
+    currentHp <= 0 ||
+    (humanoid?.IsA('Humanoid') && humanoid.Health <= 0) === true;
+
   // HPの増減を計算して適用
   const missingHp = math.max(0, oldMaxHp - currentHp);
-  const nextHp = math.max(0, newMaxHp - missingHp);
+  const nextHp = shouldPreserveDeadState
+    ? 0
+    : math.max(0, newMaxHp - missingHp);
 
   // キャラクターの属性とHumanoidを更新
   character.SetAttribute(ATTRIBUTES.MaxHp, newMaxHp);
@@ -62,7 +71,6 @@ export function syncPlayerCharacterHealthFromLevel(userId: number): void {
   character.SetAttribute(ATTRIBUTES.Dead, nextHp <= 0);
 
   // HumanoidのHPを更新
-  const humanoid = character.FindFirstChildWhichIsA('Humanoid', true);
   if (humanoid?.IsA('Humanoid')) {
     humanoid.MaxHealth = newMaxHp;
     humanoid.Health = nextHp;
