@@ -1,23 +1,17 @@
 import { CollectionService, Players } from '@rbxts/services';
 import { ATTRIBUTES, ENEMY_BALANCE_BY_LEVEL, TAGS } from 'shared/constants';
 import { Result } from 'shared/types/result';
-import { getRootPartFromModel, logger } from 'shared/utils';
+import { getRootPartFromModel, logger, toAreaLevel } from 'shared/utils';
 import { BaseService } from '../../../core/Service';
 import { applyDamageToModel } from '../../combat/utils/health';
 
 function resolveEnemyLevel(enemy: Model): 1 | 2 | 3 {
   const enemyLevelAttribute = enemy.GetAttribute(ATTRIBUTES.EnemyLevel);
+  const enemyLevel = typeIs(enemyLevelAttribute, 'number')
+    ? toAreaLevel(enemyLevelAttribute)
+    : undefined;
 
-  if (
-    typeIs(enemyLevelAttribute, 'number') &&
-    (enemyLevelAttribute === 1 ||
-      enemyLevelAttribute === 2 ||
-      enemyLevelAttribute === 3)
-  ) {
-    return enemyLevelAttribute;
-  }
-
-  return 1;
+  return (enemyLevel ?? 1) as 1 | 2 | 3;
 }
 
 export class EnemyContactAttackService extends BaseService {
