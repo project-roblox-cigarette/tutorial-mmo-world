@@ -7,7 +7,7 @@ import type { WeaponConfig, WeaponId } from '../types/weapon';
 export const WEAPON_CATALOG: Record<WeaponId, WeaponConfig> = {
   Sword_Lv0: {
     Id: 'Sword_Lv0', // 剣_レベル0
-    Damage: 9999, // ダメージ
+    Damage: 4, // ダメージ
     HitboxThickness: 3.0, // ヒットボックスの厚み
     MaxHitsPerSwing: 2, // 一回の攻撃で最大ヒット数
     CooldownSec: 0.5, // 攻撃クールダウン
@@ -17,7 +17,7 @@ export const WEAPON_CATALOG: Record<WeaponId, WeaponConfig> = {
   },
   Sword_Lv1: {
     Id: 'Sword_Lv1', // 剣_レベル1
-    Damage: 9999, // ダメージ
+    Damage: 40, // ダメージ
     HitboxThickness: 1.2, // ヒットボックスの厚み
     MaxHitsPerSwing: 2, // 一回の攻撃で最大ヒット数
     CooldownSec: 0.5, // 攻撃クールダウン
@@ -27,7 +27,7 @@ export const WEAPON_CATALOG: Record<WeaponId, WeaponConfig> = {
   },
   Sword_Lv2: {
     Id: 'Sword_Lv2', // 剣_レベル2
-    Damage: 9999, // ダメージ
+    Damage: 400, // ダメージ
     HitboxThickness: 1.2, // ヒットボックスの厚み
     MaxHitsPerSwing: 2, // 一回の攻撃で最大ヒット数
     CooldownSec: 0.5, // 攻撃クールダウン
@@ -37,7 +37,7 @@ export const WEAPON_CATALOG: Record<WeaponId, WeaponConfig> = {
   },
   Sword_Lv3: {
     Id: 'Sword_Lv3', // 剣_レベル3
-    Damage: 9999, // ダメージ
+    Damage: 1000, // ダメージ
     HitboxThickness: 1.2, // ヒットボックスの厚み
     MaxHitsPerSwing: 2, // 一回の攻撃で最大ヒット数
     CooldownSec: 0.5, // 攻撃クールダウン

@@ -18,7 +18,9 @@ export const ATTRIBUTES = {
   StopDurationSec: 'StopDurationSec',
   /** 敵の死亡フラグ（Dead） */
   Dead: 'Dead',
-  /** 敵の体力（HP） */
+  /** 敵/プレイヤー共通の体力上限（MaxHp） */
+  MaxHp: 'MaxHp',
+  /** 敵/プレイヤー共通の体力（Hp） */
   Hp: 'Hp',
   /** 敵の所有者ユーザーID（OwnerUserId） */
   OwnerUserId: 'OwnerUserId',
