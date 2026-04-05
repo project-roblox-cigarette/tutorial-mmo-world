@@ -19,6 +19,7 @@
     "@johnnymorganz/stylua-bin": "^2.3.1",
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
-    "rojo": "1.0.3-rojo7.6.1"
+    "rojo": "1.0.3-rojo7.6.1",
+    "typescript": "5.5.3"
   }
 }
