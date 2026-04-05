@@ -12,8 +12,8 @@ import { randomInt } from 'shared/utils/math';
 import { toAreaLevel } from 'shared/utils/type-guards';
 import { logger } from '../../../../shared/utils';
 import { addExp } from '../../../services/ExpService';
-import { applyDamageToModel } from './health';
 import { addMoney } from '../../player/services/MoneyService';
+import { applyDamageToModel } from './health';
 
 /**
  * 敵にダメージを適用する

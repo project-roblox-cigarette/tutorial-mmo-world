@@ -2,8 +2,8 @@ import { CollectionService, Players } from '@rbxts/services';
 import { ATTRIBUTES, ENEMY_BALANCE_BY_LEVEL, TAGS } from 'shared/constants';
 import { Result } from 'shared/types/result';
 import { getRootPartFromModel, logger } from 'shared/utils';
-import { applyDamageToModel } from '../../combat/utils/health';
 import { BaseService } from '../../../core/Service';
+import { applyDamageToModel } from '../../combat/utils/health';
 
 function resolveEnemyLevel(enemy: Model): 1 | 2 | 3 {
   const enemyLevelAttribute = enemy.GetAttribute(ATTRIBUTES.EnemyLevel);
