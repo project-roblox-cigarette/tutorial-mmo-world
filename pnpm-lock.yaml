@@ -23,6 +23,9 @@ importers:
       rojo:
         specifier: 1.0.3-rojo7.6.1
         version: 1.0.3-rojo7.6.1
+      typescript:
+        specifier: 5.5.3
+        version: 5.5.3
 
   apps/game:
     dependencies:
