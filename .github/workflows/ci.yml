@@ -25,8 +25,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: .node-version
           cache: 'pnpm'
+
+      - name: Verify Node security baseline
+        run: node scripts/check-runtime.cjs && node --test scripts/check-runtime.test.cjs
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -71,8 +74,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: .node-version
           cache: 'pnpm'
+
+      - name: Verify Node security baseline
+        run: node scripts/check-runtime.cjs && node --test scripts/check-runtime.test.cjs
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

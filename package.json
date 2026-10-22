@@ -3,16 +3,19 @@
   "private": true,
   "packageManager": "pnpm@9.0.0",
   "scripts": {
-    "build": "pnpm -r build",
-    "dev:game": "pnpm --filter @game/main dev",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
+    "build": "node scripts/check-runtime.cjs && pnpm -r build",
+    "dev:game": "node scripts/check-runtime.cjs && pnpm --filter @game/main dev",
+    "lint": "node scripts/check-runtime.cjs && biome check .",
+    "lint:fix": "node scripts/check-runtime.cjs && biome check --write .",
+    "format": "node scripts/check-runtime.cjs && biome format --write .",
+    "format:check": "node scripts/check-runtime.cjs && biome format .",
     "format:lua": "stylua .",
     "format:lua:check": "stylua --check .",
     "prepare": "husky",
-    "test": "pnpm -r test"
+    "test": "node scripts/check-runtime.cjs && pnpm build && pnpm -r test",
+    "preinstall": "node scripts/check-runtime.cjs",
+    "security:runtime": "node scripts/check-runtime.cjs",
+    "test:security": "node scripts/check-runtime.cjs && node --test scripts/check-runtime.test.cjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
@@ -20,5 +23,8 @@
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "rojo": "1.0.3-rojo7.6.1"
+  },
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || ^26.12.1"
   }
 }

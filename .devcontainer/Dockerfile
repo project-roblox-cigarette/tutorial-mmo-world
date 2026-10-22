@@ -1,17 +1,20 @@
 # Roblox 開発用 Dev Container
-# Node.js 20 + pnpm + Aftman (Rojo, StyLua, Selene)
+# Node.js 22.23.4 + pnpm + Aftman (Rojo, StyLua, Selene)
 
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm
+FROM node:22.23.4-bookworm
 
 # 必要なパッケージのインストール
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
+    sudo \
     unzip \
     curl \
     git && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    printf 'node ALL=(ALL) NOPASSWD:ALL\n' > /etc/sudoers.d/node && \
+    chmod 0440 /etc/sudoers.d/node
 
 # pnpm のインストール
 RUN npm install -g pnpm@9.0.0 && \

@@ -1,7 +1,7 @@
 # Tutorial MMO World
 
 [![CI](https://github.com/your-org/tutorial-mmo-world/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/tutorial-mmo-world/actions/workflows/ci.yml)
-[![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22.23.4-green.svg)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-9-orange.svg)](https://pnpm.io/)
 [![roblox-ts](https://img.shields.io/badge/roblox--ts-3.0-blue.svg)](https://roblox-ts.com/)
 
@@ -72,7 +72,7 @@ pnpm dev:game
 
 #### 必須ソフトウェア
 
-- [Node.js](https://nodejs.org/) v20 LTS
+- [Node.js](https://nodejs.org/) v22.23.4
 - [pnpm](https://pnpm.io/) v9
 - [Aftman](https://github.com/LPGhatguy/aftman)
 - [Roblox Studio](https://www.roblox.com/create)
@@ -274,3 +274,11 @@ pnpm prepare
 ## 📝 ライセンス
 
 Private - All Rights Reserved
+
+## Node.jsのセキュリティ最低版
+
+`.node-version`の22.23.4を基準にし、22.23.4 / 24.22.1 / 26.12.1以降の各系列だけを起動・ビルド・検証で受け入れます。pnpm 9.0.0とdevelopのBiome・ゲーム機能は維持します。`pnpm test:security`で版の境界を確認でき、CIとDev Containerも修正版を使います。
+
+Windowsのビルド・検証は、既存のPOSIX形式スクリプトに合わせてGit Bashを使用します。`pnpm test`はビルド後、共有モジュールだけの一時PlaceでTestEZをRoblox Studio上で実行します。`Shared/types`を含む全specを探索し、失敗・実行ゼロ・完了結果なしはエラーにします。ゲームのserver/clientは起動しません。
+
+ホスト側にログイン済みRoblox Studioと[run-in-roblox 0.3.0](https://github.com/rojo-rbx/run-in-roblox/releases/tag/v0.3.0)が必要です。CLIをPATHへ配置するか、`RUN_IN_ROBLOX`に実行ファイルの絶対パスを指定してください。Studioを使わないLinux Dev Containerでは、`pnpm build`・`pnpm lint`・`pnpm test:security`を実行し、TestEZはホスト側で実行します。

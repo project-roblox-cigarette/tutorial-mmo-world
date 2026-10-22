@@ -55,6 +55,7 @@ echo -e "${GREEN}Git 設定完了${NC}"
 
 step_echo 2 "依存関係をインストールしています..."
 cd /workspace
+node scripts/check-runtime.cjs
 # node_modules ディレクトリの権限を修正
 sudo chown -R node:node /workspace/node_modules 2>/dev/null || true
 sudo mkdir -p /workspace/node_modules 2>/dev/null || true
