@@ -1,8 +1,10 @@
+[依存セキュリティ対策](SECURITY_DEPENDENCIES_2026-10-22.md)
+
 # Tutorial MMO World
 
-[![CI](https://github.com/your-org/tutorial-mmo-world/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/tutorial-mmo-world/actions/workflows/ci.yml)
-[![Node.js](https://img.shields.io/badge/Node.js-20-green.svg)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-9-orange.svg)](https://pnpm.io/)
+[![CI](https://github.com/project-roblox-cigarette/tutorial-mmo-world/actions/workflows/ci.yml/badge.svg)](https://github.com/project-roblox-cigarette/tutorial-mmo-world/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-22.23.4-green.svg)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-12.14.0-orange.svg)](https://pnpm.io/)
 [![roblox-ts](https://img.shields.io/badge/roblox--ts-3.0-blue.svg)](https://roblox-ts.com/)
 
 Roblox Studio × TypeScript (roblox-ts) による MMO ゲーム開発プロジェクト
@@ -20,18 +22,18 @@ Roblox Studio × TypeScript (roblox-ts) による MMO ゲーム開発プロジ�
 
 ## 🛠 技術スタック
 
-| ツール                                                | 用途                                  |
-| ----------------------------------------------------- | ------------------------------------- |
-| [roblox-ts](https://roblox-ts.com/)                   | TypeScript → Luau 変換                |
+| ツール                                                | 用途                                   |
+| ----------------------------------------------------- | -------------------------------------- |
+| [roblox-ts](https://roblox-ts.com/)                   | TypeScript → Luau 変換                 |
 | [Rojo](https://rojo.space/)                           | ファイルシステム ↔ Roblox Studio 同期 |
-| [pnpm](https://pnpm.io/)                              | パッケージ管理（ワークスペース）      |
-| [ESLint](https://eslint.org/)                         | TypeScript コード品質                 |
-| [Prettier](https://prettier.io/)                      | コードフォーマット                    |
-| [StyLua](https://github.com/JohnnyMorganz/StyLua)     | Luau フォーマット                     |
-| [Selene](https://kampfkarren.github.io/selene/)       | Luau 静的解析                         |
-| [TestEZ](https://github.com/Roblox/testez)            | Roblox テストフレームワーク           |
-| [Husky](https://typicode.github.io/husky/)            | Git フック                            |
-| [GitHub Actions](https://github.com/features/actions) | CI/CD                                 |
+| [pnpm](https://pnpm.io/)                              | パッケージ管理（ワークスペース）       |
+| [ESLint](https://eslint.org/)                         | TypeScript コード品質                  |
+| [Prettier](https://prettier.io/)                      | コードフォーマット                     |
+| [StyLua](https://github.com/JohnnyMorganz/StyLua)     | Luau フォーマット                      |
+| [Selene](https://kampfkarren.github.io/selene/)       | Luau 静的解析                          |
+| [TestEZ](https://github.com/Roblox/testez)            | Roblox テストフレームワーク            |
+| [Husky](https://typicode.github.io/husky/)            | Git フック                             |
+| [GitHub Actions](https://github.com/features/actions) | CI/CD                                  |
 
 ---
 
@@ -50,7 +52,7 @@ Roblox Studio × TypeScript (roblox-ts) による MMO ゲーム開発プロジ�
 
 ```bash
 # 1. クローン
-git clone https://github.com/your-org/tutorial-mmo-world.git
+git clone https://github.com/project-roblox-cigarette/tutorial-mmo-world.git
 cd tutorial-mmo-world
 
 # 2. VS Code で開く
@@ -73,8 +75,8 @@ pnpm dev:game
 
 #### 必須ソフトウェア
 
-- [Node.js](https://nodejs.org/) v20 LTS
-- [pnpm](https://pnpm.io/) v9
+- [Node.js](https://nodejs.org/) 22.23.4
+- [pnpm](https://pnpm.io/) 12.14.0
 - [Aftman](https://github.com/LPGhatguy/aftman)
 - [Roblox Studio](https://www.roblox.com/create)
 
@@ -82,7 +84,8 @@ pnpm dev:game
 
 ```powershell
 # Node.js をインストール後
-npm install -g pnpm
+corepack enable
+corepack prepare pnpm@12.14.0 --activate
 
 # Aftman をインストール後
 aftman install
@@ -92,7 +95,8 @@ aftman install
 
 ```bash
 brew install node
-npm install -g pnpm
+corepack enable
+corepack prepare pnpm@12.14.0 --activate
 brew install aftman
 aftman install
 ```
@@ -100,9 +104,10 @@ aftman install
 #### プロジェクトセットアップ
 
 ```bash
-git clone https://github.com/your-org/tutorial-mmo-world.git
+git clone https://github.com/project-roblox-cigarette/tutorial-mmo-world.git
 cd tutorial-mmo-world
-pnpm install
+node scripts/prepare-offline-audit.mjs
+pnpm run deps:install
 pnpm build
 ```
 
@@ -262,7 +267,8 @@ netstat -ano | findstr :34872  # Windows
 ```bash
 # 依存関係を再インストール
 rm -rf node_modules
-pnpm install
+node scripts/prepare-offline-audit.mjs
+pnpm run deps:install
 
 # ビルドキャッシュをクリア
 rm -rf apps/game/out
@@ -294,3 +300,13 @@ pnpm prepare
 ## 📝 ライセンス
 
 Private - All Rights Reserved
+
+## Node.jsとpnpmの受入条件（2026-10-22）
+
+Node.js 22.23.4 / pnpm 12.14.0だけを、起動・ビルド・検査・導入手順で受け入れます。
+`pnpm run security:runtime` で確認できます。npm/yarnと未検証の版は拒否します。
+依存は `pnpm run deps:install` で固定ロック・導入スクリプト停止・オフライン監査を通します。
+初回の監査準備は `node scripts/prepare-offline-audit.mjs`。公開後24時間待機・発行時刻不明の拒否・信頼性低下拒否は維持します。
+新しい脆弱性の公開後は、公式情報と公開OSV DBで再照合してから受入バージョンを更新してください。
+
+変更監視はroblox-ts自身のwatchとRojo自身のserveを使い、nodemon/chokidar-cliを削除しました。roblox-tsがディレクトリ単位で監視する互換性を確認したchokidar 6.0.0へ限定し、braces依存を除去します。

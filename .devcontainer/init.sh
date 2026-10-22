@@ -56,10 +56,13 @@ echo -e "${GREEN}Git 設定完了${NC}"
 step_echo 2 "依存関係をインストールしています..."
 cd /workspace
 # node_modules ディレクトリの権限を修正
-sudo chown -R node:node /workspace/node_modules 2>/dev/null || true
-sudo mkdir -p /workspace/node_modules 2>/dev/null || true
-sudo chown -R node:node /workspace/node_modules 2>/dev/null || true
-pnpm install --frozen-lockfile
+mkdir -p /workspace/node_modules
+if [ ! -w /workspace/node_modules ]; then
+  echo "node_modules is not writable by the current user. Review the workspace mount ownership before installing."
+  exit 1
+fi
+node scripts/prepare-offline-audit.mjs
+pnpm run deps:install
 echo -e "${GREEN}依存関係インストール完了${NC}"
 
 step_echo 3 "Aftman ツールをインストールしています..."

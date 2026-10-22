@@ -1,7 +1,7 @@
 # Roblox 開発用 Dev Container
-# Node.js 20 + pnpm + Aftman (Rojo, StyLua, Selene)
+# Node.js 22.23.4 + pnpm 12.14.0 + Aftman (Rojo, StyLua, Selene)
 
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm
+FROM node:22.23.4-bookworm
 
 # 必要なパッケージのインストール
 RUN apt-get update && \
@@ -14,7 +14,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # pnpm のインストール
-RUN npm install -g pnpm@9.0.0 && \
+RUN corepack enable && corepack prepare pnpm@12.14.0 --activate && \
     echo 'store-dir=/home/node/.local/share/pnpm/store/.pnpm-store' >> /home/node/.npmrc && \
     echo 'update-notifier=false' >> /home/node/.npmrc
 
