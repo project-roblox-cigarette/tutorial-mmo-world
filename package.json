@@ -12,7 +12,7 @@
     "format:lua": "stylua .",
     "format:lua:check": "stylua --check .",
     "prepare": "husky",
-    "test": "node scripts/check-runtime.cjs && pnpm -r test",
+    "test": "node scripts/check-runtime.cjs && pnpm build && pnpm -r test",
     "preinstall": "node scripts/check-runtime.cjs",
     "security:runtime": "node scripts/check-runtime.cjs",
     "test:security": "node scripts/check-runtime.cjs && node --test scripts/check-runtime.test.cjs"

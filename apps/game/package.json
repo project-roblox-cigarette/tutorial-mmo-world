@@ -6,7 +6,7 @@
     "build": "node ../../scripts/check-runtime.cjs && NODE_OPTIONS='--max-old-space-size=4096' rbxtsc --type=game",
     "watch": "node ../../scripts/check-runtime.cjs && NODE_OPTIONS='--max-old-space-size=4096' nodemon",
     "watch:rojo": "node ../../scripts/check-runtime.cjs && nodemon --config nodemon-rojo.json",
-    "test": "node ../../scripts/check-runtime.cjs && testez"
+    "test": "node ../../scripts/check-runtime.cjs && node ../../scripts/run-testez.cjs"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",

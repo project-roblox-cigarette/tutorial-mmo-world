@@ -279,4 +279,6 @@ Private - All Rights Reserved
 
 `.node-version`の22.23.4を基準にし、22.23.4 / 24.22.1 / 26.12.1以降の各系列だけを起動・ビルド・検証で受け入れます。pnpm 9.0.0とdevelopのBiome・ゲーム機能は維持します。`pnpm test:security`で版の境界を確認でき、CIとDev Containerも修正版を使います。
 
-Windowsのビルド・検証は、既存のPOSIX形式スクリプトに合わせてGit Bashを使用します。既存の`pnpm test`は`testez`実行ファイルを別途必要とし、この端末では未導入です。
+Windowsのビルド・検証は、既存のPOSIX形式スクリプトに合わせてGit Bashを使用します。`pnpm test`はビルド後、共有モジュールだけの一時PlaceでTestEZをRoblox Studio上で実行します。`Shared/types`を含む全specを探索し、失敗・実行ゼロ・完了結果なしはエラーにします。ゲームのserver/clientは起動しません。
+
+ホスト側にログイン済みRoblox Studioと[run-in-roblox 0.3.0](https://github.com/rojo-rbx/run-in-roblox/releases/tag/v0.3.0)が必要です。CLIをPATHへ配置するか、`RUN_IN_ROBLOX`に実行ファイルの絶対パスを指定してください。Studioを使わないLinux Dev Containerでは、`pnpm build`・`pnpm lint`・`pnpm test:security`を実行し、TestEZはホスト側で実行します。
