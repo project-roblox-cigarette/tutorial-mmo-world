@@ -25,6 +25,24 @@ export default tseslint.config(
 
   // カスタムルール
   {
+    files: ['scripts/**/*.cjs', 'scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
+        Buffer: 'readonly',
+        fetch: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       // roblox-ts特有の設定

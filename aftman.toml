@@ -1,6 +1,6 @@
 # Aftman - Roblox開発ツール管理
 [tools]
-rojo = "rojo-rbx/rojo@7.4.4"
+rojo = "rojo-rbx/rojo@7.6.1"
 stylua = "JohnnyMorganz/StyLua@0.20.0"
 selene = "Kampfkarren/selene@0.27.1"
 
